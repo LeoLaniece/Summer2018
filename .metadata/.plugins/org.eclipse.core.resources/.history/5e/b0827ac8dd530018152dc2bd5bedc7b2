@@ -1,0 +1,102 @@
+package test;
+
+import java.io.*;
+import javax.sound.sampled.*;
+/**
+ * Use SourceDataLine to read line-by-line from the external sound file.
+ * For computer game, use Clip to pre-load short-duration sound files.
+ * 
+ * make this into a workable class, integrate it into the Draw2 program.
+ */
+public class SoundLineTest {
+   public static void main(String[] args) {
+      SourceDataLine soundLine = null;
+      //SourceDataLine soundLine2 = null;
+      //this is the size of the grains!!!
+      int BUFFER_SIZE = 20000;
+   
+      // Set up an audio input stream piped from the sound file.
+      try {
+         File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+         File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
+         //add a buffer to both sound files so they can be marked!
+         InputStream inputStream = new FileInputStream(soundFile);
+         InputStream inputStream2 = new FileInputStream(soundFile2);
+         InputStream bufferedIn = new BufferedInputStream(inputStream);
+         InputStream bufferedIn2 = new BufferedInputStream(inputStream2);
+         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
+         AudioInputStream audioInputStream2 = AudioSystem.getAudioInputStream(bufferedIn2);
+
+         //mark the beggining of each sound file
+         audioInputStream.mark(Integer.MAX_VALUE);
+         audioInputStream2.mark(Integer.MAX_VALUE);    	 
+
+         AudioFormat audioFormat = audioInputStream.getFormat();
+         AudioFormat audioFormat2 = audioInputStream2.getFormat();         
+         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+         DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat2);
+         soundLine = (SourceDataLine) AudioSystem.getLine(info);
+        // soundLine2 = (SourceDataLine) AudioSystem.getLine(info2);
+         soundLine.open(audioFormat);
+        // soundLine2.open(audioFormat2);
+         soundLine.start();
+         //soundLine2.start();
+         
+         int nBytesRead = 0;
+        //Handles section by section of an audio file
+         byte[] sampledData = new byte[BUFFER_SIZE];         
+         int gate = 0; 
+       //This works to evenly interweave two sound sample grains.
+         //also, the grains are provided from beggining to end of the sound sample
+         //want to create a loop to continuously generate the sound
+         // i need to build the loop.
+         while (nBytesRead >-1) {        	                 	 
+        	 //loop needs to reset the audio file when the audio file reaches its end.
+        	 //just reset the file when nBytes read = -1       	 
+        	 
+        	 if (gate == 0) {        		 
+        	nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+        	if (nBytesRead ==-1) {
+        	//resets the sound files to the beggining
+               audioInputStream.reset();
+               nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+        	}
+            System.out.println(nBytesRead);            
+        	 }
+        	 else {
+        		 nBytesRead = audioInputStream2.read(sampledData, 0, sampledData.length); 
+        		 if (nBytesRead ==-1) {
+        	        	//resets the sound files to the beggining
+        	               audioInputStream2.reset();
+        	               nBytesRead = audioInputStream2.read(sampledData, 0, sampledData.length);
+        	        	}
+        		 System.out.println(nBytesRead);
+        	 }        	           
+            
+            if (nBytesRead >= 0) {
+               // Writes audio data to the mixer via this source data line.          	            	
+               soundLine.write(sampledData, 0, nBytesRead);
+               
+               //changes the file which is read into the inputStream
+               //0 = file 1
+               //1 = file 2
+               if (gate ==0) {
+            	   gate = 1;
+               }else {
+            	   gate = 0;
+               }
+               
+            }
+         }
+      } catch (UnsupportedAudioFileException ex) {
+         ex.printStackTrace();
+      } catch (IOException ex) {
+         ex.printStackTrace();
+      } catch (LineUnavailableException ex) {
+         ex.printStackTrace();
+      } finally {
+         soundLine.drain();
+         soundLine.close();
+      }
+   }
+}

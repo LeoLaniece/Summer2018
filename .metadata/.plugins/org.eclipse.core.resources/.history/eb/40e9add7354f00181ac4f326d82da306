@@ -1,0 +1,54 @@
+package test;
+import sun.audio.*;
+import java.io.*;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+
+
+
+/**
+ * A simple Java sound file example (i.e., Java code to play a sound file).
+ * AudioStream and AudioPlayer code comes from a javaworld.com example.
+ * @author alvin alexander, devdaily.com.
+ */
+public class JavaAudioPlaySoundExample
+{
+  public static void main(String[] args) 
+  throws Exception
+  {
+    // open the sound file as a Java input stream
+    String gongFile = "C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\scratch-loud.WAV";
+    InputStream in = new FileInputStream(gongFile);
+
+    // create an audiostream from the inputstream
+    //AudioStream audioStream = new AudioStream(in);
+
+    // play the audio clip with the audioplayer class
+    //AudioPlayer.player.start(audioStream);
+    AudioInputStream audioInputStream =  AudioSystem.getAudioInputStream(in);
+
+    
+    extractFloatDataFromAudioInputStream(audioInputStream);
+    
+    
+  }
+  
+  public static void extractFloatDataFromAudioInputStream(AudioInputStream audioInputStream) {
+	    AudioFormat format = audioInputStream.getFormat();
+	    //calculate size
+	    byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];
+	    // calculate durationSec
+	    float milliseconds = (long) ((audioInputStream.getFrameLength() * 1000) / audioInputStream.getFormat().getFrameRate());
+	    double durationSec = milliseconds / 1000.0;
+	     System.out.println("The current signal has duration "+durationSec+" Sec");
+	    try {
+	        audioInputStream.read(audioBytes);
+	    } catch (IOException e) {
+	        System.out.println("IOException during reading audioBytes");
+	        e.printStackTrace();
+	    }
+	    //extractFloatDataFromAmplitudeByteArray(format, audioBytes);
+	}
+}

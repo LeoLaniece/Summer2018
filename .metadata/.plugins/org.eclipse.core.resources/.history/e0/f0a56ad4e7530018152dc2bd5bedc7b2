@@ -1,0 +1,153 @@
+package test;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+/**
+ * Takes two files as parameters
+ * has a grain frequency count represented as a %% for each file
+ * has a granularity value, default = 64*1024, 64MB
+ * has a play command
+ * has a stop command
+ * has a change % command 
+ * has a change granularity command
+ * @author HCI Lab
+ * Purpose is to perform interactive drawing sounds with the drawing tool
+ *
+ */
+public class Grain2Files {
+	
+	File file1;
+	File file2;
+	double file1Frequency;
+	double file2Frequency;
+
+	SourceDataLine soundLine = null; 
+	//the audiInputStreams
+    AudioInputStream audioInputStream;
+    AudioInputStream audioInputStream2;
+    //Buffer util
+    //this is the size of the grains!!!
+	int BUFFER_SIZE = 64*1024;//64MB
+    int nBytesRead = 0;
+   //Handles section by section of an audio file
+    byte[] sampledData = new byte[BUFFER_SIZE];         
+    int gate = 0; 
+
+	
+	
+	public Grain2Files(File f1, File f2) {
+		file1 = f1;
+		file2 = f2;
+		file1Frequency = 0.5;
+		file2Frequency = 0.5;	      	      	      	   
+	      // Set up an audio input stream piped from the sound file.
+	      try {
+	        // File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+	        // File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
+	         //add a buffer to both sound files so they can be marked!
+	         InputStream inputStream = new FileInputStream(file1);
+	         InputStream inputStream2 = new FileInputStream(file2);
+	         InputStream bufferedIn = new BufferedInputStream(inputStream);
+	         InputStream bufferedIn2 = new BufferedInputStream(inputStream2);
+	         audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
+	         audioInputStream2 = AudioSystem.getAudioInputStream(bufferedIn2);
+
+	         //mark the beggining of each sound file
+	         audioInputStream.mark(Integer.MAX_VALUE);
+	         audioInputStream2.mark(Integer.MAX_VALUE);    	 
+
+	         AudioFormat audioFormat = audioInputStream.getFormat();
+	         AudioFormat audioFormat2 = audioInputStream2.getFormat();         
+	         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+	         DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat2);
+	         soundLine = (SourceDataLine) AudioSystem.getLine(info);
+	         soundLine.open(audioFormat);
+	         soundLine.start();	         				
+	}catch (UnsupportedAudioFileException ex) {
+        ex.printStackTrace();
+     } catch (IOException ex) {
+        ex.printStackTrace();
+     } catch (LineUnavailableException ex) {
+        ex.printStackTrace();
+     } finally {
+    	 //soundLine.drain();
+         //soundLine.close();
+    	 }		
+	}
+	
+	/**
+	 * plays the mixed grains of both sound files
+	 * should not 'loop' the sound, this needs to be determined by the required interaction
+	 * @throws LineUnavailableException 
+	 */
+	public void play() throws LineUnavailableException {
+		try {
+		//This works to evenly interweave two sound sample grains.
+        //also, the grains are provided from beggining to end of the sound sample
+        //want to create a loop to continuously generate the sound
+        // i need to build the loop.
+       // while (nBytesRead >-1) {        	                 	 
+       	 //loop needs to reset the audio file when the audio file reaches its end.
+       	 //just reset the file when nBytes read = -1       	 
+       	 soundLine.open();
+       	 if (gate == 0) {        		 
+       	nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+       	if (nBytesRead ==-1) {
+       	//resets the sound files to the beggining
+              audioInputStream.reset();
+              nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+       	}
+           System.out.println(nBytesRead);            
+       	 }
+       	 else {
+       		 nBytesRead = audioInputStream2.read(sampledData, 0, sampledData.length); 
+       		 if (nBytesRead ==-1) {
+       	        	//resets the sound files to the beggining
+       	               audioInputStream2.reset();
+       	               nBytesRead = audioInputStream2.read(sampledData, 0, sampledData.length);
+       	        	}
+       		 System.out.println(nBytesRead);
+       	 }        	           
+           
+           if (nBytesRead >= 0) {
+              // Writes audio data to the mixer via this source data line.          	            	
+              soundLine.write(sampledData, 0, nBytesRead);
+              
+              //changes the file which is read into the inputStream
+              //0 = file 1
+              //1 = file 2
+              if (gate ==0) {
+           	   gate = 1;
+              }else {
+           	   gate = 0;
+              }
+              
+           }
+      //  }        
+	}catch (IOException ex) {
+        ex.printStackTrace();
+     }catch (LineUnavailableException e) {
+    	 //
+     }
+		finally {
+    	 soundLine.drain();
+         soundLine.close();
+    	 }
+	}
+	
+	
+	
+	
+}

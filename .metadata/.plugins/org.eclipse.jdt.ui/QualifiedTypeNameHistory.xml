@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="net.beadsproject.beads.data.Sample"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.GranularSamplePlayer"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Static"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.WavePlayer"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.data.Buffer"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.FileInputStream"/>
+<fullyQualifiedTypeName name="javax.sound.sampled.AudioInputStream"/>
+<fullyQualifiedTypeName name="javax.sound.sampled.AudioSystem"/>
+<fullyQualifiedTypeName name="java.awt.event.ActionListener"/>
+<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
+<fullyQualifiedTypeName name="java.awt.FlowLayout"/>
+<fullyQualifiedTypeName name="javax.management.timer.Timer"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+</qualifiedTypeNameHistroy>
