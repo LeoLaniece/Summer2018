@@ -10,90 +10,63 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
 public class Draw2Controller {
+	public Draw2View view;
+	public Draw2Model model;
+	double distanceTraveled = 0;
+	double x;
+	double y;            	
+	double dx = 0;
+	double dy = 0;
+	
+	long time;
+	
+	public Draw2Controller(Draw2View v, Draw2Model m) {
+		view = v;
+		model = m;
 	
 	
-	
-	/*	
-	btnClear.setOnAction(new EventHandler<ActionEvent>() {
-
-        public void handle(ActionEvent event) {
-            lineGroup.getChildren().removeAll(lineGroup.getChildren());                
-            //play eraser sound
-           clip2.start();
-            clip2.setMicrosecondPosition(0);                              
+	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
+        @Override
+        public void handle(MouseEvent me) {
+        	//will be useful in mouseDragged for velocity
+        	x = me.getX();
+        	y = me.getY();
+        	time = System.currentTimeMillis();        	 
+        	view.startPath(me.getX(), me.getY()); 
+                        		                        
         }
     });
-*/
-	/*
-	 * canvas.setOnMousePressed(new EventHandler<MouseEvent>()  {
-
-            @Override
-
-            public void handle(MouseEvent me) {
-
-            	//will be useful in mouseDragged for velocity
-            	x = me.getX();
-            	y = me.getY();
-            	time = System.currentTimeMillis();
-
-                path = new Path();
-
-                path.setMouseTransparent(true);
-
-                path.setStrokeWidth(sampleLine.getStrokeWidth());
-
-                path.setStroke(sampleLine.getStroke());
-
-                lineGroup.getChildren().add(path);
-
-                path.getElements().add(new MoveTo(me.getSceneX(), me.getSceneY()));
-                
-                //play drawing sound
-            	//clip.loop(Clip.LOOP_CONTINUOUSLY);
-                
-			
-                
-                
-
-            }
-
-        });
-
-
+	
         //in the controller
-        canvas.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
+	view.c.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
-
-            public void handle(MouseEvent me) {
+            public void handle(MouseEvent me) {            	
+            	 //calculate speed and distance of the stroke(in the model)
+            	model.calculateStroke(distanceTraveled,time);
+            	distanceTraveled = 0;
             	
-            	//stop the sound
-            	 clip.stop();
-            	 clip2.stop();
-			
-
-                path = null;
-
-
-
+                
             }
-
         });
-
-
-        //int the controller
-        canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
-
+      
+	view.c.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
-
-            public void handle(MouseEvent me) {
+            public void handle(MouseEvent me) {  
+            	
+            	//distance travelled = distance += |distance|
+        		dx = me.getX();
+        		dy = me.getY();
+            	distanceTraveled += Math.abs(Math.sqrt(Math.pow((dx-x), 2)+Math.pow((dy-y), 2)));
+            	x = dx;
+            	y = dy;
+            	
             	
             	//CALCULATE DRAG VELOCITY
             	//every 100 ms calculate a curent mouse x mouse y
             	//also figure out distance from previous x and y
             	//if the distance is bigger than 300pixels, play a 'fast' sound
             	//else play slow sound
-            	double distance = 0;
+            /*	
             	double dx = 0;
             	double dy = 0;
             	
@@ -123,20 +96,14 @@ public class Draw2Controller {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-            	
+            	*/
 
                 // keep lines within rectangle
 
-                if (canvas.getBoundsInLocal().contains(me.getX(), me.getY())) {
-
-                    path.getElements().add(new LineTo(me.getSceneX(), me.getSceneY()));
-
+                if (view.c.getBoundsInLocal().contains(me.getX(), me.getY())) {
+                	view.strokePath(me.getX(), me.getY()); 
+                	view.startPath(me.getX(), me.getY());
                 }
-
-
-
-            }
-
-        });
-	 */
-}
+                }
+        });	
+}}

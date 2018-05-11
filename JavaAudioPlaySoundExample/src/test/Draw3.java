@@ -14,11 +14,12 @@ public class Draw3 extends Application{
 	 @Override
 	    public void start(Stage primaryStage) {
 	        primaryStage.setTitle("Drawing Tool");
-	        //a type of layout
-	        VBox root = new VBox();
+	        //a type of layout	        
+	        VBox root = new VBox();	        
 	        Scene scene = new Scene(root, 700, 500);
 	        Draw2Model model = new Draw2Model();
 	        Draw2View view = new Draw2View(model);
+	        Draw2Controller controller = new Draw2Controller(view, model);
 	        model.addSubscriber(view);
 	        
 	       

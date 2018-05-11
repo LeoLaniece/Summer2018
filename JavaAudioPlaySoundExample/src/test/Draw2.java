@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 
 
 
+
 import java.lang.reflect.Modifier;
 
 import javafx.application.Application;
@@ -88,6 +89,9 @@ distance-volume/panning
  * -have a shape drag and drop method (with pickup and drop sounds)
  * -have communication over network server
  * 
+ * //new idea, for interactive sounds, provide a lag.
+//calculate length and speed of stroke, then generate the sound.
+ * 
  */
 
 //found at https://gist.github.com/jpt1122/6592882
@@ -120,11 +124,8 @@ public class Draw2 extends Application {
 
 
     @Override
-
     public void start(Stage primaryStage) throws Exception{
-
         primaryStage.setTitle("Drawing Tool");
-
         //a type of layout
         final Group root = new Group();
         Scene scene = new Scene(root, 600, 400);
@@ -339,10 +340,10 @@ public class Draw2 extends Application {
 
         canvas.setFill(Color.LIGHTGRAY);
         //in the controller
-        canvas.setOnMousePressed(new EventHandler<MouseEvent>()  {
-
+        
+        
+        canvas.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
             @Override
-
             public void handle(MouseEvent me) {
 
             	//will be useful in mouseDragged for velocity
@@ -384,6 +385,34 @@ public class Draw2 extends Application {
             	//stop the sound
             	 clip.stop();
             	 clip2.stop();
+            	 
+            	 //calculate speed and distance of the stroke
+            	double distance = 0;
+             	double dx = 0;
+             	double dy = 0;
+             	dx = me.getX();
+        		dy = me.getY();
+        		distance = Math.sqrt(Math.pow((dx-x), 2)+Math.pow((dy-y), 2));
+        		long strokeTime = (System.currentTimeMillis() -time);
+        		System.out.println("distance = " +distance);
+        		System.out.println("strokeTime = " +strokeTime);
+        		double strokeVelocity = ((distance*1000)/strokeTime)/1000;
+        		System.out.println("stroke velocity (pixels per millisecond= " +strokeVelocity);
+        		//use the stroke velocity to create the intensity of the sound, less than 1pixel a second is slow, more is fast
+        		//use the strokeTime to calculate length of the sound you want to generate 
+        		//implement that function for tommorow. 
+            	 
+        		//intensity should not be too hard, try implementing the length of the sound
+        		//is there a function to determine the length in time of an audio file? yes
+        		//create and array of the exact same audio file (size of array calculated by the required length)
+        		//use this array to 'extend' the sound file to match the length of the stroke
+        		try {
+					player.play(strokeTime, strokeVelocity);					
+				} catch (LineUnavailableException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		
 			
 
                 path = null;
@@ -413,25 +442,20 @@ public class Draw2 extends Application {
             	
             	//works but doesn't sound smooth, choppy when you have to start and restart the soundDataLine every ms. 
             	if (System.currentTimeMillis() -time >= 100) {
-            		time = System.currentTimeMillis();
-            		dx = me.getX();
-            		dy = me.getY();
-            		distance = Math.sqrt(Math.pow((dx-x), 2)+Math.pow((dy-y), 2));
-            		x = dx;
-            		y = dy;
-            		System.out.println("distance = " +distance);
+            		//time = System.currentTimeMillis();
+            		//dx = me.getX();
+            		//dy = me.getY();
+            		//distance = Math.sqrt(Math.pow((dx-x), 2)+Math.pow((dy-y), 2));
+            		//x = dx;
+            		//y = dy;
+            		//System.out.println("distance = " +distance);
             		//player.changeFrequency(distance/1000);
             		if (distance <= 100) {
             			//player.changeFrequency(0);
             		}else {
             			
             		}
-                    try {
-					player.play();					
-				} catch (LineUnavailableException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    
             		
             	}
             	//play sound synthesis
