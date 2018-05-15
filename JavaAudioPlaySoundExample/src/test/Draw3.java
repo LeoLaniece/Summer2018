@@ -1,29 +1,42 @@
 package test;
 
 import javafx.scene.Group;
+import javafx.geometry.Pos;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
-import javafx.scene.layout.VBox;
-
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 //dabord, desine quelquechose
 //essaye dintaller tout les boutons et menu's qui existent deja
 public class Draw3 extends Application{
 	
 	 @Override
-	    public void start(Stage primaryStage) {
+	    public void start(Stage primaryStage) throws InterruptedException {
 	        primaryStage.setTitle("Drawing Tool");
 	        //a type of layout	        
-	        VBox root = new VBox();	        
-	        Scene scene = new Scene(root, 700, 500);
+	        StackPane root = new StackPane();	        
+	        Scene scene = new Scene(root, 800,500);
 	        Draw2Model model = new Draw2Model();
-	        Draw2View view = new Draw2View(model);
-	        Draw2Controller controller = new Draw2Controller(view, model);
+	        Draw2View view = new Draw2View(800,300,model);
+	        //make the radarView a scale of the size of the logical size of the view
+	        Draw2miniMap radarView = new Draw2miniMap(1000/7,1000/7,model);
+	        
+	        StackPane.setAlignment(view, Pos.TOP_LEFT);
+	        StackPane.setAlignment(radarView, Pos.TOP_LEFT);
+	        root.getChildren().add(view);
+	        root.getChildren().add(radarView);
+	        radarView.setPickOnBounds(false);
+	        
+	        Draw2Controller controller = new Draw2Controller(view, model,radarView);
 	        model.addSubscriber(view);
+	        model.addSubscriber(radarView);
+
 	        
 	       
-	        root.getChildren().add(view);
+	        
 	        primaryStage.setScene(scene);
 	        primaryStage.show();
 	

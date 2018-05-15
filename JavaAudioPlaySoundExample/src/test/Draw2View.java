@@ -1,6 +1,7 @@
 package test;
 
 import java.lang.reflect.Field;
+
 import java.lang.reflect.Modifier;
 
 import javafx.event.EventHandler;
@@ -20,38 +21,96 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Scene;
 
 
+/**
+ * should show a canvas with a minimap
+ * a sample stroke controller 
+ * and a color picker 
+ * @author HCI Lab
+ *
+ */
+
+
+//take out the sample line and colour picker while you implement the pan-able minimap
 public class Draw2View extends Pane implements modelListener{
-	Group lineGroup;
+	Pane topPane;
 	Draw2Model model;
 	Canvas c;
 	GraphicsContext gc;
 	double pathStartx=0;
 	double pathStarty=0;
+	double height;
+	double width;
+	double logicalHeight;
+	double logicalWidth;
+	public Group lineGroup;
 	
-	public Draw2View(Draw2Model m) {
+	//put in a logical size?
+	public Draw2View(double h, double w, Draw2Model m) {
 		model = m;
+		height = h;
+		width = w;
+		logicalHeight = 1000;
+		logicalWidth =1000;
 		lineGroup = model.lineGroup;
+		//setLineGroup();
 		
-		c = new Canvas(700,300);
-		gc = c.getGraphicsContext2D();	
+		
+		//dont need the canvas
+		
+		//gc = c.getGraphicsContext2D();	
+		topPane = new Pane();////
+		
+		setCanvas(1000,1000);
+setLineGroup();
+        
+		
 		VBox root = new VBox();
 		HBox underCanvas = new HBox();
 		this.getChildren().add(root);
-		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, 700, 300);
+
 		
-		root.getChildren().add(c);
+		//topPane.getChildren().add(c);
+		
+		root.getChildren().add(topPane);
+		
 		root.getChildren().add(underCanvas);
 		VBox UCLeft = new VBox();
-		UCLeft.setPrefWidth(300);
+		UCLeft.setPrefWidth(width);
+		UCLeft.setAlignment(Pos.BOTTOM_LEFT);
 		VBox UCRight = new VBox();
-		UCRight.setPrefWidth(300);
+		UCRight.setPrefWidth(width);
+		UCRight.setAlignment(Pos.BOTTOM_RIGHT);
 		underCanvas.getChildren().add(UCLeft);
 		underCanvas.getChildren().add(UCRight);
-		UCLeft.getChildren().add(model.labelStroke);
 		
+		setSampleStroke(UCLeft, UCRight);						
+		setFlowPane(UCRight);
+			
+	}
+	public void setLineGroup() {
+		StackPane group = new StackPane();
+		group.getChildren().add(lineGroup);
+		group.setAlignment(Pos.TOP_LEFT);
+		group.setPrefHeight(300);
+		group.setPrefWidth(800);
+		topPane.getChildren().add(group);
+		
+	}
+
+	
+	public void setCanvas(double h, double w) {
+		c = new Canvas(800,300);
+		gc = c.getGraphicsContext2D();
+		gc.setFill(Color.WHITE);
+		gc.fillRect(0, 0, 800, 500);
+		topPane.getChildren().add(c);
+	}
+	
+	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
+		UCLeft.getChildren().add(model.labelStroke);		
 		//sizing for sampleLine
 		StackPane stackpane = new StackPane();
         stackpane.setPrefHeight(model.MAXSTROKE);
@@ -63,7 +122,9 @@ public class Draw2View extends Pane implements modelListener{
 		UCLeft.getChildren().add(model.strokeSlider);
 		UCLeft.getChildren().add(model.btnClear);		
 		UCRight.getChildren().add(model.colorLabel);
-		
+	}
+	
+	public void setFlowPane(VBox UCRight) {
 		//set up the color picker grid
 		FlowPane flow = new FlowPane();
         flow.setVgap(2);
@@ -107,20 +168,28 @@ public class Draw2View extends Pane implements modelListener{
         }
         UCRight.getChildren().add(flow);
 	}
+	
+	
+	
+	
 	public void modelChanged() {
 		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, 700, 400);
+		gc.fillRect(0, 0, height, width);
 		//line group
 		//c.getChildren().add(path);
 	}
 	public void startPath(double x, double y) {
-		pathStartx = x;
-		pathStarty = y;
+		//should take into account the size of the view
+		//need to relativize the coodinates
+		//0 = left
+		//1.0 = right
+		pathStartx = x*width;
+		pathStarty = y*height;
 	}
 	public void strokePath(double x, double y) {
         gc.setLineWidth(model.sampleLine.getStrokeWidth());
         gc.setStroke(model.sampleLine.getStroke());
-		gc.strokeLine(pathStartx, pathStarty, x, y);
+		gc.strokeLine(pathStartx, pathStarty, x*width, y*height);
 	}
 	
 		/*
@@ -201,5 +270,6 @@ public class Draw2View extends Pane implements modelListener{
 	public void setModel(Draw2Model m) {
 		model = m;
 	}
+
 
 }

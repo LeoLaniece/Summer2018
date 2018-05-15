@@ -15,40 +15,43 @@ import javax.sound.sampled.*;
 
 
 public class SoundLineTest {
-   public static void main(String[] args) {
+   public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
       SourceDataLine soundLine = null;      
       //this is the size of the grains!!!
-      int BUFFER_SIZE = 400;
+      //keeping the buffer size small eliminates most of the electric fry, but the pitch drop is huge.
+      int BUFFER_SIZE = 4;
       double totalCount =0;
       double file1Count =1;
       double percent = 0.5;
       double strokeTime = 0.6;
+      int loopCount =0;
+      //long startTime = System.currentTimeMillis();
       
-      //lower the pitch by putting in empty space to extend the wave length?
+      //set up a clip and try to get it to play at the given times
+      //can do!
+      //have your times and check them in the while loop  
+      //when the time matches, play the clip.
       
-      
-      
-      //calculate the time of the sound file you will be using
-      File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+      // audio for the scratch
+      File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
+      AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+      // Get a sound clip resource.
+      Clip clip = AudioSystem.getClip();
+      // Open audio clip and load samples from the audio input stream.
+      clip.open(audioIn);
+      //clip.loop(clip.LOOP_CONTINUOUSLY);
+      //calculate the time of the sound file you will be using      
       AudioInputStream audioInputStream4;
-	try {
-		audioInputStream4 = AudioSystem.getAudioInputStream(soundFile);
-	      
-
+      audioInputStream4 = AudioSystem.getAudioInputStream(soundFile);	      
 	AudioFormat format = audioInputStream4.getFormat();
 	      long audioFileLength = soundFile.length();
 	      int frameSize = format.getFrameSize();
 	      float frameRate = format.getFrameRate();
 	      float durationInSeconds = (audioFileLength / (frameSize * frameRate));
-	      System.out.println("duration in seconds = " +durationInSeconds);
-      //calculate how many files i need to generate to match the strokeLength
-	  int loopCount = Math.round(((int) (strokeTime/durationInSeconds)));
-	  loopCount = 2;
-	  if (loopCount == 0) {
-		  loopCount = 1;
-	  }
-	  System.out.println("loopCount = "+loopCount);
-      	
+      
+
+
+      loopCount = 1;	
       //array of sound files
       File[] soundFiles = new File[loopCount];
       //array of InputStreams
@@ -60,7 +63,7 @@ public class SoundLineTest {
       
       //initialize all the arrays
       for (int i = 0;i<loopCount;i++) {
-    	  soundFiles[i] = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+    	  soundFiles[i] = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
     	  
     	  try {    	  inputStreams[i] = new FileInputStream(soundFiles[i]);
     	  }catch (FileNotFoundException e){}
@@ -73,7 +76,8 @@ public class SoundLineTest {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();}		    	      	  
+			e.printStackTrace();}	
+          audioInputStreams[i].mark(Integer.MAX_VALUE);
       }
       
       //initialize the source data line
@@ -144,32 +148,68 @@ public class SoundLineTest {
 
          //want to elongate the sound of a single file. Need to load the same sound bytes into the buffer twice.
          //can load a duplicate of the same file and have them load 50% each. Works :)
+         long time = System.currentTimeMillis();
          while (nBytesRead >-1) {
+        	 
+        	 
         	 //number for loop is determined by strokeTime/durationInSeconds
         	 for (int i = 0;i<loopCount;i++) {
         	 try {
 				nBytesRead = audioInputStreams[i].read(sampledData, 0, sampledData.length);
+	        	 if (nBytesRead ==-1) {
+	              	//resets the sound file to the beggining
+	                     audioInputStreams[i].reset();
+	                     nBytesRead = audioInputStreams[i].read(sampledData, 0, sampledData.length);
+	              	}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         	 
         	 
-        	 System.out.println("nBytesRead = "+nBytesRead);
+        	// System.out.println("nBytesRead = "+nBytesRead);
         	 // Writes audio data to the mixer via this source data line.
         	 if (nBytesRead >= 0) {                           	            	
                  soundLine.write(sampledData, 0, nBytesRead);
         	 }
+        	 
+        	 //ONLY PLAY AFTER SECOND
+        	 if (System.currentTimeMillis()-time > 100) {
+        		 System.out.println("playing clip");
+   	      //PLAY LOOP FOR EXACTLY THE LENGTH OF THE RECORDING
+             clip.loop(clip.LOOP_CONTINUOUSLY);
+             clip.start(); 
+             long startTime = System.currentTimeMillis();     	      
+       	      //have the clip play for the duration in seconds of the sound file
+       	      System.out.println("satrt time " +startTime);
+       	      System.out.println("current time " +System.currentTimeMillis());
+       	      System.out.println("recording duration " +durationInSeconds);
+       	      while(System.currentTimeMillis()-startTime < durationInSeconds*1000) {
+       	    	  //clip finishes
+       	      }
+       	      clip.stop();
+       	      time = System.currentTimeMillis();
+        	 }
+        	 
+        	 
+        	 /*
+        	 //space between the files
+        	 nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+        	 if (nBytesRead ==-1) {
+             	//resets the sound file to the beggining
+                    audioInputStream.reset();
+                    nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+             	}
+        	 
+        	 if (nBytesRead >= 0) {                           	            	
+                 soundLine.write(sampledData, 0, nBytesRead);
+        	 }*/
+        	 
+        	 
+        	 
          }
          }
-         soundLine.drain();
-         soundLine.close();
-	} catch (UnsupportedAudioFileException e2) {
-		// TODO Auto-generated catch block
-		e2.printStackTrace();
-	} catch (IOException e2) {
-		// TODO Auto-generated catch block
-		e2.printStackTrace();
+
 	}
         	 /*
         	 if (gate == 0) {        		 
@@ -227,5 +267,6 @@ public class SoundLineTest {
          soundLine.drain();
          soundLine.close();
       }*/
-   }
-}
+	}
+
+

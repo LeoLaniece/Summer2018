@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
@@ -16,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
@@ -34,11 +36,18 @@ public class Draw2Model {
     final Line sampleLine; 
     final Label colorLabel;
     public Grain2Files player;
+    public ArrayList<Path> modelPaths;
+    public ArrayList<Coordinate> modelPathsCoordinates;
+    public ArrayList<Coordinate> modelPathsTranslateByCoordinates;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
+    	modelPaths = new ArrayList<>();
+    	modelPathsCoordinates = new ArrayList<>();
+    	modelPathsTranslateByCoordinates = new ArrayList<>();
     	path = null;
     	lineGroup = new Group();
+    	
     	
     	btnClear = new Button("Clear");
     	btnClear.setOnAction(new EventHandler<ActionEvent>() {
@@ -55,7 +64,7 @@ public class Draw2Model {
         colorLabel = new Label("color: blue");
         
         //set up for sound things
-        File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
+        File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
         File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
         player = new Grain2Files(soundFile, soundFile2);
         player.changeFrequency(0);
@@ -69,24 +78,36 @@ public class Draw2Model {
     }
 	//this bit should call a method in the model, just pass in the coordinates.
 	public void startPath(double x, double y) {
-    
+    path = new Path();
+   
+    path.setSmooth(true);
     path.setStrokeWidth(sampleLine.getStrokeWidth());
     path.setStroke(sampleLine.getStroke());
     path.getElements().add(new MoveTo(x, y));
-    lineGroup.getChildren().add(path);
-    notifySubscribers();
+    modelPathsCoordinates.add(new Coordinate(x,y));    
+    modelPathsTranslateByCoordinates.add(new Coordinate(0,0));
     
+    lineGroup.getChildren().add(path);
+    modelPaths.add(path);    
+    path.toFront();
+   // notifySubscribers();    
+	}
+	
+	public void strokePath(double x, double y) {
+		path.getElements().add(new LineTo(x, y));
+	}
+	public void pathToNull() {
+		path = null;
 	}
 	
 	public void calculateStroke(double distanceTraveled, long startTime) {
 		//figure out how to calculate distance traveled.
 		
 	long strokeTime = (System.currentTimeMillis() -startTime);
-	System.out.println("distance = " +distanceTraveled);
-	System.out.println("strokeTime = " +strokeTime);
 	double strokeVelocity = ((distanceTraveled*1000)/strokeTime)/1000;
-	System.out.println("stroke velocity (pixels per millisecond= " +strokeVelocity);
-	player.play2(strokeTime/1000);
+	System.out.println("Stroke velocity "+strokeVelocity);
+	//works pretty well, but cannot draw while the play back occurs. Would a thread work?
+	player.play2(strokeTime, strokeVelocity);
 	//play sound based on the calculated time and velocity
 	
 	

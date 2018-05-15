@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
@@ -26,7 +27,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * Purpose is to perform interactive drawing sounds with the drawing tool
  *
  */
-public class Grain2Files {
+public class Grain2Files implements Runnable {
 	
 	File file1;
 	File file2;
@@ -49,6 +50,8 @@ public class Grain2Files {
     double percent =0.5;
     DataLine.Info info;
     AudioFormat audioFormat;
+    double strokeTime;
+    File soundFile;
 
 	
 	/**
@@ -189,34 +192,67 @@ public class Grain2Files {
 	 * find a way to drop the pitch when the loopCount is higher than 4?
 	 * @param strokeTime
 	 */
-	public void play2(double strokeTime) {
+	public void play2(double sT, double StrokeVelocity) {
+		 strokeTime = sT/1000;
+		 //slow stroke=slowPencil
+		 if (StrokeVelocity < 1) {
+			 soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
+		 }else {
+			 soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
+		 }
+		 
+		 
+		 
+		 run();
+	}
+		 
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+		 
 		SourceDataLine soundLine = null;      
 	      //this is the size of the grains!!!
-	      int BUFFER_SIZE = 400;
+	      int BUFFER_SIZE = 4;
 	      double totalCount =0;
 	      double file1Count =1;
 	      double percent = 0.5;
 	      
-	      //calculate the time of the sound file you will be using
-	      File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+	     //calculate the time of the sustained sound file you will be using	      
 	      AudioInputStream audioInputStream4;
 		try {
-			audioInputStream4 = AudioSystem.getAudioInputStream(soundFile);
-		      
-
+			audioInputStream4 = AudioSystem.getAudioInputStream(soundFile);		      
 		AudioFormat format = audioInputStream4.getFormat();
 		      long audioFileLength = soundFile.length();
 		      int frameSize = format.getFrameSize();
 		      float frameRate = format.getFrameRate();
 		      float durationInSeconds = (audioFileLength / (frameSize * frameRate));
-		      System.out.println("duration in seconds = " +durationInSeconds);
 	      //calculate how many files i need to generate to match the strokeLength
-		  int loopCount = Math.round(((int) (strokeTime/durationInSeconds)));
-		  
+		  double loopCount1 = (((strokeTime/durationInSeconds)));
+		  int loopCount = (int)loopCount1;
 		  if (loopCount == 0) {
 			  loopCount = 1;
 		  }
-		  System.out.println("loopCount = "+loopCount);
+		  
+	      //set up strokeChange clip
+	      // audio for the scratch
+	      File strokeChange = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
+	      AudioInputStream audioIn = AudioSystem.getAudioInputStream(strokeChange);
+	      // Get a sound clip resource.
+	      Clip clip = AudioSystem.getClip();
+	      // Open audio clip and load samples from the audio input stream.
+	      clip.open(audioIn);
+	    //calculate the time of the sound file you will be using     	      	      	      
+		 format = audioIn.getFormat();
+		      audioFileLength = soundFile.length();
+		      frameSize = format.getFrameSize();
+		      frameRate = format.getFrameRate();
+		      durationInSeconds = (audioFileLength / (frameSize * frameRate));
+	      
+	      
+	      
+	      
+
+		  
 	      	
 	      //array of sound files
 	      File[] soundFiles = new File[loopCount];
@@ -229,7 +265,7 @@ public class Grain2Files {
 	      
 	      //initialize all the arrays
 	      for (int i = 0;i<loopCount;i++) {
-	    	  soundFiles[i] = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+	    	  soundFiles[i] = soundFile;//new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
 	    	  
 	    	  try {    	  inputStreams[i] = new FileInputStream(soundFiles[i]);
 	    	  }catch (FileNotFoundException e){}
@@ -269,6 +305,7 @@ public class Grain2Files {
 
 	         //want to elongate the sound of a single file. Need to load the same sound bytes into the buffer twice.
 	         //can load a duplicate of the same file and have them load 50% each. Works :)
+	         long time = System.currentTimeMillis();
 	         while (nBytesRead >-1) {
 	        	 //number for loop is determined by strokeTime/durationInSeconds
 	        	 for (int i = 0;i<loopCount;i++) {
@@ -277,15 +314,48 @@ public class Grain2Files {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-	        	 
-	        	 
-	        	 System.out.println("nBytesRead = "+nBytesRead);
+				}        	 	        	 	        	 
 	        	 // Writes audio data to the mixer via this source data line.
 	        	 if (nBytesRead >= 0) {                           	            	
 	                 soundLine.write(sampledData, 0, nBytesRead);
 	        	 }
+	        	 
+	        	 //ONLY PLAY AFTER SECOND
+	        	 //make it so that the clip plays every stroke change occurrence in the model
+	        	 if (System.currentTimeMillis()-time > 100) {
+	        		 System.out.println("playing clip");
+	   	      //PLAY LOOP FOR EXACTLY THE LENGTH OF THE RECORDING
+	             clip.loop(clip.LOOP_CONTINUOUSLY);
+	             clip.start(); 
+	             long startTime = System.currentTimeMillis();     	      
+	       	      //have the clip play for the duration in seconds of the sound file
+	       	      System.out.println("satrt time " +startTime);
+	       	      System.out.println("current time " +System.currentTimeMillis());
+	       	      System.out.println("recording duration " +durationInSeconds);
+	       	      while(System.currentTimeMillis()-startTime < durationInSeconds*1000) {
+	       	    	  //clip finishes
+	       	      }
+	       	      clip.stop();
+	       	      time = System.currentTimeMillis();
+	        	 }
+	        	 
 	         }
+	        	//create the action as an object
+	        	 //refer to the action as a thread
+	        	 //use t.join method so that drawCommands(also reworked to become action as objects)
+	        	 //can execute while the sound is playing back.
+	        	 
+	        	 //at that point, remove the sleep command because it won't do anything
+	        	 //maybe ask Carl if this is a good idea before you implement it?  
+	        	 
+	        	 
+	        	 
+                 try {
+					Thread.sleep(0);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	         }
 	         soundLine.drain();
 	         soundLine.close();
@@ -295,9 +365,16 @@ public class Grain2Files {
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
+		} catch (LineUnavailableException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 		
 		
+		
+	
+
+
 		
 	}
 	
