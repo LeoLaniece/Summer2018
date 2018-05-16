@@ -1,0 +1,12 @@
+package test;
+
+import java.io.File;
+
+public class FileAndDuration {
+	public File file;
+	public long duration;
+	public FileAndDuration(File f, long time) {
+		file = f;
+		duration = time;
+	}
+}

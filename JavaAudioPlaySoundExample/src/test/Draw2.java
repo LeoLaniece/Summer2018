@@ -57,6 +57,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 //Leo's imports
 import sun.audio.*;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.io.*;
 
@@ -130,6 +132,25 @@ public class Draw2 extends Application {
         //a type of layout
         final Group root = new Group();
         Scene scene = new Scene(root, 600, 400);
+        
+        //my own test for a bit
+        Canvas can=new Canvas(600,400);
+        GraphicsContext gc = can.getGraphicsContext2D();
+        gc.setFill(Color.RED);
+        gc.fillRect(0, 0, 600, 400);        
+        
+		gc.beginPath();						
+			gc.moveTo(0, 0);
+			gc.setFill(Color.BLACK);
+			gc.setStroke(Color.BLACK);
+			gc.setLineWidth(8);
+			gc.lineTo(300,300);		
+		
+		gc.stroke();
+		gc.closePath();
+        
+        root.getChildren().add(can);
+        
         
         //should be in the model?
         //LEO'S SOUND CODE
@@ -407,16 +428,11 @@ public class Draw2 extends Application {
         		//is there a function to determine the length in time of an audio file? yes
         		//create and array of the exact same audio file (size of array calculated by the required length)
         		//use this array to 'extend' the sound file to match the length of the stroke
-        		try {
-					player.play(strokeTime, strokeVelocity);					
-				} catch (LineUnavailableException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+        		
         		
 			
 
-                path = null;
+           path = null;
 
 
 
@@ -484,7 +500,7 @@ public class Draw2 extends Application {
         vb.setLayoutX(10);
         vb.setLayoutY(20);
         vb.getChildren().addAll(lineBox, canvas, toolBox);
-        root.getChildren().addAll(vb, lineGroup);
+        //root.getChildren().addAll(vb, lineGroup);
         primaryStage.setScene(scene);
         primaryStage.show();
 

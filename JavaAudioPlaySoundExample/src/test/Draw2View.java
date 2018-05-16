@@ -1,6 +1,7 @@
 package test;
 
 import java.lang.reflect.Field;
+import javafx.scene.shape.LineTo; 
 
 import java.lang.reflect.Modifier;
 
@@ -72,9 +73,11 @@ setLineGroup();
 		this.getChildren().add(root);
 
 		
-		//topPane.getChildren().add(c);
+		//try to use canvas based paths?
+		//fool around with the alignement of the Stack Pane or Pane
+		//add Carl to your gitAccountProject
 		
-		root.getChildren().add(topPane);
+		root.getChildren().add(c);
 		
 		root.getChildren().add(underCanvas);
 		VBox UCLeft = new VBox();
@@ -106,7 +109,7 @@ setLineGroup();
 		gc = c.getGraphicsContext2D();
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, 800, 500);
-		topPane.getChildren().add(c);
+		//topPane.getChildren().add(c);
 	}
 	
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
@@ -169,14 +172,36 @@ setLineGroup();
         UCRight.getChildren().add(flow);
 	}
 	
-	
+	public void drawModelPaths() {
+		//DRAW MODELpATHS
+				for (int i=0; i<model.modelPaths.size();i++) {	
+					gc.beginPath();
+					gc.moveTo(model.modelPathsCoordinates.get(i).x +(model.modelPathsTranslateByCoordinates.get(i).x),
+							model.modelPathsCoordinates.get(i).y +(model.modelPathsTranslateByCoordinates.get(i).y));											
+					gc.setStroke(model.modelPaths.get(i).getStroke());
+					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth());
+					if (model.modelPaths.get(i).getElements().size()>0) {
+					final double translateX = model.modelPathsTranslateByCoordinates.get(i).x;
+					final double translateY = model.modelPathsTranslateByCoordinates.get(i).y;						
+					model.modelPaths.get(i).getElements().
+					forEach(a -> {				
+						if (a instanceof LineTo) {
+						//your code
+						gc.lineTo(((LineTo) a).getX() +translateX, ((LineTo) a).getY()+translateY);	
+						
+						}			
+					});
+					gc.stroke();
+				}
+					
+				}
+	}
 	
 	
 	public void modelChanged() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, height, width);
-		//line group
-		//c.getChildren().add(path);
+		drawModelPaths();				
 	}
 	public void startPath(double x, double y) {
 		//should take into account the size of the view

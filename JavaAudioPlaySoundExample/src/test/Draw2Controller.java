@@ -32,6 +32,9 @@ public class Draw2Controller {
 	boolean xDirection = false;
 	boolean yDirection = false;
 	ArrayList<Double> timeOfChange;
+	ArrayList<Double> velocities;
+	//velocityItems
+	Coordinate[] points;
 	
 	//STATES
 	int READY = 0;
@@ -46,15 +49,20 @@ public class Draw2Controller {
 		model = m;
 		radarView = r;
 		timeOfChange = new ArrayList<>();
+		points = new Coordinate[4];
+		//setPoints();
 		
 	//when shift key is down, pan the canvas to new area's
 		
 	
-	view.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
+	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
         @Override
         public void handle(MouseEvent me) {
         	System.out.println("x = "+me.getX());
         	System.out.println("y = "+me.getY());
+        	setPoints(me.getX(),me.getY());
+        	//model.play();
+        	
         	
         	if (me.isShiftDown()) {
         		//pan the canvas
@@ -73,6 +81,7 @@ public class Draw2Controller {
         	time = System.currentTimeMillis();   
         	//pat should be started in the model
         	model.startPath(me.getX(),me.getY());
+        	velocities = new ArrayList<>();
         	
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
@@ -83,19 +92,19 @@ public class Draw2Controller {
     });
 	
         //in the controller
-	view.setOnMouseReleased(new EventHandler<MouseEvent>() {
+	view.c.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent me) {            	
-            	 //calculate speed and distance of the stroke(in the model)
-            	
-            	//would be informative to reproduce the edges in the stroke
-            	//every time the stroke changes direction (+,+ -> -,-)
-            	
-            	//model.calculateStroke(distanceTraveled,time);
+            public void handle(MouseEvent me) {                     	            	
+            	if (state == READY) {
+            	 //calculate speed and distance of the stroke(in the model)	
+            	model.calculateStroke(distanceTraveled,time);
+            	model.playStroke(System.currentTimeMillis()-time, velocities);
             	distanceTraveled = 0;
             	//timeOfChange.forEach(a -> System.out.println("change in direction at "+a));
             	//timeOfChange.removeAll(timeOfChange);
+            	
             	model.pathToNull();
+            	}
                 state = READY;
                 
             }
@@ -105,7 +114,8 @@ public class Draw2Controller {
             @Override
             public void handle(MouseEvent me) {  
             	
-            	
+            	updatePoints(me.getX(),me.getY());            	
+            	velocities.add(calculatePointsAverageVelocity());
             	
             	if (state == PAN_READY) {
             		dx =me.getX()-x;
@@ -119,7 +129,8 @@ public class Draw2Controller {
             			model.modelPaths.get(a).setTranslateX(model.modelPathsTranslateByCoordinates.get(a).x);
             			model.modelPaths.get(a).setTranslateY(model.modelPathsTranslateByCoordinates.get(a).y);
             			
-            		}
+            		}            		
+            		model.notifySubscribers();
             	}
             	
             	if (state ==READY) {
@@ -129,7 +140,13 @@ public class Draw2Controller {
             	
             	//calculate distance travel
             	//calculate the velocity interactively
-            	//last 4 point, take the average of the 3 velocities
+            	//last 4 points, take the average of the 3 velocities
+            	//functions: 
+            	//setPoints()
+            	//updatePoints(double x, double y)
+            	//calculateVelocity(Coordinate 1, Coordinate 2)
+            	//double (pixels per ms) calculatePointsAverageVelocity()
+            	
             	//use microseconds
         		dx = me.getX();
         		dy = me.getY();
@@ -186,23 +203,76 @@ public class Draw2Controller {
                 }
             	}
                 }
-        });
-	
-	
-//fix this up!
-	/*
-	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
-        @Override
-        public void handle(KeyEvent event) {
-            switch (event.getCode()) {
-                case UP:    goNorth = true; break;
-                case DOWN:  goSouth = true; break;
-                case LEFT:  goWest  = true; break;
-                case RIGHT: goEast  = true; break;
-                case SHIFT: running = true; break;
-            }
-        }
-    });*/
-	}
+        });		
 
+	}
+	
+	//velocity calculation functions
+	//need to test these
+	/**
+	 * initializes the points for velocity calculation of given stroke
+	 * x,y = mousePressed location
+	 * 
+	 */
+	public void setPoints(double x, double y) {
+		for (int i =0;i<4;i++) {
+			points[i] = new Coordinate(x,y);
+			points[i].time = System.currentTimeMillis();
+		}
+	}
+	/**
+	 * update the points to have the 4 previous mouse locations
+	 * @param x
+	 * @param y
+	 */
+	public void updatePoints(double x, double y) {
+
+		long startTime = System.currentTimeMillis();		
+		for (int i =3;i>0;) {
+			if (System.currentTimeMillis()-startTime >10) {
+				points[i].x = points[i-1].x;
+			points[i].y = points[i-1].y;
+			points[i].time = System.currentTimeMillis();
+
+				startTime = System.currentTimeMillis();
+				i--;
+			}			
+		}
+		while (System.currentTimeMillis()-startTime <10) {
+			//wait
+		}
+		points[0].x = x;
+		points[0].y = y;
+		points[0].time = System.currentTimeMillis();
+
+			
+
+	}
+	/**
+	 * calculate given velocity between 2 coordinates
+	 * a should be earlier in time than b
+	 * @param a
+	 * @param b
+	 * @param startTime
+	 * @return
+	 */
+	public double calculateVelocity(Coordinate a, Coordinate b) {
+		double distanceTraveled = Math.abs(Math.sqrt(Math.pow((b.x-a.x), 2)+Math.pow((b.y-a.y), 2)));
+		return distanceTraveled/(a.time-b.time);
+	}
+	//last 4 points, take the average of the 3 velocities
+	//functions: 	
+	//double (pixels per ms) calculatePointsAverageVelocity()
+	/**
+	 * will return the average velocity between the 4 previous mouse locations
+	 * @return 
+	 */
+	public double calculatePointsAverageVelocity() {		
+		double average =0;
+		for (int i =0;i<3;i++) {
+			average+=calculateVelocity(points[0], points[i+1]);
+		}
+		return average/3;
+		
+	}
 }

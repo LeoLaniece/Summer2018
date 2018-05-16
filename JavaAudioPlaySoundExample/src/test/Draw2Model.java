@@ -77,24 +77,23 @@ public class Draw2Model {
     	modelListeners.forEach(a->a.modelChanged());
     }
 	//this bit should call a method in the model, just pass in the coordinates.
-	public void startPath(double x, double y) {
-    path = new Path();
-   
+	public void startPath(double x, double y) {				
+    path = new Path();   
     path.setSmooth(true);
     path.setStrokeWidth(sampleLine.getStrokeWidth());
     path.setStroke(sampleLine.getStroke());
     path.getElements().add(new MoveTo(x, y));
     modelPathsCoordinates.add(new Coordinate(x,y));    
-    modelPathsTranslateByCoordinates.add(new Coordinate(0,0));
-    
+    modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
     lineGroup.getChildren().add(path);
-    modelPaths.add(path);    
-    path.toFront();
-   // notifySubscribers();    
+    modelPaths.add(path);          
 	}
+	
+
 	
 	public void strokePath(double x, double y) {
 		path.getElements().add(new LineTo(x, y));
+		notifySubscribers();
 	}
 	public void pathToNull() {
 		path = null;
@@ -108,40 +107,27 @@ public class Draw2Model {
 	System.out.println("Stroke velocity "+strokeVelocity);
 	//works pretty well, but cannot draw while the play back occurs. Would a thread work?
 	player.play2(strokeTime, strokeVelocity);
-	//play sound based on the calculated time and velocity
+	//play sound based on the calculated time and velocity		
+	}
 	
+	public void play() {
+		File f = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
+		player.playFor(f, 0.5);
+	}
 	
+	public void playStroke(long time, ArrayList<Double> velocities) {
+		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
+		ArrayList<FileAndDuration> filesAndDurations = new ArrayList<>();		
+		filesAndDurations =player.determineStrokesAndSustain(f1, f2, time, velocities);
+		filesAndDurations.forEach(f ->{
+			System.out.println("file "+ f.file.getName());
+			System.out.println("duration "+f.duration);
+			System.out.println("total time = "+time);
+		});
+		
+		
 	}
     
-    /*
-     * //should be in the model?
-        //LEO'S SOUND CODE
-        //test for GRAIN2FILES
-         File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
-         File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
-         Grain2Files player = new Grain2Files(soundFile, soundFile2);
-         player.changeFrequency(1.0);
-         //implementation, needs to be able to loop. Done
-         //loop based on interaction.
-         
 
-        
-     
-            // audio for the scratch
-            File url = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\scratchLoud3.WAV");
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-            // Get a sound clip resource.
-            Clip clip = AudioSystem.getClip();
-            // Open audio clip and load samples from the audio input stream.
-            clip.open(audioIn);
-           // clip.loop(2);
-            
-            //audio prep for the eraser
-            File file = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraser.WAV");
-            AudioInputStream audioIn2 = AudioSystem.getAudioInputStream(file);
-            // Get a sound clip resource.
-            Clip clip2 = AudioSystem.getClip();
-            // Open audio clip and load samples from the audio input stream.
-            clip2.open(audioIn2);
-     */
 }

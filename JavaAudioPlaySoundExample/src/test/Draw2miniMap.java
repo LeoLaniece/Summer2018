@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
 import javafx.scene.canvas.Canvas;
@@ -32,7 +33,10 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public class Draw2miniMap extends Draw2View implements modelListener {
 	
+	int scale;
+	
 	public Draw2miniMap(double h, double w, Draw2Model m) {
+		
 		super(h,w,m);
 		//FIGURE OUT HOW TO CONTAIN THIS BACKGROUND COLOR
 		//this.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
@@ -55,7 +59,8 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	}
 	@Override
 	public void setCanvas(double h, double w) {
-		c = new Canvas(1000/7,1000/7);
+		scale =7;
+		c = new Canvas(1000/scale,1000/scale);
 		gc = c.getGraphicsContext2D();
 		this.getChildren().add(c);
 	}
@@ -65,22 +70,38 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
 		//do nothing
 	}
-	
+	@Override
+	public void drawModelPaths() {
+		//DRAW MODELpATHS
+				for (int i=0; i<model.modelPaths.size();i++) {	
+					gc.beginPath();
+					gc.moveTo(model.modelPathsCoordinates.get(i).x/scale,
+							model.modelPathsCoordinates.get(i).y/scale );											
+					gc.setStroke(model.modelPaths.get(i).getStroke());
+					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth()/scale);
+					if (model.modelPaths.get(i).getElements().size()>0) {
+					
+					model.modelPaths.get(i).getElements().
+					forEach(a -> {				
+						if (a instanceof LineTo) {
+						//your code
+						gc.lineTo(((LineTo) a).getX()/scale , ((LineTo) a).getY()/scale);	
+						
+						}			
+					});
+					gc.stroke();
+				}					
+				}
+	}
+	@Override
 	public void modelChanged() {
-		strokePath();
-		//gc.setFill(Color.WHITE);
-		//gc.fillRect(0, 0, height, width);
+		gc.setFill(Color.WHITE);
+		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
+		this.gc.setStroke(Color.BLACK);
+		this.gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
+		drawModelPaths();				
 	}
 	
 	
-	public void strokePath() {
-		//get the path list from the model
-		//get the path translate by coordinates from the model
-		//reproduce each path within the bounds of the minimap
-		
-		for (int i = 0; i< model.modelPaths.size();i++) {
-			
-		}
-	}
 
 }
