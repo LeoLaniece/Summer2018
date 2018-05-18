@@ -41,7 +41,7 @@ public class Grain2Files implements Runnable {
     AudioInputStream audioInputStream2;
     //Buffer util
     //this is the size of the grains!!!
-	int BUFFER_SIZE = 1000;
+	int BUFFER_SIZE = 4;
     int nBytesRead = 0;
    //Handles section by section of an audio file
     byte[] sampledData = new byte[BUFFER_SIZE];         
@@ -172,9 +172,10 @@ public class Grain2Files implements Runnable {
 	      //calculate how many files i need to generate to match the strokeLength
 		  double loopCount1 = (((strokeTime/durationInSeconds)));
 		  int loopCount = (int)loopCount1;
-		  if (loopCount == 0) {
-			  loopCount = 1;
-		  }
+		  //if the loop count is 0, don't play anything
+		  if (loopCount > 0) {
+			  
+		  
 		  
 	      //set up strokeChange clip
 	      File strokeChange = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
@@ -203,6 +204,12 @@ public class Grain2Files implements Runnable {
 		  
 		  //playStroke(strokeDuration, List<double> velocities), will play the appropriate sounds
 		  //given the stroke duration and the stroke velocities list 
+		  
+		  //current sound 'sounds like' too many strokes
+		  //fix this with Carl's mixing idea
+		  //given the total time of the stroke, two sound files and the velocities 
+		  //mix more or less of the files if they are close to certain velocities
+		  //probably want a 'silence' factor mixed into this.
 		  
 		  //how to make this work using Carl's idea
 		  //need one more function which is 
@@ -323,44 +330,72 @@ public class Grain2Files implements Runnable {
 		} catch (LineUnavailableException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
-		} 
+		}
+		  }
 	}
 			
- //return List<file+timeInMS> determineStrokesAndSustain(List<double> velocities)
-  //will return the type of file and the length for which the file should be played
-  //based on the given list of velocities
+
+	/**
+	 *  will return a list of files and the length for which the file should be played
+ 	 *  based on the given list of velocities
+	 * @param file1 slower sound
+	 * @param file2 faster sound
+	 * @param duration
+	 * @param velocities
+	 * @return
+	 */
 	public ArrayList<FileAndDuration> determineStrokesAndSustain(File file1, File file2, long duration, ArrayList<Double> velocities){
 		ArrayList<FileAndDuration> filesAndDurations = new ArrayList<>();
+		//increment is the amount of time for which each velocity is responsible
 		double increment = duration/velocities.size();		
-		int incrementCount =0;
+		System.out.println("duration "+duration);
+		System.out.println("velocities.size() "+velocities.size());
+		System.out.println("increment "+increment);
+		int incrementCount =1;
+		int velocityChange = 5;
 		//0 = <5
 		//1 = >5
 		int currentV = 0;
+		//initialize currentV
+		if (velocities.get(0) < 5) {
+			currentV = 0;				
+		}else {
+			currentV = 1;
+		}
 		//for all v,
 		//while v >5 and has been >5 increment count
 		//while v< 5 and has been <5 increment count
 		//when v changes from <5 to >5, add file1 for incrementCount to the list
 		//when v changes from >5 to <5, add file2 and incrementCount to the list
-		for (int i = 0; i<velocities.size();i++) {
-			
-			if (velocities.get(i) < 5 && currentV == 0) {
+		for (int i = 0; i<velocities.size();i++) {			
+			if (velocities.get(i) < velocityChange && currentV == 0) {
 				incrementCount++;				
 			}					
-			if (velocities.get(i) > 5 && currentV == 1) {
+			if (velocities.get(i) > velocityChange && currentV == 1) {
 				incrementCount++;				
 			}
-			if (currentV == 0 && velocities.get(i) > 5) {
+			if (currentV == 0 && velocities.get(i) > velocityChange) {
 				//not <5 so change 
 				filesAndDurations.add(new FileAndDuration(file1, (incrementCount*increment)));
 				incrementCount = 0;	
 				currentV =1;
 			}
-			if (currentV ==1 && velocities.get(i) < 5) {
+			if (currentV ==1 && velocities.get(i) < velocityChange) {
 				//not >5 so change 
 				filesAndDurations.add(new FileAndDuration(file2, (incrementCount*increment)));
 				incrementCount = 0;	
 				currentV =0;
-			}																	
+			}
+			//when the last velocity is reached, make last segment
+			if (i == velocities.size()-1) {
+				
+				if (currentV ==0) {
+					filesAndDurations.add(new FileAndDuration(file1, (incrementCount*increment)));
+				}else {
+					filesAndDurations.add(new FileAndDuration(file2, (incrementCount*increment)));
+				}
+			}
+			
 		}								
 		return filesAndDurations;
 	}
@@ -456,10 +491,433 @@ public class Grain2Files implements Runnable {
 	        	 if (nBytesRead >= 0) {                           	            	
 	                 soundLine.write(sampledData, 0, nBytesRead);
 	        	 }
+	        	 
+	        	 
+	}}
+	     soundLine.drain();
+		 soundLine.close();
+	}
+
+	/**
+	 * will mix grains from file1 and file2,
+	   will play the mixed sounds and will increment the mixing base on the 
+	  % wanted of file1 given.
+	  will sustain the mixed sound for the value of duration(in milliseconds)
+	 * @param file1
+	 * @param file2
+	 * @param file1Percent
+	 * @param duration - in milliseconds
+	 */
+	public void playMixFor(File file1,File file2, double file1Percent, double duration) {
+		//trying to stretch the strokes based on the percentages !!!
+		//this would be a different kind of mixing
+		//not by grain, instead stretch the files so that they match the duration
+		//then mix by grain (no file is played in full more than once)
+		//functions:  given 2 files a duration and a percentage play without repeating a file more than once
+		//need to 'stretch' 2 files and mix them smoothly
+		//functions:
+		
+		//stretch the given file, return the audioInputStreams[] and loopCount(can do this separate?)
+		//mix the given stretched files, ->edit mixFor to take in audioInputStream[]? 
+		
+		//given the audioInputStreams[], and the loop count mix the files so that they play for the given duration
+		//start just mixing the stretched files 50% each.
+		
+		//play 
+		
+		
+		//prepare the buffers for the 2 sound files
+		try {
+	         //add a buffer to both sound files so they can be marked!
+	         InputStream inputStream = new FileInputStream(file1);
+	         InputStream inputStream2 = new FileInputStream(file2);
+	         InputStream bufferedIn = new BufferedInputStream(inputStream);
+	         InputStream bufferedIn2 = new BufferedInputStream(inputStream2);
+	         audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
+	         audioInputStream2 = AudioSystem.getAudioInputStream(bufferedIn2);
+
+	         //mark the beggining of each sound file
+	         audioInputStream.mark(Integer.MAX_VALUE);
+	         audioInputStream2.mark(Integer.MAX_VALUE);    	 
+
+	         audioFormat = audioInputStream.getFormat();
+	         AudioFormat audioFormat2 = audioInputStream2.getFormat();         
+	         info = new DataLine.Info(SourceDataLine.class, audioFormat);
+	         DataLine.Info info2 = new DataLine.Info(SourceDataLine.class, audioFormat2);
+	         soundLine = (SourceDataLine) AudioSystem.getLine(info);
+	         soundLine.open(audioFormat);
+	         soundLine.start();	         				
+	}catch (UnsupportedAudioFileException ex) {
+        ex.printStackTrace();
+     } catch (IOException ex) {
+        ex.printStackTrace();
+     } catch (LineUnavailableException ex) {
+        ex.printStackTrace();
+     } finally {
+    	 //soundLine.drain();
+         //soundLine.close();
+    	 }
+		
+		//now mix the soundFiles
+		try {
+	      // this determines how long the sound is sustained for. make this last for the stroke duration.
+			long startTime = System.currentTimeMillis();
+			//duration/4 because it takes time for the system to load the buffer and then to play the buffer
+		    while (System.currentTimeMillis()-startTime < duration/4) {
+	       	 if (gate == 0) {        		 
+	       	nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+	       	if (nBytesRead ==-1) {
+	       	//resets the sound files to the beggining
+	              audioInputStream.reset();
+	              nBytesRead = audioInputStream.read(sampledData, 0, sampledData.length);
+	       	}
+	                       
+	       	 }
+	       	 else {
+	       		 nBytesRead = audioInputStream2.read(sampledData, 0, sampledData.length); 
+	       		 if (nBytesRead ==-1) {
+	       	        	//resets the sound files to the beggining
+	       	               audioInputStream2.reset();
+	       	               nBytesRead = audioInputStream2.read(sampledData, 0, sampledData.length);
+	       	        	}	       		 
+	       	 }        	           
+	           
+	           if (nBytesRead >= 0) {
+	              // Writes audio data to the mixer via this source data line.          	            	
+	              soundLine.write(sampledData, 0, nBytesRead);
+	              
+	              //changes the file which is read into the inputStream
+	              totalCount += 1;               
+	         	  if (gate ==0) {
+	        		  gate = 1;
+	        	  }else {
+	        		  gate = 0;
+	        	  }             	
+	              if (file1Count/totalCount <= file1Percent) {
+	            	  gate = 0;
+	              }else {
+	           	   gate = 1;
+	              }
+	              
+	              if (gate == 0) {
+	            	  file1Count += 1;            	   
+	              }
+	              
+	           }
+		         }
+	           
+		}catch (IOException ex) {
+	        ex.printStackTrace();
+	     }//catch (LineUnavailableException e) {     }
+			finally {
+	    	 soundLine.drain();    	     	 
+	         soundLine.close();
+	    	 }				
+	}
+	/**
+	 * will take an array of velocities and return an array of the % of the file1 needed to play appropriate mix
+	 * mix more or less of the files if they are close to certain velocities
+	//if the file is at 1.0 velocity play slow sound
+	//if the file is at 0 velocity play silence
+	//if the file is at 5.0 velocity play fast sound
+	//anything in between should be a mix of 2 sounds	  
+	 * @param velocities
+	 * @return
+	 */
+	//
+	public ArrayList<Double> determineMixPercentage(ArrayList<Double> velocities){
+		ArrayList<Double> mixPercentages = new ArrayList<>();
+		velocities.forEach(v ->{
+			if (v <= 1) {
+				mixPercentages.add(1.0);
+			}
+			if (v > 1 && v < 5) {
+				mixPercentages.add((v-1)/4);
+			}
+			if (v >5) {
+				mixPercentages.add(0.0);
+			}
+		});
+		return mixPercentages;				
+	}
+	/**
+	 * will calculate how many times the given file needs to be looped to be played for the given duration
+	 * @param soundFile
+	 * @param duration
+	 * @return
+	 */
+	public int calculateLoopCount(File soundFile, double duration) {
+		float durationInSeconds = fileLength(soundFile);		 		 
+	      //calculate how many files i need to generate to match the strokeLength
+		  double loopCount1 = (((duration/durationInSeconds)));
+		  int loopCount = (int)loopCount1;
+		  if (loopCount == 0) {
+			  loopCount = 1;
+		  }
+		  return loopCount;
+	}
+	/**
+	 * stretch the given file for the given duration(in seconds), return the audioInputStreams[] and will set 
+	 * the submitted loopCount?
+	 * @param soundFile
+	 * @param duration
+	 * @return
+	 */
+	public AudioInputStream[] stretchFileFor(File soundFile, double duration){
+		//calculate the time of the sustained sound file you will be using	    	      
+		 float durationInSeconds = fileLength(soundFile);	 
+		 
+	      //calculate how many files i need to generate to match the strokeLength
+		  double loopCount1 = (((duration/durationInSeconds)));
+		  int loopCount = (int)loopCount1;
+		  if (loopCount == 0) {
+			  loopCount = 1;
+		  }
+		  
+		  
+		//set up files in order to sustain a sound given a loopCount, and a sound file
+	      //array of sound files
+	      File[] soundFiles = new File[loopCount];
+	      //array of InputStreams
+	      InputStream[] inputStreams = new InputStream[loopCount];
+	      //array of BufferedInputStreams
+	      InputStream[] bufferedIns = new BufferedInputStream[loopCount];
+	      //array of audioInputStreams
+	      AudioInputStream[] audioInputStreams = new AudioInputStream[loopCount];
+	      
+	      //initialize all the arrays
+	      for (int i = 0;i<loopCount;i++) {
+	    	  soundFiles[i] = soundFile;
+	    	  
+	    	  try {    	  inputStreams[i] = new FileInputStream(soundFiles[i]);
+	    	  }catch (FileNotFoundException e){}
+	    	  
+	    	  bufferedIns[i] = new BufferedInputStream(inputStreams[i]);
+	    	  
+	    	  try {			audioInputStreams[i] = AudioSystem.getAudioInputStream(bufferedIns[i]);
+			} catch (UnsupportedAudioFileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();}		    	      	  
+	      }
+	      return audioInputStreams;
+	}
+	/**
+	 * will play the sound file associated with the given AudioInputStream
+	 * @param audioInputStreams
+	 */
+	public void playStretchedFor(AudioInputStream[] audioInputStreams, int loopCount) {
+		//initialize the source data line
+	      AudioFormat audioFormat = audioInputStreams[0].getFormat();          
+	      DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);           
+	      try {
+			soundLine = (SourceDataLine) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	      try {
+			soundLine.open(audioFormat);
+		} catch (LineUnavailableException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	      soundLine.start();        	      
+	      
+	         int nBytesRead = 0;
+	        //Handles section by section of an audio file
+	         byte[] sampledData = new byte[BUFFER_SIZE];         
+	        
+
+	         //want to elongate the sound of a single file. Need to load the same sound bytes into the buffer twice.
+	         //can load a duplicate of the same file and have them load 50% each. Works :)
+	         
+	         while (nBytesRead >-1) {
+	        	 //number for loop is determined by strokeTime/durationInSeconds
+	        	 for (int i = 0;i<loopCount;i++) {
+	        	 try {
+					nBytesRead = audioInputStreams[i].read(sampledData, 0, sampledData.length);					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}        	 	        	 	        	 
+	        	 // Writes audio data to the mixer via this source data line.
+	        	 if (nBytesRead >= 0) {                           	            	
+	                 soundLine.write(sampledData, 0, nBytesRead);
+	        	 }
 	}}
 	        	 soundLine.drain();
-		         soundLine.close();
-			
+		         soundLine.close();			
 	}
-}
+	
+	/**
+	 * will mix grains from audioInputStreams and audioInputStreams2,
+	   will play the mixed sounds 
+	   
+	   will increment the mixing base on the % wanted of file1 given.
+	   will sustain the mixed sound for the value of duration(in milliseconds)
+	   
+	  AudioInputStream[] audioInputStreams
+	  int loopCount	 
+	  AudioInputStream[] audioInputStreams2
+	  int loopCount2
+	  ArrayList<Double> mixPercentages 
+	  double duration
+	 */
+	public void mixStreamsFor(AudioInputStream[] audioInputStreams, int loopCount,
+			AudioInputStream[] audioInputStreams2, int loopCount2, 
+			ArrayList<Double> mixPercentages, double duration) {
+		//always use the smallest loop count so that none of the audioStream arrays reaches its end
+		
+		double percentageIncrementInTime = duration/mixPercentages.size();		
+		
+		int newloopCount;
+		if (loopCount < loopCount2) {
+			newloopCount = loopCount;
+		}else {
+			newloopCount = loopCount2;
+		}
+		
+		//prepare the percentage increment
+	     long totalFramesRead = 0;
+	     for (int i =0;i<loopCount;i++) {
+	    	 totalFramesRead += audioInputStreams[i].getFrameLength();
+	     }
+	     for (int i =0;i<loopCount2;i++) {
+	    	 totalFramesRead += audioInputStreams2[i].getFrameLength();
+	     }
+	     System.out.println("total frame length = "+totalFramesRead);
+	     int predictedBytesRead = (int)totalFramesRead*4;
+	     if (mixPercentages.size() != 0) {
+	     int bytesPerPercent = predictedBytesRead/mixPercentages.size();
+	     int mixPercentagesIncrement =0;
+	     
+		
+		//trying to stretch the strokes based on the percentages !!!
+		//this would be a different kind of mixing
+		//not by grain, instead stretch the files so that they match the duration
+		//then mix by grain (no file is played in full more than once)
+		//functions:  given 2 files a duration and a percentage play without repeating a file more than once
+		//need to 'stretch' 2 files and mix them smoothly
+		//functions:
+		
+		//stretch the given file, return the audioInputStreams[] and loopCount(can do this separate?)
+		//mix the given stretched files, 
+		
+		//given the audioInputStreams[], and the loop count mix the files so that they play for the given duration
+		//need to adjust the loop count to fit duration?
+		//need to use separate for loops to achieve this
+		//start just mixing the stretched files 50% each.
+		
+		//STROKE-velocities, duration
+		//calculate percentages, how? by total average velocity? by segments?
+		//start with by total average velocity
+		//get percentage of fast to slow sound you should play
+		//calculate how long each file should be played for
+		//duration = totalTime*percentage
+		//mix each of these elongated files together by the same amounts as the percentages
+		//play result 
+		
+		//play 
+		
+		
+		//prepare the buffers for the 2 sound files
+		//initialize the source data line
+		
+	      AudioFormat audioFormat = audioInputStreams[0].getFormat();          
+	      DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);           
+	      try {
+			soundLine = (SourceDataLine) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	      try {
+			soundLine.open(audioFormat);
+		} catch (LineUnavailableException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	      soundLine.start();
+		
+	     nBytesRead = 0;
+	     int loop1Count = 0;
+	     int loop2Count = 0;
+	     int bytesCount = 0;
+
+	     
+		//now mix the soundFiles
+		try {
+	      //once the audioStreams are empty stop		
+			while (nBytesRead >-1) {
+	        //number for loop is determined by strokeTime/durationInSeconds
+			//don't want to reach the end of the array
+			//what do you do with 2 to 1. 
+				
+			loop1Count = 0;
+			loop2Count = 0;
+	       // for (int i = 0;i<loopCount;i++) {
+			while (loop1Count != loopCount && loop2Count != loopCount2) {
+				
+	       	if (gate == 0) {   
+	       		if (loop1Count < loopCount) {
+	       		nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 	       		 
+	       		loop1Count++;
+	       	}
+	       	} 	else {
+	       		 if (loop2Count < loopCount2) {
+	       		 nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 		       		 
+	       		loop2Count++;
+	       		 }
+	       		 
+	       	 }        	           	           
+	           if (nBytesRead >= 0) {
+	        	   bytesCount +=nBytesRead;
+	              // Writes audio data to the mixer via this source data line.          	            	
+	              soundLine.write(sampledData, 0, nBytesRead);	  
+	              
+	              //changes the file which is read into the inputStream
+	              totalCount += 1;               
+	         	  if (gate ==0) {
+	        		  gate = 1;
+	        	  }else {
+	        		  gate = 0;
+	        	  }
+	         	  //increment the percentage if increment is reached
+	         	  //use the frame size to know where we are in the recording.
+	         	  //would be totalBytesRead or something
+	         	  if (bytesCount > bytesPerPercent) {
+	         		  bytesCount = 0;
+	         		  mixPercentagesIncrement ++;
+	         	  }
+	         	  
+	         	  
+	              if (file1Count/totalCount <= mixPercentages.get(mixPercentagesIncrement)) {
+	            	  gate = 0;
+	              }else {
+	           	   gate = 1;
+	              }	              
+	              if (gate == 0) {
+	            	  file1Count += 1;            	   
+	              }	              
+	           }
+	           
+	        	 }
+	        }
+			}
+		catch (IOException ex) {
+	        ex.printStackTrace();
+	     }//catch (LineUnavailableException e) {     }
+			finally {
+	    	 soundLine.drain();    	     	 
+	         soundLine.close();
+	         System.out.println("total bytes Read = "+bytesCount);
+	    	 }
+	     }
+		}
+	}
+	
+
 	

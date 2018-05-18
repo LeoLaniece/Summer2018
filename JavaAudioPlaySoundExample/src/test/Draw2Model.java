@@ -2,6 +2,7 @@ package test;
 
 import java.io.File;
 
+
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
@@ -39,6 +40,9 @@ public class Draw2Model {
     public ArrayList<Path> modelPaths;
     public ArrayList<Coordinate> modelPathsCoordinates;
     public ArrayList<Coordinate> modelPathsTranslateByCoordinates;
+    InteractionModel iModel;
+    PlayPathSound p = null;
+    drawPath dP = null;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -51,7 +55,11 @@ public class Draw2Model {
     	
     	btnClear = new Button("Clear");
     	btnClear.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {                
+            public void handle(ActionEvent event) {  
+            	modelPathsCoordinates = new ArrayList<>();  
+                iModel.modelPathsTranslateByCoordinates =new ArrayList<>(); 
+                iModel.viewPortXYLocation =new ArrayList<>();                
+                modelPaths =new ArrayList<>();         
                 notifySubscribers();
             }
         });    	
@@ -84,7 +92,8 @@ public class Draw2Model {
     path.setStroke(sampleLine.getStroke());
     path.getElements().add(new MoveTo(x, y));
     modelPathsCoordinates.add(new Coordinate(x,y));    
-    modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
+    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
+    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
     lineGroup.getChildren().add(path);
     modelPaths.add(path);          
 	}
@@ -92,10 +101,12 @@ public class Draw2Model {
 
 	
 	public void strokePath(double x, double y) {
-		path.getElements().add(new LineTo(x, y));
+		dP = new drawPath(modelPaths, x,y);
+		//path.getElements().add(new LineTo(x, y));
 		notifySubscribers();
 	}
 	public void pathToNull() {
+		dP = null;
 		path = null;
 	}
 	
@@ -110,23 +121,86 @@ public class Draw2Model {
 	//play sound based on the calculated time and velocity		
 	}
 	
+	public void playPathSound(ArrayList<Double> v, double d) {
+		SoundThread t = new SoundThread("sound",player,d,v);
+		t.start();
+	}
+	
 	public void play() {
 		File f = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
 		player.playFor(f, 0.5);
 	}
 	
 	public void playStroke(long time, ArrayList<Double> velocities) {
-		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
 		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
 		ArrayList<FileAndDuration> filesAndDurations = new ArrayList<>();		
 		filesAndDurations =player.determineStrokesAndSustain(f1, f2, time, velocities);
 		filesAndDurations.forEach(f ->{
+			player.playFor(f.file, f.duration/1000);
 			System.out.println("file "+ f.file.getName());
-			System.out.println("duration "+f.duration);
-			System.out.println("total time = "+time);
+			System.out.println("duration "+f.duration);			
+		});
+		System.out.println("total time = "+time);
+	}
+
+	/**
+	 * most realistic sound so far!
+	 * now try to implement the velocity calculations 
+	 * ideally, you would adjust the mixing of the 2 files as the sound is manufactured to capture the velocity of the moment
+	 * need an array of %? need to change % when we reach certain parts of the recording, need to make sure none of the arrays run out
+	 * firsts, calculate percentages -> returns percentages and for what portion of the duration it is valid
+	 * use determineMixPercent, pass it into mixStreamsFor
+	 * @param duration1
+	 */
+	public void playTest(double duration1, ArrayList<Double> velocities) {
+		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
+		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
+		//velocity = 3 so each file is 50%
+		//duration is 2 seconds	
+		 double duration = duration1/2000;
+		//now that i have separate loop counts can actually try to do % of each file.
+		//double duration = 0.5;
+		int loopCount = player.calculateLoopCount(f1, duration);
+		int loopCount2 = player.calculateLoopCount(f2, duration);
+		AudioInputStream[] audioInputStreams = player.stretchFileFor(f1, duration);
+		AudioInputStream[] audioInputStreams2 = player.stretchFileFor(f2, duration);
+		ArrayList<Double> mixPercentages = player.determineMixPercentage(velocities);
+		//still working on this function, right now the issue seems to be the mixing, mixing is not occuring.
+		//probably involves the for loops. Try a few things
+		//don't use for loops
+		//switch the current state to value the second file more
+		//works!!!
+		player.mixStreamsFor(audioInputStreams, loopCount, audioInputStreams2, loopCount2, mixPercentages, duration*1000*2);
+		//player.playStretchedFor(audioInputStreams2, loopCount2);
+	}
+	
+	
+	public void playMix(ArrayList<Double> velocities, double duration) {
+		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
+		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
+		System.out.println("duration "+duration);
+		long t = System.currentTimeMillis();
+		ArrayList<Double> mixPercentages = player.determineMixPercentage(velocities);
+		double velocityDuration = duration/velocities.size();
+		//it works! but doesn't sound quite there yet, also quite slow computationally.
+		mixPercentages.forEach(p ->{
+			player.playMixFor(f1, f2, p, velocityDuration);
 		});
 		
+		System.out.println("play time = "+(System.currentTimeMillis()-t));
+	}
+	
+	/**
+	 * play sound while drawing
+	 * @param iM
+	 */
+	public void threadTest(double duration) {
 		
+	}
+	
+	public void setIModel(InteractionModel iM) {
+		iModel = iM;
 	}
     
 

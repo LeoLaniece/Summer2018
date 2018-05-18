@@ -47,6 +47,7 @@ public class Draw2View extends Pane implements modelListener{
 	double logicalHeight;
 	double logicalWidth;
 	public Group lineGroup;
+	InteractionModel iModel;
 	
 	//put in a logical size?
 	public Draw2View(double h, double w, Draw2Model m) {
@@ -56,27 +57,18 @@ public class Draw2View extends Pane implements modelListener{
 		logicalHeight = 1000;
 		logicalWidth =1000;
 		lineGroup = model.lineGroup;
-		//setLineGroup();
 		
-		
-		//dont need the canvas
-		
-		//gc = c.getGraphicsContext2D();	
-		topPane = new Pane();////
+		topPane = new Pane();
 		
 		setCanvas(1000,1000);
-setLineGroup();
-        
-		
+		setLineGroup();     
+		mainViewOnly();
+	}
+	
+	public void mainViewOnly() {
 		VBox root = new VBox();
 		HBox underCanvas = new HBox();
-		this.getChildren().add(root);
-
-		
-		//try to use canvas based paths?
-		//fool around with the alignement of the Stack Pane or Pane
-		//add Carl to your gitAccountProject
-		
+		this.getChildren().add(root);				
 		root.getChildren().add(c);
 		
 		root.getChildren().add(underCanvas);
@@ -91,7 +83,6 @@ setLineGroup();
 		
 		setSampleStroke(UCLeft, UCRight);						
 		setFlowPane(UCRight);
-			
 	}
 	public void setLineGroup() {
 		StackPane group = new StackPane();
@@ -176,13 +167,13 @@ setLineGroup();
 		//DRAW MODELpATHS
 				for (int i=0; i<model.modelPaths.size();i++) {	
 					gc.beginPath();
-					gc.moveTo(model.modelPathsCoordinates.get(i).x +(model.modelPathsTranslateByCoordinates.get(i).x),
-							model.modelPathsCoordinates.get(i).y +(model.modelPathsTranslateByCoordinates.get(i).y));											
+					gc.moveTo(model.modelPathsCoordinates.get(i).x +(iModel.modelPathsTranslateByCoordinates.get(i).x),
+							model.modelPathsCoordinates.get(i).y +(iModel.modelPathsTranslateByCoordinates.get(i).y));											
 					gc.setStroke(model.modelPaths.get(i).getStroke());
 					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth());
 					if (model.modelPaths.get(i).getElements().size()>0) {
-					final double translateX = model.modelPathsTranslateByCoordinates.get(i).x;
-					final double translateY = model.modelPathsTranslateByCoordinates.get(i).y;						
+					final double translateX = iModel.modelPathsTranslateByCoordinates.get(i).x;
+					final double translateY = iModel.modelPathsTranslateByCoordinates.get(i).y;						
 					model.modelPaths.get(i).getElements().
 					forEach(a -> {				
 						if (a instanceof LineTo) {
@@ -294,6 +285,9 @@ setLineGroup();
 	}*/
 	public void setModel(Draw2Model m) {
 		model = m;
+	}
+	public void setIModel(InteractionModel iM) {
+		iModel = iM;
 	}
 
 

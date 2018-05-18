@@ -33,6 +33,7 @@ public class Draw2Controller {
 	boolean yDirection = false;
 	ArrayList<Double> timeOfChange;
 	ArrayList<Double> velocities;
+	InteractionModel iModel;
 	//velocityItems
 	Coordinate[] points;
 	
@@ -61,7 +62,10 @@ public class Draw2Controller {
         	System.out.println("x = "+me.getX());
         	System.out.println("y = "+me.getY());
         	setPoints(me.getX(),me.getY());
-        	//model.play();
+        	if (model.p != null) {
+        		System.out.println("mousepressed");
+        		model.p.stop();
+        	}
         	
         	
         	if (me.isShiftDown()) {
@@ -97,11 +101,25 @@ public class Draw2Controller {
             public void handle(MouseEvent me) {                     	            	
             	if (state == READY) {
             	 //calculate speed and distance of the stroke(in the model)	
-            	model.calculateStroke(distanceTraveled,time);
-            	model.playStroke(System.currentTimeMillis()-time, velocities);
+            	//model.calculateStroke(distanceTraveled,time);
+            		
+            	//sounds the closest to a realistic stroke sound
+            	//model.playStroke(System.currentTimeMillis()-time, velocities);
+            	//does not capture the stroke.
+            	//could try to fix this by:
+            	//adding more different kinds of strokes at different speeds?
+            	//trying to stretch the strokes based on the percentages !!!
+            	//this would be a different kind of mixing
+            	//not by grain, instead stretch the files so that they match the duration
+            	//then mix by grain (no file is played in full more than once)            	
+            	//model.playMix(velocities, System.currentTimeMillis()-time);
+            		
+            		//currently developing this function            		
+            		//model.playTest((System.currentTimeMillis()-time),velocities);
+            		
+            		//for threading tests
+            		model.playPathSound(velocities, System.currentTimeMillis()-time);
             	distanceTraveled = 0;
-            	//timeOfChange.forEach(a -> System.out.println("change in direction at "+a));
-            	//timeOfChange.removeAll(timeOfChange);
             	
             	model.pathToNull();
             	}
@@ -122,15 +140,27 @@ public class Draw2Controller {
             		dy = me.getY()-y;
             		x = me.getX();
             		y = me.getY();
+            		
+            		           		
+            		
+        		            		
+            		//move the viewPort within its bounds
+            		//but only if it is a drag allowed in the view port 
+            		if (iModel.viewPortX +dx >=0 &&
+            				iModel.viewPortY +dy >=0&&
+            				(iModel.viewPortX +iModel.viewPortHeight + dx) <=1000/7 &&
+            				(iModel.viewPortY +iModel.viewPortWidth +dy) <=1000/7) {
+            		iModel.viewPortX += dx/7;
+            		iModel.viewPortY += dy/7;
             		//drag the paths around to make it seem like we are panning the background
             		for (int a = 0; a < model.modelPaths.size(); a++) {
-            			model.modelPathsTranslateByCoordinates.get(a).x -=dx;
-            			model.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
-            			model.modelPaths.get(a).setTranslateX(model.modelPathsTranslateByCoordinates.get(a).x);
-            			model.modelPaths.get(a).setTranslateY(model.modelPathsTranslateByCoordinates.get(a).y);
-            			
+            			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;
+            			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
+            			model.modelPaths.get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
+            			model.modelPaths.get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
             		}            		
-            		model.notifySubscribers();
+            		  model.notifySubscribers();    		
+            		}            		
             	}
             	
             	if (state ==READY) {
@@ -274,5 +304,8 @@ public class Draw2Controller {
 		}
 		return average/3;
 		
+	}
+	public void setIModel(InteractionModel iM) {
+		iModel = iM;
 	}
 }

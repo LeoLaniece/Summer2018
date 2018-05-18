@@ -23,7 +23,12 @@ public class Draw3 extends Application{
 	        Draw2View view = new Draw2View(800,300,model);
 	        //make the radarView a scale of the size of the logical size of the view
 	        Draw2miniMap radarView = new Draw2miniMap(1000/7,1000/7,model);
-	        
+	        InteractionModel iModel = new InteractionModel(model,view);
+	        model.setIModel(iModel);
+	        view.setIModel(iModel);
+	        radarView.setIModel(iModel);
+	        radarView.drawViewPort();
+
 	        StackPane.setAlignment(view, Pos.TOP_LEFT);
 	        StackPane.setAlignment(radarView, Pos.TOP_LEFT);
 	        root.getChildren().add(view);
@@ -33,10 +38,8 @@ public class Draw3 extends Application{
 	        Draw2Controller controller = new Draw2Controller(view, model,radarView);
 	        model.addSubscriber(view);
 	        model.addSubscriber(radarView);
+	        controller.setIModel(iModel);
 
-	        
-	       
-	        
 	        primaryStage.setScene(scene);
 	        primaryStage.show();
 	
