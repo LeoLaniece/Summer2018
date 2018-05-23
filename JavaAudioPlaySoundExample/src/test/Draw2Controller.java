@@ -32,8 +32,13 @@ public class Draw2Controller {
 	boolean xDirection = false;
 	boolean yDirection = false;
 	ArrayList<Double> timeOfChange;
-	ArrayList<Double> velocities;
+	/**
+	 * x = velocity in pixels per ms
+	 * y = duration of velocity
+	 */
+	ArrayList<Coordinate> velocities;
 	InteractionModel iModel;
+	ArrayList<Coordinate> mouseCoordinates;
 	//velocityItems
 	Coordinate[] points;
 	
@@ -43,6 +48,7 @@ public class Draw2Controller {
 	int PANNING =2;
 	int state = READY;
 	long time;
+	long velocityTime;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
@@ -51,6 +57,7 @@ public class Draw2Controller {
 		radarView = r;
 		timeOfChange = new ArrayList<>();
 		points = new Coordinate[4];
+		 mouseCoordinates=new ArrayList<Coordinate>();
 		//setPoints();
 		
 	//when shift key is down, pan the canvas to new area's
@@ -59,14 +66,34 @@ public class Draw2Controller {
 	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
         @Override
         public void handle(MouseEvent me) {
-        	System.out.println("x = "+me.getX());
-        	System.out.println("y = "+me.getY());
+        //	System.out.println("x = "+me.getX());
+        //	System.out.println("y = "+me.getY());
+        	
+        	//keep thinking about this
+        	//thread is possible
+        	//special type of event Handler?
+        	//objective is to keep calculating velocity, even when the mouse stops draging
+        	//current method only updates calculates and adds the velocities during mouse drag events
+        	//is there a better way to keep track of the mouse velocity?
+        	
+        	//like a velocityList coupled with a duration for the velocities?
+        	//would assign a duration and velocity at the same time to the velocities array
+        	
+        	
+        	
+        	//CalculateVelocityThread thread = new CalculateVelocityThread("thread",me.getX(),me.getY(),view);
+        	//thread.start();
+        	
         	setPoints(me.getX(),me.getY());
+        	
         	if (model.p != null) {
         		System.out.println("mousepressed");
         		model.p.stop();
         	}
         	
+        	//while the mouse is pressed, always calculate the current velocity.
+        	//would probably be best to start a velocity calculation thread, but how do i update the coordinates in the thread?
+        	//pass in the view?
         	
         	if (me.isShiftDown()) {
         		//pan the canvas
@@ -82,11 +109,13 @@ public class Draw2Controller {
         	//will be useful in mouseDragged for velocity
         	x = me.getX();
         	y = me.getY();
-        	time = System.currentTimeMillis();   
+        	time = System.currentTimeMillis();  
+        	
         	//pat should be started in the model
         	model.startPath(me.getX(),me.getY());
         	velocities = new ArrayList<>();
-        	
+        	velocityTime = System.currentTimeMillis();
+        	mouseCoordinates.add(new Coordinate(me.getX(),me.getY()));
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
         	}
@@ -100,25 +129,30 @@ public class Draw2Controller {
             @Override
             public void handle(MouseEvent me) {                     	            	
             	if (state == READY) {
-            	 //calculate speed and distance of the stroke(in the model)	
-            	//model.calculateStroke(distanceTraveled,time);
             		
-            	//sounds the closest to a realistic stroke sound
-            	//model.playStroke(System.currentTimeMillis()-time, velocities);
-            	//does not capture the stroke.
-            	//could try to fix this by:
-            	//adding more different kinds of strokes at different speeds?
-            	//trying to stretch the strokes based on the percentages !!!
-            	//this would be a different kind of mixing
-            	//not by grain, instead stretch the files so that they match the duration
-            	//then mix by grain (no file is played in full more than once)            	
-            	//model.playMix(velocities, System.currentTimeMillis()-time);
+            	//still need sound generated appropriately for the sustained sections of the stroke
+            		//-can fix this by using longer recordings from the start so that they loop less?
+            		//-they would sound less distorted
             		
-            		//currently developing this function            		
-            		//model.playTest((System.currentTimeMillis()-time),velocities);
+            		//still need the sound generated appropriately for the 'silent' portions of the stroke.
+            		//-this might mean mixing 3 different sounds
+            	
+            	
+            	//CAPTURES THE SECTIONS OF THE STROKE	            		
+            	//implements playFor with filesAndDurations            		            	
+            	//model.playStroke(System.currentTimeMillis()-time, velocities);            	            	            
             		
-            		//for threading tests
-            		model.playPathSound(velocities, System.currentTimeMillis()-time);
+            	//GOOD FOR CAPTURING EDGES OR SHARP STROKES
+            	//implements playMixStreamsFor
+            	            	velocities.forEach(a ->{            	            		
+            	            		if (a.y > 0.044) {
+            	            			a.x = 0;
+            	            		}            		            		
+            	});	            		
+            	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
+
+            	mouseCoordinates=new ArrayList<Coordinate>();
+            	
             	distanceTraveled = 0;
             	
             	model.pathToNull();
@@ -127,14 +161,17 @@ public class Draw2Controller {
                 
             }
         });
+	
+	
       
 	view.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {  
             	
             	updatePoints(me.getX(),me.getY());            	
-            	velocities.add(calculatePointsAverageVelocity());
-            	
+            	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
+            	velocityTime = System.currentTimeMillis();
+
             	if (state == PAN_READY) {
             		dx =me.getX()-x;
             		dy = me.getY()-y;
@@ -167,7 +204,8 @@ public class Draw2Controller {
             	//set up relativized view coordinates
             	double viewx = me.getX()/view.width;
             	double viewy = me.getY()/view.height;            	
-            	
+        		//just for consisitency
+        		mouseCoordinates.add(new Coordinate(me.getX(),me.getY()));
             	//calculate distance travel
             	//calculate the velocity interactively
             	//last 4 points, take the average of the 3 velocities
@@ -297,7 +335,8 @@ public class Draw2Controller {
 	 * will return the average velocity between the 4 previous mouse locations
 	 * @return 
 	 */
-	public double calculatePointsAverageVelocity() {		
+	public double calculatePointsAverageVelocity() {	
+
 		double average =0;
 		for (int i =0;i<3;i++) {
 			average+=calculateVelocity(points[0], points[i+1]);

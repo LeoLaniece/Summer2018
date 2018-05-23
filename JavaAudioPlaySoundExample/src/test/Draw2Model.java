@@ -121,14 +121,16 @@ public class Draw2Model {
 	//play sound based on the calculated time and velocity		
 	}
 	
-	public void playPathSound(ArrayList<Double> v, double d) {
-		SoundThread t = new SoundThread("sound",player,d,v);
+	public void playPathSound(ArrayList<Coordinate> v, double d, ArrayList<Coordinate> mouseCoordinates) {
+		ArrayList<Float> panValues = calculatePanValues(mouseCoordinates);
+		
+		SoundThread t = new SoundThread("sound",player,d,v,panValues);
 		t.start();
 	}
 	
 	public void play() {
 		File f = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
-		player.playFor(f, 0.5);
+		//player.playFor(f, 0.5);
 	}
 	
 	public void playStroke(long time, ArrayList<Double> velocities) {
@@ -137,7 +139,7 @@ public class Draw2Model {
 		ArrayList<FileAndDuration> filesAndDurations = new ArrayList<>();		
 		filesAndDurations =player.determineStrokesAndSustain(f1, f2, time, velocities);
 		filesAndDurations.forEach(f ->{
-			player.playFor(f.file, f.duration/1000);
+			//player.playFor(f.file, f.duration/1000);
 			System.out.println("file "+ f.file.getName());
 			System.out.println("duration "+f.duration);			
 		});
@@ -201,6 +203,28 @@ public class Draw2Model {
 	
 	public void setIModel(InteractionModel iM) {
 		iModel = iM;
+	}
+	/**
+	 * will calculate the appropriate panValues based on the list of coordinates of the mouse.
+	 * @param location
+	 * @return
+	 */
+	public ArrayList<Float> calculatePanValues(ArrayList<Coordinate> location){
+		ArrayList<Float> panValues = new ArrayList<>();
+		//box center is at 400
+		//if x < 400 pan value should be between -1 and 0
+		//if x >400 and <800 value should be between 0 and 1
+		location.forEach(a -> {
+			if (a.x < 400) {
+				panValues.add( (float) ((-1) + a.x/400f));
+			}
+			if (a.x >=400 && a.x < 800) {
+				panValues.add((float)(a.x -400)/400);
+			}
+		});
+		
+		
+		return panValues;
 	}
     
 

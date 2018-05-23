@@ -100,6 +100,9 @@ public class Draw2View extends Pane implements modelListener{
 		gc = c.getGraphicsContext2D();
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, 800, 500);
+		gc.setFill(Color.RED);
+		gc.fillRect(375, 150, 50, 50);
+		
 		//topPane.getChildren().add(c);
 	}
 	
@@ -192,6 +195,8 @@ public class Draw2View extends Pane implements modelListener{
 	public void modelChanged() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, height, width);
+		gc.setFill(Color.RED);
+		gc.fillRect(375, 150, 50, 50);
 		drawModelPaths();				
 	}
 	public void startPath(double x, double y) {
