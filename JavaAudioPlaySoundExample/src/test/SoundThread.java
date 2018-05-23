@@ -30,24 +30,20 @@ public class SoundThread extends Thread{
 	   public void run() {
 			File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
 			File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
-			File f3 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\silence.WAV");
+			File f3 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
 			//velocity = 3 so each file is 50%
 			//duration is 2 seconds	
 			
 			
 			 double duration = strokeDuration/1000;
-			//now that i have separate loop counts can actually try to do % of each file.
-			//double duration = 0.5;
-			//silence only needs to be played when f1 = 100%
-			 //could just use a clip to play the silence? 
+			 //if the duration is less than the silence duration, play a tap sound.
+			 //implement this for next time, also chang ethe loop setter to always set to at least 1 
 			 
-			//i need the duration to accurately reflect how long each file will be played for
-			 // make a function for this.
-			 //function will take the mix percentages
-			 //will return an array with the duration in seconds for 3 sound files
 			 ArrayList<Coordinate> mixPercentages = player.determineMixPercentageFor3Files(velocities);
 			 double[] durations = player.calculateDurationsFor3Files(mixPercentages, velocities, duration);
 			 
+			 
+			 double dur = player.calculateLoopCount(f3, duration);
 			 
 			int loopCount = player.calculateLoopCount(f1, durations[0]);
 			int loopCount2 = player.calculateLoopCount(f2, durations[1]);

@@ -1,10 +1,22 @@
 package javaServer;
 
-//File Name GreetingClient.java
-import java.net.*;
-import java.io.*;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+//File Name GreetingClient.java
+import java.net.Socket;
+import test.*;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 public class GreetingClient {
+	
+	public Draw2View view;
+	public Draw2Model model;
+	
 
 public static void main(String [] args) {
    String serverName = args[0];
@@ -19,12 +31,21 @@ public static void main(String [] args) {
       
       out.writeUTF("Hello from " + client.getLocalSocketAddress());
       InputStream inFromServer = client.getInputStream();
-      DataInputStream in = new DataInputStream(inFromServer);
+      ObjectInputStream in = new ObjectInputStream(inFromServer);
+      CanvasAddress cd =  (CanvasAddress) in.readObject();
+      System.out.println("Server says : got canvas!");
+      GraphicsContext gc = cd.c.getGraphicsContext2D();
+      gc.setFill(Color.BLACK);
+      gc.fillRect(0, 0, 400, 400);
       
-      System.out.println("Server says " + in.readUTF());
+      
+      
       client.close();
    } catch (IOException e) {
       e.printStackTrace();
-   }
+   } catch (ClassNotFoundException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
 }
 }

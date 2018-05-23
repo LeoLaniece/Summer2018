@@ -144,6 +144,8 @@ public class Draw2Controller {
             		
             	//GOOD FOR CAPTURING EDGES OR SHARP STROKES
             	//implements playMixStreamsFor
+            		updatePoints(me.getX(),me.getY());            	
+                	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
             	            	velocities.forEach(a ->{            	            		
             	            		if (a.y > 0.044) {
             	            			a.x = 0;
