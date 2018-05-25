@@ -27,4 +27,9 @@
 <fullyQualifiedTypeName name="javax.sound.sampled.Mixer"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.DataLine.Info"/>
 <fullyQualifiedTypeName name="java.util.Scanner"/>
+<fullyQualifiedTypeName name="javaServer.CanvasPass"/>
+<fullyQualifiedTypeName name="java.awt.Color"/>
+<fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="java.io.ObjectOutputStream"/>
+<fullyQualifiedTypeName name="java.io.DataOutputStream"/>
 </qualifiedTypeNameHistroy>

@@ -121,12 +121,27 @@ public class Draw2Model {
 	//play sound based on the calculated time and velocity		
 	}
 	
+	/**
+	 * play path sound Thread
+	 * @param v
+	 * @param d
+	 * @param mouseCoordinates
+	 */
 	public void playPathSound(ArrayList<Coordinate> v, double d, ArrayList<Coordinate> mouseCoordinates) {
-		ArrayList<Float> panValues = calculatePanValues(mouseCoordinates);
-		
+		ArrayList<Float> panValues = calculateVolumeValues(v);		
 		SoundThread t = new SoundThread("sound",player,d,v,panValues);
 		t.start();
 	}
+	
+	public void playStaggeredSoundThreads(double duration) {
+		//play staggered sound threads for the given duration
+		//start a thread, 30 milliseconds later, start a second thread
+		//for each thread, play a clip until /2 of duration time is up
+		//wait the duration of the clip - 30ms between each clip play
+		StaggeredSoundThread t = new StaggeredSoundThread("Stagered sound", player, duration);
+		t.start();
+	}
+	
 	
 	public void play() {
 		File f = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
@@ -154,7 +169,7 @@ public class Draw2Model {
 	 * firsts, calculate percentages -> returns percentages and for what portion of the duration it is valid
 	 * use determineMixPercent, pass it into mixStreamsFor
 	 * @param duration1
-	 */
+	
 	public void playTest(double duration1, ArrayList<Double> velocities) {
 		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
 		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
@@ -175,23 +190,10 @@ public class Draw2Model {
 		//works!!!
 		player.mixStreamsFor(audioInputStreams, loopCount, audioInputStreams2, loopCount2, mixPercentages, duration*1000*2);
 		//player.playStretchedFor(audioInputStreams2, loopCount2);
-	}
+	} */
 	
 	
-	public void playMix(ArrayList<Double> velocities, double duration) {
-		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
-		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
-		System.out.println("duration "+duration);
-		long t = System.currentTimeMillis();
-		ArrayList<Double> mixPercentages = player.determineMixPercentage(velocities);
-		double velocityDuration = duration/velocities.size();
-		//it works! but doesn't sound quite there yet, also quite slow computationally.
-		mixPercentages.forEach(p ->{
-			player.playMixFor(f1, f2, p, velocityDuration);
-		});
-		
-		System.out.println("play time = "+(System.currentTimeMillis()-t));
-	}
+
 	
 	/**
 	 * play sound while drawing
@@ -221,11 +223,41 @@ public class Draw2Model {
 			if (a.x >=400 && a.x < 800) {
 				panValues.add((float)(a.x -400)/400);
 			}
-		});
+		});				
+		return panValues;
+	}
+	
+	/**
+	 * calculate masterVolume values
+	 */
+	public ArrayList<Float> calculateVolumeValues(ArrayList<Coordinate> velocities){
+		ArrayList<Float> panValues = new ArrayList<>();
+		//for each velocity
+		//if it is .y==3
+		//silence -80
+		//else normal volume
+		//eventually try to make it quieter as it slows down.
+		velocities.forEach(a -> {
+			System.out.println("velocity = "+a.x+ " DURATION = "+a.y);			
+			if (a.x == 0) {				
+				//normal increment is every 0.043 seconds so this/0.043
+				int batches = (int) (a.y/0.043);
+				for (int i = 0; i < batches;i++) {
+					panValues.add(-80f);
+				}						
+					//System.out.println("something will be silent");
+			}else {
+				panValues.add(0f);
+			}
+		});			
+		
+		//issue discovered
+		//silence isn't playing for long because the increment is in even amounts of time, i would need to add consequentially more 'silence' increments
+		//or change the way my player plays back sounds, the former sounds simpleler
+		//this was also why my thing wasn't working yesterday!.
 		
 		
 		return panValues;
 	}
-    
 
 }

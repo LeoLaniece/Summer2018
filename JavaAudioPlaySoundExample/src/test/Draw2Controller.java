@@ -151,8 +151,9 @@ public class Draw2Controller {
             	            			a.x = 0;
             	            		}            		            		
             	});	            		
-            	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
-
+            	//model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
+            	
+            	model.playStaggeredSoundThreads(System.currentTimeMillis()-time);
             	mouseCoordinates=new ArrayList<Coordinate>();
             	
             	distanceTraveled = 0;

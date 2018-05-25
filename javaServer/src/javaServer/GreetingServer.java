@@ -2,6 +2,7 @@ package javaServer;
 
 //File Name GreetingServer.java
 import java.net.*;
+
 import javafx.scene.Group;
 import javafx.geometry.Pos;
 
@@ -15,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import test.Draw2Model;
 import test.Draw2View;
+import test.modelListener;
 
 import java.io.*;
 
@@ -23,12 +25,13 @@ private ServerSocket serverSocket;
 
 public Draw2View view;
 public Draw2Model model;
-public CanvasAddress canvas;
+public Socket server;
 
-public GreetingServer(int port, CanvasAddress cd) throws IOException {
+
+public GreetingServer(int port, Draw2Model m) throws IOException {
    serverSocket = new ServerSocket(port);
-   serverSocket.setSoTimeout(10000);
-   canvas = cd;
+   serverSocket.setSoTimeout(100000);
+   model = m;
 
 }
 
@@ -38,21 +41,25 @@ public void run() {
          System.out.println("Waiting for client on port " + 
             serverSocket.getLocalPort() + "...");
         
-         Socket server = serverSocket.accept();
+         server = serverSocket.accept();
          
          System.out.println("Just connected to " + server.getRemoteSocketAddress());
-         DataInputStream in = new DataInputStream(server.getInputStream());
-         
-         System.out.println(in.readUTF());
-         
-         //figure out how to create a public canvas thing.
-         ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());         
-         System.out.println("sending canvas!");
-       //  out.writeUTF(sc.nextLine());
-         out.writeObject(canvas);
-         out.flush();
+         DataInputStream in = new DataInputStream(server.getInputStream());         
+         System.out.println(in.readUTF());         
+         DataOutputStream out = new DataOutputStream(server.getOutputStream());         
+         DataInputStream objectIn = new DataInputStream(server.getInputStream());
+         ClientListener clientListener = new ServerListener(model,out);
+         //wait for a message, print the message
          
          
+         
+         String msg = "greetingServer";
+         while (msg!="exit") {
+        	 System.out.println(msg);
+        	 msg = (String) objectIn.readUTF();
+        	 System.out.println(msg);
+        	 }                                  
+		         
          server.close();
          
       } catch (SocketTimeoutException s) {
@@ -65,12 +72,12 @@ public void run() {
    }
 }
 
-public static void main(String [] args, CanvasAddress cd) {
+public static void main(String [] args, Draw2Model m) {
 	//test for javaFX component
 	
-   int port = 1100;//Integer.parseInt(args[0]);
+   int port = 999;//Integer.parseInt(args[0]);
    try {
-      Thread t = new GreetingServer(port, cd);
+      Thread t = new GreetingServer(port,m);
       t.start();
    } catch (IOException e) {
       e.printStackTrace();
@@ -80,9 +87,12 @@ public static void main(String [] args, CanvasAddress cd) {
    
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
-   arr[1] = "1100";
-   GreetingClient.main(arr);
+   arr[1] = "999";
+   GreetingClient GC = new GreetingClient(arr);
+   GC.start();
 }
+
+
 
 
 }

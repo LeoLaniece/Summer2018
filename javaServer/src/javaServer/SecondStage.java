@@ -1,5 +1,4 @@
 package javaServer;
-
 import javafx.scene.Group;
 import javafx.geometry.Pos;
 
@@ -15,12 +14,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-
-public class CanvasPass extends Application{
-
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Drawing Tool");
+public class SecondStage extends Stage {
+	public Draw2Model m;
+	
+	SecondStage(){
+		setTitle("Drawing Tool");
         //a type of layout	        
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, 800,500);
@@ -40,26 +38,20 @@ public class CanvasPass extends Application{
         root.getChildren().add(radarView);
         radarView.setPickOnBounds(false);
         
-        Draw2Controller controller = new Draw2Controller(view, model,radarView);
+        Draw2Controller controller;
+		try {
+			controller = new Draw2Controller(view, model,radarView);
+
         model.addSubscriber(view);
         model.addSubscriber(radarView);
         controller.setIModel(iModel);
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-		
-        //progress report
-        //-now try to send path information and update the model with the information sent!
-        
-        
-		String[] args = new String[1];
-		args[0] = "HEELOWORLD";
-		GreetingServer.main(args, model);
+        setScene(scene);
+        show();
+        m = model;
+        		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
-	
-	 public static void main(String[] args) {
-	        Application.launch(args);
-	    }
-
 }

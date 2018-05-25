@@ -37,24 +37,29 @@ public class SoundThread extends Thread{
 			
 			 double duration = strokeDuration/1000;
 			 //if the duration is less than the silence duration, play a tap sound.
-			 //implement this for next time, also chang ethe loop setter to always set to at least 1 
+			 //implement this for next time, also change the loop setter to always set to at least 1 
 			 
-			 ArrayList<Coordinate> mixPercentages = player.determineMixPercentageFor3Files(velocities);
-			 double[] durations = player.calculateDurationsFor3Files(mixPercentages, velocities, duration);
+
+			 ArrayList<Coordinate> mixPercentages = player.determineMixPercentage(velocities);
+			 double[] durations = player.calculateDurationsFor2Files(mixPercentages, velocities, duration);
 			 
 			 
-			 double dur = player.calculateLoopCount(f3, duration);
+			// double dur = player.calculateLoopCount(f3, duration);
 			 
 			int loopCount = player.calculateLoopCount(f1, durations[0]);
 			int loopCount2 = player.calculateLoopCount(f2, durations[1]);
-			int loopCount3 = player.calculateLoopCount(f3, durations[2]);
+		//	int loopCount3 = player.calculateLoopCount(f3, durations[2]);
 			AudioInputStream[] audioInputStreams = player.stretchFileFor(f1, durations[0]);
 			AudioInputStream[] audioInputStreams2 = player.stretchFileFor(f2, durations[1]);
-			AudioInputStream[] audioInputStreams3 = player.stretchFileFor(f3, durations[2]);
+		//	AudioInputStream[] audioInputStreams3 = player.stretchFileFor(f3, durations[2]);
 			
+			//progress report,
+			//get muting to happen when mixing 2 files
+			//try your silence mixer now with the improved batch idea probably in the velocity array
+			//tried but does not work yet, explore this idea more
 
-			player.mixStreamsFor(audioInputStreams, loopCount, audioInputStreams2, loopCount2,
-					audioInputStreams3, loopCount3, 
+			player.mixStreamsFor2(audioInputStreams, loopCount, audioInputStreams2, loopCount2,
+				//	audioInputStreams3, loopCount3, 
 					mixPercentages, duration, panValues);
 			
 			//test for panning the sound

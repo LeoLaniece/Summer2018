@@ -43,7 +43,7 @@ public class Grain2Files implements Runnable {
     AudioInputStream audioInputStream2;
     //Buffer util
     //this is the size of the grains!!!
-	int BUFFER_SIZE = 100;
+	int BUFFER_SIZE = 4;
     int nBytesRead = 0;
    //Handles section by section of an audio file
     byte[] sampledData = new byte[BUFFER_SIZE];         
@@ -419,7 +419,7 @@ public class Grain2Files implements Runnable {
 	      
 	     //calculate the time of the sustained sound file you will be using	    	      
 		 float durationInSeconds = fileLength(soundFile);
-		 System.out.println("durationInSeconds "+durationInSeconds); 
+		 
 		 
 	      //calculate how many files i need to generate to match the strokeLength
 		  double loopCount1 = (((strokeDuration/durationInSeconds)));
@@ -427,7 +427,7 @@ public class Grain2Files implements Runnable {
 		  if (loopCount == 0) {
 			  loopCount = 1;
 		  }
-		  
+		  System.out.println("durationInSeconds "+durationInSeconds*loopCount); 
 		//set up files in order to sustain a sound given a loopCount, and a sound file
 	      //array of sound files
 	      File[] soundFiles = new File[loopCount];
@@ -494,7 +494,7 @@ public class Grain2Files implements Runnable {
 	      FloatControl volCtrl;
 	      Mixer mixer = AudioSystem.getMixer(null);
 	      
-	      volCtrl = (FloatControl) soundLine.getControl(FloatControl.Type.PAN);	    	      	      	      	      	            	      
+	      volCtrl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);	    	      	      	      	      	            	      
 	      volCtrl.setValue(panValues.get(0));
 	      soundLine.start();
 	      
@@ -529,10 +529,7 @@ public class Grain2Files implements Runnable {
 	         	  if (bytesCount > bytesPerPanValue) {
 	         		  bytesCount = 0;
 	         		  panValuesIncrement ++;
-	         	  }
-	        	 
-	        	 
-	        	 
+	         	  }	        	 	        	 	        	 
 	}}
 	     soundLine.drain();
 		 soundLine.close();
@@ -656,38 +653,70 @@ public class Grain2Files implements Runnable {
 	}
 	/**
 	 * will take an array of velocities and return an array of the % of the file1 needed to play appropriate mix
-	 * mix more or less of the files if they are close to certain velocities
-	//if the file is at 1.0 velocity play slow sound
-	//if the file is at 0 velocity play silence
-	//if the file is at 5.0 velocity play fast sound
-	//anything in between should be a mix of 2 sounds	  
+	 * mix more or less of the files if they are close to certain velocities	 
 	 * @param velocities
 	 * @return
-	 */
-	//how to use this function to accurately build the sound?
-	//with 3 sounds
-	//ideally, v>5 = 0% of slow and silence sounds
-	//v>1 v<5 = just mix fast and slow sound by the percent by which is closer 
-	//v <1, if v = 0, play silence otherwise play a mix of silence and the slow sound 	
-	
-	public ArrayList<Double> determineMixPercentage(ArrayList<Double> velocities){
-		ArrayList<Double> mixPercentages = new ArrayList<>();
+	 */	
+	public ArrayList<Coordinate> determineMixPercentage(ArrayList<Coordinate> velocities){
+		ArrayList<Coordinate> mixPercentages = new ArrayList<>();				
 		velocities.forEach(v ->{
-			if (v <= 1) {
-				//mix of slow and silence
-				mixPercentages.add(v);
+			//velocites.x = velocity
+			//.y = for how long
+			//mixPercentage needs what mix%, which file
+			//can eliminate the file#for just 2 files								
+			if (v.x <= 1) {
+				//just slow, with less and less volume..
+				mixPercentages.add(new Coordinate(v.x,0));
+				if (v.x == 0) {
+					int batches = (int) (v.y/0.043);
+					for (int i =0; i<batches;i++) {
+						mixPercentages.add(new Coordinate(v.x,0));
+					}
+				}
 			}
-			if (v > 1 && v < 5) {
+			if (v.x > 1 && v.x < 5) {
 				//mix of slow and fast
-				mixPercentages.add(1-(v-1)/4);
+				mixPercentages.add(new Coordinate((1-(v.x-1)/4),1));
 			}
-			if (v >5) {
+			if (v.x >5) {
 				//all fast
-				mixPercentages.add(0.0);
+				mixPercentages.add(new Coordinate(0.0,2));
 			}
+			
 		});
 		return mixPercentages;				
 	}
+	
+	/**
+	 * will take an array of velocities and return an array of the % of the file1 needed to play appropriate mix
+	 * mix more or less of the files if they are close to certain velocities	 
+	 * @param velocities
+	 * @return
+	 */	
+	public ArrayList<Coordinate> determineMixPercentageForDurationsSake(ArrayList<Coordinate> velocities){
+		ArrayList<Coordinate> mixPercentages = new ArrayList<>();				
+		velocities.forEach(v ->{
+			//velocites.x = velocity
+			//.y = for how long
+			//mixPercentage needs what mix%, which file
+			//can eliminate the file#for just 2 files								
+			if (v.x <= 1) {
+				//just slow, with less and less volume..
+				mixPercentages.add(new Coordinate(v.x,0));
+			}
+			if (v.x > 1 && v.x < 5) {
+				//mix of slow and fast
+				mixPercentages.add(new Coordinate((1-(v.x-1)/4),1));
+			}
+			if (v.x >5) {
+				//all fast
+				mixPercentages.add(new Coordinate(0.0,2));
+			}
+			
+		});
+		return mixPercentages;				
+	}
+	
 	
 	/**
 	 * will take an array of velocities and return an array of the % of the file1 needed to play appropriate mix
@@ -740,9 +769,9 @@ public class Grain2Files implements Runnable {
 	      //calculate how many files i need to generate to match the strokeLength
 		  float loopCount1 = (float)(duration/durationInSeconds);	  		  
 		  int loopCount = Math.round(loopCount1);
-		  //if (loopCount == 0) {
-		//	  loopCount = 1;
-		 // }		  
+		  if (loopCount == 0) {
+			  loopCount = 1;
+		  }		  
 		  return loopCount;
 	}
 	/**
@@ -881,34 +910,6 @@ public class Grain2Files implements Runnable {
 	     if (mixPercentages.size() != 0) {
 	     int bytesPerPercent = predictedBytesRead/mixPercentages.size();
 	     int mixPercentagesIncrement =0;
-	     
-		
-		//trying to stretch the strokes based on the percentages !!!
-		//this would be a different kind of mixing
-		//not by grain, instead stretch the files so that they match the duration
-		//then mix by grain (no file is played in full more than once)
-		//functions:  given 2 files a duration and a percentage play without repeating a file more than once
-		//need to 'stretch' 2 files and mix them smoothly
-		//functions:
-		
-		//stretch the given file, return the audioInputStreams[] and loopCount(can do this separate?)
-		//mix the given stretched files, 
-		
-		//given the audioInputStreams[], and the loop count mix the files so that they play for the given duration
-		//need to adjust the loop count to fit duration?
-		//need to use separate for loops to achieve this
-		//start just mixing the stretched files 50% each.
-		
-		//STROKE-velocities, duration
-		//calculate percentages, how? by total average velocity? by segments?
-		//start with by total average velocity
-		//get percentage of fast to slow sound you should play
-		//calculate how long each file should be played for
-		//duration = totalTime*percentage
-		//mix each of these elongated files together by the same amounts as the percentages
-		//play result 
-		
-		//play 
 		
 		
 		//prepare the buffers for the 2 sound files
@@ -1007,10 +1008,11 @@ public class Grain2Files implements Runnable {
 		}
 	/**
 	 * will mix grains from audioInputStreams and audioInputStreams2 and audioInputStreams3
-	   will play the mixed sounds 
-	   
+	   will play the mixed sounds 	   
 	   will increment the mixing based on the mixPercentages 
 	   will sustain the mixed sound for the value of duration(in milliseconds)
+	   also pans the sound
+	   Does not sustain the sound for long enough, Silence in particular
 	   
 	  AudioInputStream[] audioInputStreams
 	  int loopCount	 
@@ -1062,7 +1064,7 @@ public class Grain2Files implements Runnable {
 		//prepare the buffers for the 2 sound files
 		//initialize the source data line
 		
-	      AudioFormat audioFormat = audioInputStreams3[0].getFormat();          
+	      AudioFormat audioFormat = audioInputStreams[0].getFormat();          
 	      DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);           
 	      try {
 			soundLine = (SourceDataLine) AudioSystem.getLine(info);
@@ -1117,33 +1119,30 @@ public class Grain2Files implements Runnable {
 	       //until all the loopCounts are reached, keep repeating!
 			//problem is that once a single file == its loopCount, the counters are reset
 			
-			while (loop1Count != loopCount &&loop2Count != loopCount2 && loop3Count != loopCount3) {				
+			while (loop1Count != loopCount &&loop2Count != loopCount2 && loop3Count != loopCount3) {	
+				
 	       	if (gate == 0) {  
 	       		//check to see if there is buffer left in this audioStream
 	       		if (loop1Count < loopCount) {
 	       		nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 	       		 
 	       		loop1Count++;
-	       		//if empty, check the other audioStreams for more
+	       		//if empty, check the other currently mixing audioStream for more
 	       		if (nBytesRead <0) {
 	       			//pencilFast
-		       		 if (loop2Count < loopCount2) {
+		       		 if (loop2Count < loopCount2 && mixPercentages.get(mixPercentagesIncrement).y == 2) {
 			       		 nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 
 			       		//System.out.println("hit loop2");
 			       		loop2Count++;
 			       		 }
 		       		 //silence
-		       		 if (loop3Count < loopCount3 && nBytesRead <0) {
+		       		 if (loop3Count < loopCount3 && mixPercentages.get(mixPercentagesIncrement).y == 3) {
 			       		 nBytesRead = audioInputStreams3[loop3Count].read(sampledData, 0, sampledData.length); 	
 			       		 //System.out.println("hit loop3");
 			       		loop3Count++;
 	       		 }
 	       		}
 	       		
-	       	}
-	       		if(nBytesRead <0) {
-	       			System.out.println("nBytes are 0 in loop 1");
-	       		}
-	       		
+	       	}	       		
 	       	} 	else if (gate==1){
 	       		 if (loop2Count < loopCount2) {
 	       		 nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 
@@ -1155,43 +1154,25 @@ public class Grain2Files implements Runnable {
 			       		 nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 
 			       		loop1Count++;
 			       		 }
-		       		 //silence
-		       		 if (loop3Count < loopCount3 &&nBytesRead <0) {
-			       		 nBytesRead = audioInputStreams3[loop3Count].read(sampledData, 0, sampledData.length); 	
-			       		loop3Count++;
+	       		}	       		
 	       		 }
-	       		}
-	       		
-	       		 }
-		       		if(nBytesRead <0) {
-		       			System.out.println("nBytes are 0 in loop 2");
-		       		}
 	       		 
 	       	}else if(gate==2){
 		       		 if (loop3Count < loopCount3) {
-			       		 nBytesRead = audioInputStreams3[loop3Count].read(sampledData, 0, sampledData.length); 	
+			       		 nBytesRead = audioInputStreams3[loop3Count].read(sampledData, 0, sampledData.length); 
+			       		 
 			       		loop3Count++;
 				       	//if empty, check the other audioStreams for more
-			       		if (nBytesRead <0) {
+			       		if (nBytesRead <0 ) {
 			       			//pencilSlow
 				       		 if (loop1Count < loopCount) {
 					       		 nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 
 					       		loop1Count++;
-					       		 }else
-				       		 //pencilFast
-				       		 if (loop2Count < loopCount2 && nBytesRead <0) {
-					       		 nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 	
-					       		loop2Count++;
-			       		 }
-			       		}
-			       		if(nBytesRead <0) {
-			       			System.out.println("nBytes are 0 in loop 3");
+					       		 }
+			       		
 			       		}
 			       		}		       		 
 	       	 }
-       		if(nBytesRead <0) {
-       			System.out.println("nBytes are 0");
-       		}
 	           if (nBytesRead >= 0) {
 	        	   bytesCount +=nBytesRead;
 	        	   panBytesCount += nBytesRead;
@@ -1215,6 +1196,10 @@ public class Grain2Files implements Runnable {
 	         	  if (bytesCount > bytesPerPercent) {
 	         		  bytesCount = 0;
 	         		  mixPercentagesIncrement ++;
+	         	      slowCountF = 0.1;
+	        	       slowCountS = 0.1;
+	        	       fastCount =0.1;
+	        	      silenceCount =0.1;	         		  
 	         	  }
 	         	  
 	         	  
@@ -1230,6 +1215,7 @@ public class Grain2Files implements Runnable {
 		            	  fastCount+=1;
 		              }
 	         		 totalCountF+=1;
+	         	//	 System.out.println("Mix file = "+mixPercentages.get(mixPercentagesIncrement).y+ " mix percentage "+mixPercentages.get(mixPercentagesIncrement).x);
 	         	  }
 	         	  
 	         	  if (mixPercentages.get(mixPercentagesIncrement).y == 3) {
@@ -1244,6 +1230,7 @@ public class Grain2Files implements Runnable {
 		            	  silenceCount+=1;			            	  
 		              }
 	         		 totalCountS +=1;
+	         	//	System.out.println("Mix file = "+mixPercentages.get(mixPercentagesIncrement).y+ " mix percentage "+mixPercentages.get(mixPercentagesIncrement).x);
 	         	  }	         	                     
 	           }
 	           
@@ -1251,9 +1238,9 @@ public class Grain2Files implements Runnable {
 
 			
 			//figure out how to make the loopCount even
-	         System.out.println("loop1Count = "+loop1Count);
-	         System.out.println("loop2Count = "+loop2Count);
-	         System.out.println("loop3Count = "+loop3Count);
+	       //  System.out.println("loop1Count = "+loop1Count);
+	       //  System.out.println("loop2Count = "+loop2Count);
+	       //  System.out.println("loop3Count = "+loop3Count);
 	        }
 			//System.out.println("last mix increment "+mixPercentagesIncrement);
 			//System.out.println(" mixPercentagesSize "+mixPercentages.size());
@@ -1273,7 +1260,8 @@ public class Grain2Files implements Runnable {
 	     //    System.out.println("slowCountS = "+slowCountS);
 	     //    System.out.println("fastCount = "+fastCount);
 	     //    System.out.println("silenceCount = "+silenceCount);
-	     //    System.out.println("mixIncrementYCount = "+mixIncrementYCount);
+	     //    System.out.println("mixIncrementsize = "+mixIncrementYCount);
+	      //   System.out.println("mixIncrementYCount = "+mixIncrementYCount);
 	    	 }
 	     }
 		}
@@ -1312,7 +1300,234 @@ public class Grain2Files implements Runnable {
 		return durations;											
 	}
 	
-	
+	/**
+	 * will take two sound samples and mix them based on the given velocity array 
+	 * for the given duration
+	 * will also pan the sound 
+	 */
+	public void mixStreamsFor2(AudioInputStream[] audioInputStreams, int loopCount,
+			AudioInputStream[] audioInputStreams2, int loopCount2, 
+			ArrayList<Coordinate> mixPercentages, double duration, ArrayList<Float> panValues) {
+		//always use the smallest loop count so that none of the audioStream arrays reaches its end
+		
+		double percentageIncrementInTime = duration/mixPercentages.size();		
+		
+		int newloopCount;
+		if (loopCount < loopCount2) {
+			newloopCount = loopCount;
+		}else {
+			newloopCount = loopCount2;
+		}
+		
+		//prepare the percentage increment
+	     long totalFramesRead = 0;
+	     for (int i =0;i<loopCount;i++) {
+	    	 totalFramesRead += audioInputStreams[i].getFrameLength();
+	     }
+	     for (int i =0;i<loopCount2;i++) {
+	    	 totalFramesRead += audioInputStreams2[i].getFrameLength();
+	     }
+	     System.out.println("total frame length = "+totalFramesRead);
+	     int predictedBytesRead = (int)totalFramesRead*4;
+	     if (mixPercentages.size() != 0) {
+	     int bytesPerPercent = predictedBytesRead/mixPercentages.size();
+	     int mixPercentagesIncrement =0;	     	     
+		//prepare the panning increment
+	     //
+	     if (panValues.size() == 0) {
+	    	 panValues.add((float) 0.0);
+	     }
+	     int bytesPerPanValue = predictedBytesRead/panValues.size();
+	     int panValuesIncrement = 0;
+	         	     	     	     	     	          				
+		//prepare the buffers for the 2 sound files
+		//initialize the source data line		
+	      AudioFormat audioFormat = audioInputStreams[0].getFormat();          
+	      DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);           
+	      try {
+			soundLine = (SourceDataLine) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	      try {
+			soundLine.open(audioFormat);
+		} catch (LineUnavailableException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	      
+	      //set up the panner
+	      FloatControl volCtrl;
+	    //  Mixer mixer = AudioSystem.getMixer(null);	      
+	      volCtrl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);	    	      	      	      	      	            	      
+	      volCtrl.setValue(panValues.get(0));
+	      //volume control should work, need to play the mixing for the real amount of time.
+	      
+	      soundLine.start();
+		
+	     nBytesRead = 0;
+	     int loop1Count = 0;
+	     int loop2Count = 0;
+	     int bytesCount = 0;
+	     int panBytesCount =0;
+	     
+		//now mix the soundFiles
+		try {
+	      //once the audioStreams are empty stop		
+			while (nBytesRead >-1) {
+	        //number for loop is determined by strokeTime/durationInSeconds
+			//don't want to reach the end of the array
+			//what do you do with 2 to 1. 
+				
+			loop1Count = 0;
+			loop2Count = 0;
+	       // for (int i = 0;i<loopCount;i++) {
+			while (loop1Count != loopCount && loop2Count != loopCount2) {
+				
+	       	if (gate == 0) {   
+	       		if (loop1Count < loopCount) {
+	       		nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 	       		 
+	       		loop1Count++;
+	       	}
+	       	} 	else {
+	       		 if (loop2Count < loopCount2) {
+	       		 nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 		       		 
+	       		loop2Count++;
+	       		 }
+	       		 
+	       	 }        	           	           
+	           if (nBytesRead >= 0) {
+	        	   bytesCount +=nBytesRead;
+	        	   panBytesCount += nBytesRead;
+	              // Writes audio data to the mixer via this source data line.  
+	        	   //adjust pan value
+	        	   volCtrl.setValue(panValues.get(panValuesIncrement));	        	   
+	              soundLine.write(sampledData, 0, nBytesRead);	  
+	              
+	              //adjust the panvaulueIncrement if nessesary
+	         	  if (panBytesCount > bytesPerPanValue) {
+	         		 panBytesCount = 0;
+	         		  panValuesIncrement ++;
+	         	  }
+	              
+	              
+	              //changes the file which is read into the inputStream
+	              totalCount += 1;               
+
+	         	  
+	         	  
+	         	  //increment the percentage if increment is reached
+	         	  //use the frame size to know where we are in the recording.
+	         	  //would be totalBytesRead or something
+	         	  if (bytesCount > bytesPerPercent) {
+	         		  bytesCount = 0;
+	         		  mixPercentagesIncrement ++;
+	         	  }
+	         	  
+	         	  //use to adjust volume settings
+	         	  //turn volume to 0 when the velocity is 0
+	         	  //change your getMixPercentage function too
+	              if (file1Count/totalCount <= mixPercentages.get(mixPercentagesIncrement).x) {
+	            	  gate = 0;
+	              }else {
+	           	   gate = 1;
+	              }	   
+	              
+	              if (gate == 0) {
+	            	  file1Count += 1;            	   
+	              }	              
+	           }
+	           
+	        	 }
+	        }
+			}
+		catch (IOException ex) {
+	        ex.printStackTrace();
+	     }//catch (LineUnavailableException e) {     }
+			finally {
+	    	 soundLine.drain();    	     	 
+	         soundLine.close();
+	         System.out.println("total bytes Read = "+bytesCount);
+	    	 }
+	     }
+		}
+	/**
+	 * will take the mix percentages and velocities durations
+	 * will return an array with the duration in seconds for 2 sound files
+	 * @param mixPercentages
+	 * @param duration
+	 * @return
+	 */
+	public double[] calculateDurationsFor2Files(ArrayList<Coordinate> mixPercentages, ArrayList<Coordinate> velocities, double duration) {
+		//for each mixPercentage some length of each file will be played
+		//double durationPerPercent = duration/mixPercentages.size();
+		double file1D =0;
+		double file2D =0;
+
+		
+		//for each velocity there is at least one mix percentage
+		//for 0 velocities, there are v.y/0.043 mixPercentages
+		
+		//for each velocity, check if it is != 0
+		//if so, as normal
+		//else, duration * v.y/0.043.
+		
+		int offSetFromVelocities = 0;
+		
+		for (int i = 0; i < velocities.size();i++) {			
+			if (velocities.get(i).x != 0) {
+				if (mixPercentages.get(i+offSetFromVelocities).y == 0) {
+					double addToFile1 = velocities.get(i).y;
+					file1D += addToFile1;
+				}
+				//mix of slow and fast
+				else if(mixPercentages.get(i+offSetFromVelocities).y == 1) {							
+					double addToFile1 = velocities.get(i).y*mixPercentages.get(i+offSetFromVelocities).x;
+					file2D += velocities.get(i).y -addToFile1;
+					file1D += addToFile1;				
+				}
+				//only fast
+				else if(mixPercentages.get(i+offSetFromVelocities).y==2) {				
+					double addToFile2 = velocities.get(i).y;
+					file2D += addToFile2;					
+				}
+			}
+			
+			else if(velocities.get(i).x == 0) {
+				file1D += velocities.get(i).y;
+				offSetFromVelocities += velocities.get(i).y/0.043;
+			}
+		}
+		
+		//for each velocity, if mixPercentage is 0 it is intended to be entirely slow sound
+		//id mix percentage it 1, it is intended to be mix of slow and fast
+		//if mix i 2 it is intended to be only fast.
+		//velocities.y is the duration of the given velocity
+		
+		
+	/*	for (int i = 0; i< mixPercentages.size();i++) {
+			//for only slow
+			if (mixPercentages.get(i).y == 0) {
+				double addToFile1 = velocities.get(i).y;
+				file1D += addToFile1;
+			}
+			//mix of slow and fast
+			else if(mixPercentages.get(i).y == 1) {							
+				double addToFile1 = velocities.get(i).y*mixPercentages.get(i).x;
+				file2D += velocities.get(i).y -addToFile1;
+				file1D += addToFile1;				
+			}
+			//only fast
+			else if(mixPercentages.get(i).y==2) {				
+				double addToFile2 = velocities.get(i).y;
+				file2D += addToFile2;					
+			}
+		}*/
+		System.out.println("file 1 duration "+file1D);
+		System.out.println("file 2 duration "+file2D);		
+		double[] durations = {file1D,file2D};
+		return durations;											
+	}
 	
 	}
 	
