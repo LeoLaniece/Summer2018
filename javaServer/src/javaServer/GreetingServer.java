@@ -48,16 +48,34 @@ public void run() {
          System.out.println(in.readUTF());         
          DataOutputStream out = new DataOutputStream(server.getOutputStream());         
          DataInputStream objectIn = new DataInputStream(server.getInputStream());
-         ClientListener clientListener = new ServerListener(model,out);
+         ServerListener serverListener = new ServerListener(model,out);
          //wait for a message, print the message
          
          
-         
+         boolean isNetPathAlive = false;
          String msg = "greetingServer";
+         double[] line = new double[2];
          while (msg!="exit") {
-        	 System.out.println(msg);
+        	 
         	 msg = (String) objectIn.readUTF();
-        	 System.out.println(msg);
+        	 isNetPathAlive = Boolean.parseBoolean(objectIn.readUTF());
+        	 line[0] = Double.parseDouble((objectIn.readUTF()));
+        	 line[1] = Double.parseDouble(objectIn.readUTF());
+        	 if (isNetPathAlive == false) {
+        		 model.netWorkPath = null;
+        	 }
+        	 
+        	 if (model.netWorkPath == null) {
+        		 model.createNewPathFromNetwork(line);
+        	 }
+        	 if (model.netWorkPath!=null) {
+        		 model.updateNewPathFromNetwork(line);
+        	 }
+
+        	 
+        	 
+        	 model.notifySubscribers();
+        	System.out.println("Server got msg :"+ msg);
         	 }                                  
 		         
          server.close();
@@ -75,7 +93,7 @@ public void run() {
 public static void main(String [] args, Draw2Model m) {
 	//test for javaFX component
 	
-   int port = 999;//Integer.parseInt(args[0]);
+   int port = 9090;//Integer.parseInt(args[0]);
    try {
       Thread t = new GreetingServer(port,m);
       t.start();
@@ -87,7 +105,7 @@ public static void main(String [] args, Draw2Model m) {
    
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
-   arr[1] = "999";
+   arr[1] = "9090";
    GreetingClient GC = new GreetingClient(arr);
    GC.start();
 }

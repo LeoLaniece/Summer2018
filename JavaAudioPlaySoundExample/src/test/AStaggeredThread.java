@@ -18,42 +18,53 @@ public class AStaggeredThread extends StaggeredSoundThread{
 	
 	@Override
 	 public void run() {
-			File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");					
-			double duration = strokeDuration/1000;			
-			
+			File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");					
+			double duration = strokeDuration/1000;						
 			//set up clip
-         AudioInputStream audioIn;
 			try {
 				
-				audioIn = AudioSystem.getAudioInputStream(f1); 
+				//progress report
+				//looping count needed to be 0, for some reason
+				//try to understand why i am getting an error mesage in the fade out loop. 
+				
+				
+				AudioInputStream audioIn = AudioSystem.getAudioInputStream(f1); 
 				// Get a sound clip resource.
          Clip clip = AudioSystem.getClip();
          // Open audio clip and load samples from the audio input stream.
          clip.open(audioIn);
-        // clip.loop(2);
-         sleep(100);
+         clip.loop(1);
          
-	      FloatControl volCtrl;
-	    //  Mixer mixer = AudioSystem.getMixer(null);	      
+         
+         //
+         
+	      FloatControl volCtrl;      
 	      volCtrl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);	    	      	      	      	      	            	      
-	      volCtrl.setValue(0);
+	      volCtrl.setValue(6f);	      
          clip.start();
-         //13184
-         System.out.println("clip frames "+clip.getFrameLength());
-         while (clip.isActive()) {
+         while (clip.getFrameLength() > clip.getFramePosition()) {
+        	// volCtrl.setValue(6f);
+        	 
         	 if (clip.getFramePosition() < ((clip.getFrameLength()/4))) {
-        		 volCtrl.setValue(-80f);
-        	 }else {
-        		 volCtrl.setValue(0f);
-        	 }
-        	 
-        	 if (clip.getFramePosition() < ((clip.getFrameLength()/4) *3)) {
-        		 volCtrl.setValue(-80f);
-        	 }
-        	 
+        		 //fade in
+        		 float framePos = clip.getFramePosition();
+        		 float firstBitLength = clip.getFrameLength()/4;
+        		 float volume = 1- framePos/firstBitLength;
+        		 volCtrl.setValue(-30f*volume);
+        		 System.out.println("fading in! "+-30f*volume);
+        	 }        		  
+        		     		 
+        	         	 
+        	 if (clip.getFramePosition() > ((clip.getFrameLength()/4) *2)) {
+        		//fade out
+        		 float lastClipBit = clip.getFrameLength() - ((clip.getFrameLength()/4) *3);
+        		 float clipLeft = clip.getFrameLength() -clip.getFramePosition();
+        		 float volume = 1-clipLeft/lastClipBit;
+        		 volCtrl.setValue(-30f*volume);
+        		 System.out.println("fading out! "+-30f*volume);
+        	 }        	 
          }
-
-         clip.close();
+         System.out.println("sound done");
          
 			} catch (UnsupportedAudioFileException | IOException e) {
 				// TODO Auto-generated catch block
@@ -61,8 +72,6 @@ public class AStaggeredThread extends StaggeredSoundThread{
 			} catch (LineUnavailableException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}						
+			}
+			
 	   }}

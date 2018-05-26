@@ -18,7 +18,7 @@ public class SecondStage extends Stage {
 	public Draw2Model m;
 	
 	SecondStage(){
-		setTitle("Drawing Tool");
+		setTitle("Drawing Tool client");
         //a type of layout	        
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, 800,500);

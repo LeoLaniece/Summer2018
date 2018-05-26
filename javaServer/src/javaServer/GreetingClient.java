@@ -62,10 +62,15 @@ public GreetingClient(String [] args) {
 			objectIn = new DataInputStream(client.getInputStream());
 			      //wait for a message, print the message
       String msg = "Greeting client";
+      int temp = 0;
       while (msg!="exit") {
-    	  System.out.println(msg);
+    	  //receive path info from server, use the info to build a path and add the new path to your client model.
+    	  //need,     	  
+    	
      	 msg = (String) objectIn.readUTF();
-     	 System.out.println(msg);
+     	temp = Integer.parseInt(objectIn.readUTF());
+     	  System.out.println("client got message: "+msg+temp);
+     	 
      	 } 									
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

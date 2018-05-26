@@ -31,8 +31,7 @@ public class SoundThread extends Thread{
 			File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
 			File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
 			File f3 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-			//velocity = 3 so each file is 50%
-			//duration is 2 seconds	
+
 			
 			
 			 double duration = strokeDuration/1000;
@@ -55,8 +54,9 @@ public class SoundThread extends Thread{
 			
 			//progress report,
 			//get muting to happen when mixing 2 files
-			//try your silence mixer now with the improved batch idea probably in the velocity array
-			//tried but does not work yet, explore this idea more
+			//seems like the problem is that one of the audio streams runs out before the length of the recording is complete
+			//this leads to odd behavior, keep investigating.
+			//one of the loops reaches 0 well before the others.
 
 			player.mixStreamsFor2(audioInputStreams, loopCount, audioInputStreams2, loopCount2,
 				//	audioInputStreams3, loopCount3, 

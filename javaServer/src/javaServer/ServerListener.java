@@ -20,7 +20,8 @@ public class ServerListener extends ClientListener {
 		ArrayList<Path> modelPaths = model.modelPaths;
 		try {
 			//out.writeObject("Passed at least a string!!!");
-			out.writeUTF("Hello from the model0!");// + client.getLocalSocketAddress());
+			out.writeUTF("Server model changed!");
+			out.writeUTF(Integer.toString(30));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

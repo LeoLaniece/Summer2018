@@ -20,7 +20,7 @@ public class CanvasPass extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Drawing Tool");
+        primaryStage.setTitle("Drawing Tool Server");
         //a type of layout	        
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, 800,500);
@@ -49,7 +49,7 @@ public class CanvasPass extends Application{
         primaryStage.show();
 		
         //progress report
-        //-now try to send path information and update the model with the information sent!
+        
         
         
 		String[] args = new String[1];

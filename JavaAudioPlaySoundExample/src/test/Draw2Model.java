@@ -28,6 +28,8 @@ public class Draw2Model {
 	Group lineGroup;
 	
     public Path path;  
+    public Path netWorkPath;
+    public Coordinate currentPathCoordinate;
     public static final Double DEFAULTSTROKE = 3.0;
     public static final Double MAXSTROKE = 30.0;
     public static final Double MINSTROKE = 1.0;
@@ -92,6 +94,7 @@ public class Draw2Model {
     path.setStroke(sampleLine.getStroke());
     path.getElements().add(new MoveTo(x, y));
     modelPathsCoordinates.add(new Coordinate(x,y));    
+    currentPathCoordinate = new Coordinate(x,y);
     iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
     iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
     lineGroup.getChildren().add(path);
@@ -102,12 +105,14 @@ public class Draw2Model {
 	
 	public void strokePath(double x, double y) {
 		dP = new drawPath(modelPaths, x,y);
+		currentPathCoordinate = new Coordinate(x,y);
 		//path.getElements().add(new LineTo(x, y));
 		notifySubscribers();
 	}
 	public void pathToNull() {
 		dP = null;
 		path = null;
+		netWorkPath = null;
 	}
 	
 	public void calculateStroke(double distanceTraveled, long startTime) {
@@ -254,10 +259,28 @@ public class Draw2Model {
 		//issue discovered
 		//silence isn't playing for long because the increment is in even amounts of time, i would need to add consequentially more 'silence' increments
 		//or change the way my player plays back sounds, the former sounds simpleler
-		//this was also why my thing wasn't working yesterday!.
-		
-		
+		//this was also why my thing wasn't working yesterday!.				
 		return panValues;
 	}
+	
+	public void createNewPathFromNetwork(double[] points) {
+		netWorkPath = new Path();   
+		netWorkPath.setSmooth(true);
+		netWorkPath.setStrokeWidth(sampleLine.getStrokeWidth());
+		netWorkPath.setStroke(sampleLine.getStroke());
+		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
+	    //path.getElements().add(new LineTo(points[2], points[3]));
+	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
+	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
+	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
+	    lineGroup.getChildren().add(netWorkPath);
+	    modelPaths.add(netWorkPath); 
+	    notifySubscribers();
+	}
+	
+	public void updateNewPathFromNetwork(double[] points) {
+		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
+	}
+	
 
 }

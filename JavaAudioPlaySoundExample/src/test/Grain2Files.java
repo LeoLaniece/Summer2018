@@ -43,7 +43,7 @@ public class Grain2Files implements Runnable {
     AudioInputStream audioInputStream2;
     //Buffer util
     //this is the size of the grains!!!
-	int BUFFER_SIZE = 4;
+	int BUFFER_SIZE = 100;
     int nBytesRead = 0;
    //Handles section by section of an audio file
     byte[] sampledData = new byte[BUFFER_SIZE];         
@@ -491,9 +491,7 @@ public class Grain2Files implements Runnable {
 		}
 	      //controls for the sourceDataLine	 
 	      //FIGURED OUT HOW TO PAN THE SOUND!!!!
-	      FloatControl volCtrl;
-	      Mixer mixer = AudioSystem.getMixer(null);
-	      
+	      FloatControl volCtrl;	      
 	      volCtrl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);	    	      	      	      	      	            	      
 	      volCtrl.setValue(panValues.get(0));
 	      soundLine.start();
@@ -512,6 +510,7 @@ public class Grain2Files implements Runnable {
 	        	 for (int i = 0;i<loopCount;i++) {
 	        	 try {
 					nBytesRead = audioInputStreams[i].read(sampledData, 0, sampledData.length);
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1308,17 +1307,8 @@ public class Grain2Files implements Runnable {
 	public void mixStreamsFor2(AudioInputStream[] audioInputStreams, int loopCount,
 			AudioInputStream[] audioInputStreams2, int loopCount2, 
 			ArrayList<Coordinate> mixPercentages, double duration, ArrayList<Float> panValues) {
-		//always use the smallest loop count so that none of the audioStream arrays reaches its end
-		
-		double percentageIncrementInTime = duration/mixPercentages.size();		
-		
-		int newloopCount;
-		if (loopCount < loopCount2) {
-			newloopCount = loopCount;
-		}else {
-			newloopCount = loopCount2;
-		}
-		
+		//always use the smallest loop count so that none of the audioStream arrays reaches its end		
+				
 		//prepare the percentage increment
 	     long totalFramesRead = 0;
 	     for (int i =0;i<loopCount;i++) {
@@ -1326,14 +1316,12 @@ public class Grain2Files implements Runnable {
 	     }
 	     for (int i =0;i<loopCount2;i++) {
 	    	 totalFramesRead += audioInputStreams2[i].getFrameLength();
-	     }
-	     System.out.println("total frame length = "+totalFramesRead);
+	     }	     
 	     int predictedBytesRead = (int)totalFramesRead*4;
 	     if (mixPercentages.size() != 0) {
 	     int bytesPerPercent = predictedBytesRead/mixPercentages.size();
 	     int mixPercentagesIncrement =0;	     	     
-		//prepare the panning increment
-	     //
+		//prepare the panning increment	    
 	     if (panValues.size() == 0) {
 	    	 panValues.add((float) 0.0);
 	     }
@@ -1358,11 +1346,9 @@ public class Grain2Files implements Runnable {
 		}	      
 	      //set up the panner
 	      FloatControl volCtrl;
-	    //  Mixer mixer = AudioSystem.getMixer(null);	      
-	      volCtrl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);	    	      	      	      	      	            	      
-	      volCtrl.setValue(panValues.get(0));
-	      //volume control should work, need to play the mixing for the real amount of time.
 	      
+	      volCtrl = (FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN);	    	      	      	      	      	            	      
+	      volCtrl.setValue(panValues.get(0));      	      
 	      soundLine.start();
 		
 	     nBytesRead = 0;
@@ -1370,33 +1356,93 @@ public class Grain2Files implements Runnable {
 	     int loop2Count = 0;
 	     int bytesCount = 0;
 	     int panBytesCount =0;
+	     int bigloop=0;
 	     
 		//now mix the soundFiles
 		try {
 	      //once the audioStreams are empty stop		
-			while (nBytesRead >-1) {
-	        //number for loop is determined by strokeTime/durationInSeconds
-			//don't want to reach the end of the array
-			//what do you do with 2 to 1. 
-				
+			while (nBytesRead >-1) {			
 			loop1Count = 0;
 			loop2Count = 0;
-	       // for (int i = 0;i<loopCount;i++) {
-			while (loop1Count != loopCount && loop2Count != loopCount2) {
-				
+			
+			//read through all of sound 1
+			while (loop1Count < loopCount) {
+				BUFFER_SIZE = (int) (100*mixPercentages.get(mixPercentagesIncrement).x);	
+				sampledData = new byte[BUFFER_SIZE];
+				System.out.println("buffer size "+BUFFER_SIZE);
+				nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 
+		       	System.out.println("available in audio stream "+loop1Count+ " "+audioInputStreams[loop1Count].available());
+		       	System.out.println("nBytesRead "+nBytesRead);
+				if (nBytesRead >= 0) {		        	   
+		        	   bytesCount +=nBytesRead;
+		        	   panBytesCount += nBytesRead;
+		              // Writes audio data to the mixer via this source data line.  		        	   		        	   	        	   
+		              soundLine.write(sampledData, 0, nBytesRead);	
+			}
+	       		loop1Count++;
+			}
+			
+			//read through all of sound 2
+			while (loop2Count < loopCount2) {
+				BUFFER_SIZE = (int) (100- 100*mixPercentages.get(mixPercentagesIncrement).x);
+				sampledData = new byte[BUFFER_SIZE];
+				System.out.println("buffer size "+BUFFER_SIZE);
+				nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 	
+	 	       	System.out.println("available in audio stream2 "+loop2Count+ " "+audioInputStreams2[loop2Count].available());
+		       	System.out.println("nBytesRead "+nBytesRead);
+				if (nBytesRead >= 0) {		        	   
+		        	   bytesCount +=nBytesRead;
+		        	   panBytesCount += nBytesRead;
+		              // Writes audio data to the mixer via this source data line.  		        	   		        	   	        	   
+		              soundLine.write(sampledData, 0, nBytesRead);	
+			}
+	       		loop2Count++;
+			}
+			
+			/*while (loop1Count != loopCount && loop2Count != loopCount2) {				
 	       	if (gate == 0) {   
 	       		if (loop1Count < loopCount) {
-	       		nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 	       		 
+	       		nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 
+		       	System.out.println("available in audio stream "+loop1Count+ " "+audioInputStreams[loop1Count].available());
+		       	System.out.println("nBytesRead "+nBytesRead);
 	       		loop1Count++;
+	       		if (nBytesRead <=0 && loop1Count < loopCount) {
+		       		 nBytesRead = audioInputStreams[loop1Count].read(sampledData, 0, sampledData.length); 		       		 
+		       		loop1Count++;
+		       		 }	       			       			       		
 	       	}
 	       	} 	else {
 	       		 if (loop2Count < loopCount2) {
 	       		 nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 		       		 
+	 	       	System.out.println("available in audio stream2 "+loop2Count+ " "+audioInputStreams2[loop2Count].available());
+		       	System.out.println("nBytesRead "+nBytesRead);
 	       		loop2Count++;
+	       		if (loop2Count < loopCount2&& nBytesRead <=0) {
+	       		nBytesRead = audioInputStreams2[loop2Count].read(sampledData, 0, sampledData.length); 	       		 
+	       		loop2Count++;	       		
 	       		 }
-	       		 
-	       	 }        	           	           
-	           if (nBytesRead >= 0) {
+	       		 }       		 	       		 	       		 
+	       	 }*/
+	       	
+			//always check before starting eat round
+	      volCtrl.setValue(panValues.get(panValuesIncrement));
+	       	
+	      //adjust the panvaulueIncrement if necessary
+       	  if (panBytesCount > bytesPerPanValue) {
+       		 panBytesCount = 0;
+       		  panValuesIncrement ++;
+       	  }	              	
+       	  
+       	//increment the percentage if increment is reached
+     	  //use the frame size to know where we are in the recording.
+     	  //would be totalBytesRead or something
+     	  if (bytesCount > bytesPerPercent) {
+     		  bytesCount = 0;
+     		  mixPercentagesIncrement ++;
+     	  }
+	       	
+	         /*  if (nBytesRead >= 0) {
+	        	   
 	        	   bytesCount +=nBytesRead;
 	        	   panBytesCount += nBytesRead;
 	              // Writes audio data to the mixer via this source data line.  
@@ -1404,13 +1450,11 @@ public class Grain2Files implements Runnable {
 	        	   volCtrl.setValue(panValues.get(panValuesIncrement));	        	   
 	              soundLine.write(sampledData, 0, nBytesRead);	  
 	              
-	              //adjust the panvaulueIncrement if nessesary
+	              //adjust the panvaulueIncrement if necessary
 	         	  if (panBytesCount > bytesPerPanValue) {
 	         		 panBytesCount = 0;
 	         		  panValuesIncrement ++;
-	         	  }
-	              
-	              
+	         	  }	              	              
 	              //changes the file which is read into the inputStream
 	              totalCount += 1;               
 
@@ -1427,18 +1471,22 @@ public class Grain2Files implements Runnable {
 	         	  //use to adjust volume settings
 	         	  //turn volume to 0 when the velocity is 0
 	         	  //change your getMixPercentage function too
-	              if (file1Count/totalCount <= mixPercentages.get(mixPercentagesIncrement).x) {
+	             // if (file1Count/totalCount <= mixPercentages.get(mixPercentagesIncrement).x) {
+	         	  //always alternate between the files
+	         	  
+	         	  
+	         	  
+	         /*	  if (gate == 1) {
 	            	  gate = 0;
+	            	  //change the buffer size
+	            	  BUFFER_SIZE = (int) (100*mixPercentages.get(mixPercentagesIncrement).x);	            	  
 	              }else {
 	           	   gate = 1;
-	              }	   
-	              
-	              if (gate == 0) {
-	            	  file1Count += 1;            	   
-	              }	              
-	           }
+	           	BUFFER_SIZE = (int) (100- 100*mixPercentages.get(mixPercentagesIncrement).x);
+	              }	   	              	              
+	           }*/
 	           
-	        	 }
+	        	 
 	        }
 			}
 		catch (IOException ex) {
@@ -1447,7 +1495,8 @@ public class Grain2Files implements Runnable {
 			finally {
 	    	 soundLine.drain();    	     	 
 	         soundLine.close();
-	         System.out.println("total bytes Read = "+bytesCount);
+	         System.out.println("panValues increment = "+panValuesIncrement);
+	         System.out.println("total # of panvalues = "+panValues.size());
 	    	 }
 	     }
 		}
