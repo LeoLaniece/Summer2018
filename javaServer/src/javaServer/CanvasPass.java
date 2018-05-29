@@ -1,6 +1,8 @@
 package javaServer;
 
 import javafx.scene.Group;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.geometry.Pos;
 
 import javafx.scene.Scene;
@@ -10,11 +12,15 @@ import test.Draw2Model;
 import test.Draw2View;
 import test.Draw2miniMap;
 import test.InteractionModel;
+
+
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 
 public class CanvasPass extends Application{
 
@@ -49,12 +55,19 @@ public class CanvasPass extends Application{
         primaryStage.show();
 		
         //progress report
-        
+        //get the paths to draw in the correct color and width
+        //make the entire drawing application resizable
         
         
 		String[] args = new String[1];
 		args[0] = "HEELOWORLD";
-		GreetingServer.main(args, model);
+		GreetingServer.main(args, model, controller);
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(final WindowEvent me) {  
+            	
+            }
+		});
 	}
 	
 	

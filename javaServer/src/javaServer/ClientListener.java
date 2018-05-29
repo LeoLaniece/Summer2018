@@ -10,10 +10,12 @@ import test.*;
 public class ClientListener implements modelListener{
 
 	public Draw2Model model;
+	public Draw2Controller controller;
 	public DataOutputStream out;
 	
-	public ClientListener(Draw2Model m, DataOutputStream o) {
+	public ClientListener(Draw2Model m, Draw2Controller c, DataOutputStream o) {
 		model = m;
+		controller = c;
 		out =o;
 		model.addSubscriber(this);
 	}
@@ -39,8 +41,7 @@ public class ClientListener implements modelListener{
 		
 		
 		
-		ArrayList<Path> modelPaths = model.modelPaths;								
-		
+		if (controller.state ==controller.READY) {								
 		try {
 			//out.writeObject("Passed at least a string!!!");
 			out.writeUTF("Client model changed!");// + client.getLocalSocketAddress());
@@ -52,11 +53,17 @@ public class ClientListener implements modelListener{
 			}
 			
 			//sending the line over			
-			out.writeUTF(Double.toString(model.currentPathCoordinate.x));
-			out.writeUTF(Double.toString(model.currentPathCoordinate.y));
+			out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7)));
+			out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7)));			
+			//sending the colour over
+			out.writeUTF(model.sampleLine.getStroke().toString());
+			//send the strokeWidth over
+			out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
 		}
 		
 	}

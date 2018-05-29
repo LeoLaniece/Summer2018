@@ -46,7 +46,7 @@ public GreetingClient(String [] args) {
       SecondStage clientStage = new SecondStage();
 
       
-      ClientListener clientListener = new ClientListener(clientStage.m,out);
+      ClientListener clientListener = new ClientListener(clientStage.m, clientStage.c,out);
       
    } catch (UnknownHostException e) {
 	// TODO Auto-generated catch block

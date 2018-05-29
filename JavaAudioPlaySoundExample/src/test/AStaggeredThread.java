@@ -1,6 +1,15 @@
 package test;
 
 import java.io.File;
+import net.beadsproject.beads.core.AudioContext;
+import net.beadsproject.beads.core.UGen;
+import net.beadsproject.beads.data.Sample;
+import net.beadsproject.beads.ugens.Envelope;
+import net.beadsproject.beads.ugens.Gain;
+import net.beadsproject.beads.ugens.Glide;
+import net.beadsproject.beads.ugens.GranularSamplePlayer;
+import net.beadsproject.beads.ugens.Static;
+import net.beadsproject.beads.ugens.SamplePlayer;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioInputStream;
@@ -18,22 +27,77 @@ public class AStaggeredThread extends StaggeredSoundThread{
 	
 	@Override
 	 public void run() {
-			File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");					
-			double duration = strokeDuration/1000;						
+			//File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");					
+			//double duration = strokeDuration/1000;						
+			
+		    // instantiate the AudioContext
+		    AudioContext ac = new AudioContext();
+		    
+		    // load the source sample from a file
+		    Sample sourceSample = null;
+		    try
+		    {
+		      sourceSample = new Sample("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+		    }
+		    catch(Exception e)
+		    {
+		      /*
+		       * If the program exits with an error message,
+		       * then it most likely can't find the file
+		       * or can't open it. Make sure it is in the
+		       * root folder of your project in Eclipse.
+		       * Also make sure that it is a 16-bit,
+		       * 44.1kHz audio file. These can be created
+		       * using Audacity.
+		       */
+		      System.out.println(e.getMessage());
+		      e.printStackTrace();
+		      System.exit(1);
+		    }
+		    		    
+		    // create a Glide to control the gain - give it 5000ms ramp time
+		    Envelope gainGlide = new Envelope(ac, 0.0f);		    
+		    
+		    // instantiate a GranularSamplePlayer
+		    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);
+		    
+		    // tell gsp to loop the file
+		 //   gsp.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+		    
+		    // set the grain size to a fixed 10ms
+		    gsp.setGrainSize(new Static(ac, 100.0f));
+		    
+			  Gain g = new Gain(ac, 1, gainGlide);
+			  		gainGlide.addSegment(0f, 0f);
+				  	gainGlide.addSegment(1.0f, (float) (strokeDuration/4));
+				  	gainGlide.addSegment(1f, (float) (strokeDuration/2));
+				  	gainGlide.addSegment(0f, (float) ((strokeDuration/4)-20));
+			  
+
+			  g.addInput(gsp);
+		    
+		    // connect gsp to ac
+		    ac.out.addInput(g);
+		    
+		    // begin audio processing
+		    ac.start();									
+			
+			
 			//set up clip
-			try {
+			//try {
 				
 				//progress report
-				//looping count needed to be 0, for some reason
-				//try to understand why i am getting an error mesage in the fade out loop. 
+				//everything works, but the volume control does not act quickly enough to produce an envelope on the sound clip. 
 				
 				
+				
+				/*
 				AudioInputStream audioIn = AudioSystem.getAudioInputStream(f1); 
 				// Get a sound clip resource.
          Clip clip = AudioSystem.getClip();
          // Open audio clip and load samples from the audio input stream.
          clip.open(audioIn);
-         clip.loop(1);
+         clip.loop(0);
          
          
          //
@@ -50,18 +114,19 @@ public class AStaggeredThread extends StaggeredSoundThread{
         		 float framePos = clip.getFramePosition();
         		 float firstBitLength = clip.getFrameLength()/4;
         		 float volume = 1- framePos/firstBitLength;
-        		 volCtrl.setValue(-30f*volume);
-        		 System.out.println("fading in! "+-30f*volume);
+        		 volCtrl.setValue(-20f*volume);
+        		// System.out.println("fading in! "+-30f*volume);
         	 }        		  
         		     		 
         	         	 
         	 if (clip.getFramePosition() > ((clip.getFrameLength()/4) *2)) {
         		//fade out
-        		 float lastClipBit = clip.getFrameLength() - ((clip.getFrameLength()/4) *3);
+        		 float lastClipBit = clip.getFrameLength() - ((clip.getFrameLength()/4) *2);
         		 float clipLeft = clip.getFrameLength() -clip.getFramePosition();
         		 float volume = 1-clipLeft/lastClipBit;
-        		 volCtrl.setValue(-30f*volume);
-        		 System.out.println("fading out! "+-30f*volume);
+        		 //System.out.println("fading out! "+-30f*volume);
+        		 volCtrl.setValue(-20f*volume);
+        		 
         	 }        	 
          }
          System.out.println("sound done");
@@ -72,6 +137,6 @@ public class AStaggeredThread extends StaggeredSoundThread{
 			} catch (LineUnavailableException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			
 	   }}

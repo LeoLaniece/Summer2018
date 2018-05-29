@@ -43,10 +43,10 @@ public class Draw2Controller {
 	Coordinate[] points;
 	
 	//STATES
-	int READY = 0;
-	int PAN_READY = 1;
-	int PANNING =2;
-	int state = READY;
+	public int READY = 0;
+	public int PAN_READY = 1;
+	public int PANNING =2;
+	public int state = READY;
 	long time;
 	long velocityTime;
 	
@@ -153,12 +153,13 @@ public class Draw2Controller {
             	});	            		
             //	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
             	
-            //	model.playStaggeredSoundThreads(System.currentTimeMillis()-time);
+            	model.playStaggeredSoundThreads(System.currentTimeMillis()-time);
             	mouseCoordinates=new ArrayList<Coordinate>();
             	
             	distanceTraveled = 0;
             	
             	model.pathToNull();
+            	model.notifySubscribers();
             	}
                 state = READY;
                 
@@ -169,21 +170,13 @@ public class Draw2Controller {
       
 	view.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent me) {  
-            	
-            	updatePoints(me.getX(),me.getY());            	
-            	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
-            	velocityTime = System.currentTimeMillis();
+            public void handle(MouseEvent me) {              	
 
             	if (state == PAN_READY) {
             		dx =me.getX()-x;
             		dy = me.getY()-y;
             		x = me.getX();
-            		y = me.getY();
-            		
-            		           		
-            		
-        		            		
+            		y = me.getY();            		            		           		            		        		            		
             		//move the viewPort within its bounds
             		//but only if it is a drag allowed in the view port 
             		if (iModel.viewPortX +dx >=0 &&
@@ -204,6 +197,10 @@ public class Draw2Controller {
             	}
             	
             	if (state ==READY) {
+            		
+                	updatePoints(me.getX(),me.getY());            	
+                	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
+                	velocityTime = System.currentTimeMillis();
             	//set up relativized view coordinates
             	double viewx = me.getX()/view.width;
             	double viewy = me.getY()/view.height;            	

@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -36,13 +37,13 @@ public class Draw2Model {
     Button btnClear;
     Slider strokeSlider;
     Label labelStroke;
-    final Line sampleLine; 
+    public final Line sampleLine; 
     final Label colorLabel;
     public Grain2Files player;
     public ArrayList<Path> modelPaths;
     public ArrayList<Coordinate> modelPathsCoordinates;
     public ArrayList<Coordinate> modelPathsTranslateByCoordinates;
-    InteractionModel iModel;
+    public InteractionModel iModel;
     PlayPathSound p = null;
     drawPath dP = null;
     
@@ -90,7 +91,7 @@ public class Draw2Model {
 	public void startPath(double x, double y) {				
     path = new Path();   
     path.setSmooth(true);
-    path.setStrokeWidth(sampleLine.getStrokeWidth());
+    path.setStrokeWidth(sampleLine.getStrokeWidth());    
     path.setStroke(sampleLine.getStroke());
     path.getElements().add(new MoveTo(x, y));
     modelPathsCoordinates.add(new Coordinate(x,y));    
@@ -263,14 +264,18 @@ public class Draw2Model {
 		return panValues;
 	}
 	
-	public void createNewPathFromNetwork(double[] points) {
+	public void createNewPathFromNetwork(double[] points, String pathPaint) {
 		netWorkPath = new Path();   
 		netWorkPath.setSmooth(true);
-		netWorkPath.setStrokeWidth(sampleLine.getStrokeWidth());
-		netWorkPath.setStroke(sampleLine.getStroke());
+		netWorkPath.setStrokeWidth(points[2]);
+		netWorkPath.setStroke(Paint.valueOf(pathPaint));
+		
 		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
+	    
+	    //i think this is where the issue of translation is happening
+	    //we are drawing out of bounds from the minimap
 	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
 	    lineGroup.getChildren().add(netWorkPath);

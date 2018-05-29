@@ -16,6 +16,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 public class SecondStage extends Stage {
 	public Draw2Model m;
+	public Draw2Controller c;
 	
 	SecondStage(){
 		setTitle("Drawing Tool client");
@@ -38,13 +39,13 @@ public class SecondStage extends Stage {
         root.getChildren().add(radarView);
         radarView.setPickOnBounds(false);
         
-        Draw2Controller controller;
+       // Draw2Controller controller;
 		try {
-			controller = new Draw2Controller(view, model,radarView);
+			c = new Draw2Controller(view, model,radarView);
 
         model.addSubscriber(view);
         model.addSubscriber(radarView);
-        controller.setIModel(iModel);
+        c.setIModel(iModel);
 
         setScene(scene);
         show();

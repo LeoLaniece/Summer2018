@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.scene.shape.Path;
+import test.Draw2Controller;
 import test.Draw2Model;
 
 public class ServerListener extends ClientListener {
 
-	public ServerListener(Draw2Model m, DataOutputStream o) {
-		super(m, o);
+	public ServerListener(Draw2Model m, Draw2Controller c, DataOutputStream o) {
+		super(m, c, o);
 		// TODO Auto-generated constructor stub
 	}
 
