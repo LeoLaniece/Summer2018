@@ -55,8 +55,8 @@ public class CanvasPass extends Application{
         primaryStage.show();
 		
         //progress report
-        //get the paths to draw in the correct color and width
-        //make the entire drawing application resizable
+        //make sure both models know the viewPortOffsets and draw the paths appropriately
+        //normalize the coordinates
         
         
 		String[] args = new String[1];
@@ -65,7 +65,7 @@ public class CanvasPass extends Application{
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(final WindowEvent me) {  
-            	
+            	//close the port here
             }
 		});
 	}

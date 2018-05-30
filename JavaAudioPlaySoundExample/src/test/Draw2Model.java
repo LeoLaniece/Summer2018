@@ -29,7 +29,7 @@ public class Draw2Model {
 	Group lineGroup;
 	
     public Path path;  
-    public Path netWorkPath;
+    public Path netWorkPath = null;
     public Coordinate currentPathCoordinate;
     public static final Double DEFAULTSTROKE = 3.0;
     public static final Double MAXSTROKE = 30.0;
@@ -99,13 +99,14 @@ public class Draw2Model {
     iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
     iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
     lineGroup.getChildren().add(path);
-    modelPaths.add(path);          
+    modelPaths.add(path);   
+    System.out.println("created path");
 	}
 	
 
 	
 	public void strokePath(double x, double y) {
-		dP = new drawPath(modelPaths, x,y);
+		dP = new drawPath(path, x,y);
 		currentPathCoordinate = new Coordinate(x,y);
 		//path.getElements().add(new LineTo(x, y));
 		notifySubscribers();
@@ -139,12 +140,9 @@ public class Draw2Model {
 		t.start();
 	}
 	
-	public void playStaggeredSoundThreads(double duration) {
-		//play staggered sound threads for the given duration
-		//start a thread, 30 milliseconds later, start a second thread
-		//for each thread, play a clip until /2 of duration time is up
-		//wait the duration of the clip - 30ms between each clip play
-		StaggeredSoundThread t = new StaggeredSoundThread("Stagered sound", player, duration);
+	public void playStaggeredSoundThreads(double duration, ArrayList<Coordinate> velocities, ArrayList<Coordinate> mouseCoordinates) {
+		ArrayList<Float> panValues = calculatePanValues(mouseCoordinates);	
+		StaggeredSoundThread t = new StaggeredSoundThread("Stagered sound", player, duration, velocities, panValues);
 		t.start();
 	}
 	
@@ -273,9 +271,8 @@ public class Draw2Model {
 		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
-	    
-	    //i think this is where the issue of translation is happening
-	    //we are drawing out of bounds from the minimap
+
+	    //these are the values that are wrong?
 	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
 	    lineGroup.getChildren().add(netWorkPath);
@@ -284,8 +281,6 @@ public class Draw2Model {
 	}
 	
 	public void updateNewPathFromNetwork(double[] points) {
-		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
-	}
-	
-
+		netWorkPath.getElements().add(new LineTo(points[0], points[1]));		
+	}	
 }

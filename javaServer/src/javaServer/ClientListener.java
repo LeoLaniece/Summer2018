@@ -37,13 +37,10 @@ public class ClientListener implements modelListener{
     lineGroup.getChildren().add(path);
     modelPaths.add(path);          
 		 */
-		
-		
-		
-		
+
 		if (controller.state ==controller.READY) {								
 		try {
-			//out.writeObject("Passed at least a string!!!");
+			
 			out.writeUTF("Client model changed!");// + client.getLocalSocketAddress());
 			//is the path Alive
 			if (model.path == null) {

@@ -119,10 +119,7 @@ public class PlayPathSound extends Thread {
 		         while (nBytesRead >-1) {
 		        	 //if user is drawing a path, sleep
 		        	 //ask Carl about this? maybe he knows?
-					 if (drawPathThread.paths.get(drawPathThread.paths.size()-1) != null) {
-						// drawPathThread.start();
-						 //System.out.println("should appear lots");
-					 }
+
 					 
 					 
 		        	 for (int i = 0;i<loopCount;i++) {

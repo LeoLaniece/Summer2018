@@ -3,14 +3,18 @@ package test;
 import java.io.File;
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.UGen;
+import net.beadsproject.beads.data.Buffer;
 import net.beadsproject.beads.data.Sample;
 import net.beadsproject.beads.ugens.Envelope;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.Glide;
 import net.beadsproject.beads.ugens.GranularSamplePlayer;
+import net.beadsproject.beads.ugens.Panner;
 import net.beadsproject.beads.ugens.Static;
+import net.beadsproject.beads.ugens.WavePlayer;
 import net.beadsproject.beads.ugens.SamplePlayer;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -21,8 +25,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class AStaggeredThread extends StaggeredSoundThread{
 
-	AStaggeredThread(String name, Grain2Files p, double strokeDuration) {
-		super(name, p, strokeDuration);		
+	//be aware that strokeDuration is actually the clip duratio
+	public File f;
+	public float maxVolume;
+	float panValue;
+	
+	AStaggeredThread(String name, Grain2Files p, double cDuration, File f, float maxVol, ArrayList<Coordinate> velocities, float panValue) {
+		super(name, p, cDuration, velocities, null);	
+		this.f = f;
+		maxVolume = maxVol;
+		this.panValue =panValue;
 	}
 	
 	@Override
@@ -35,9 +47,11 @@ public class AStaggeredThread extends StaggeredSoundThread{
 		    
 		    // load the source sample from a file
 		    Sample sourceSample = null;
+		    
+		    
 		    try
 		    {
-		      sourceSample = new Sample("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+		      sourceSample = new Sample(f.toString());
 		    }
 		    catch(Exception e)
 		    {
@@ -54,12 +68,15 @@ public class AStaggeredThread extends StaggeredSoundThread{
 		      e.printStackTrace();
 		      System.exit(1);
 		    }
+		    
+		    Envelope panGlide = new Envelope(ac, panValue);
 		    		    
 		    // create a Glide to control the gain - give it 5000ms ramp time
-		    Envelope gainGlide = new Envelope(ac, 0.0f);		    
+		    Envelope gainGlide = new Envelope(ac, 1.0f);		    
 		    
 		    // instantiate a GranularSamplePlayer
 		    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);
+		    //WavePlayer gsp = new WavePlayer(ac, freqEnv, Buffer.SINE);
 		    
 		    // tell gsp to loop the file
 		 //   gsp.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
@@ -67,17 +84,23 @@ public class AStaggeredThread extends StaggeredSoundThread{
 		    // set the grain size to a fixed 10ms
 		    gsp.setGrainSize(new Static(ac, 100.0f));
 		    
+		    Panner p = new Panner(ac, panGlide);
+
+		    
+		    
 			  Gain g = new Gain(ac, 1, gainGlide);
-			  		gainGlide.addSegment(0f, 0f);
-				  	gainGlide.addSegment(1.0f, (float) (strokeDuration/4));
-				  	gainGlide.addSegment(1f, (float) (strokeDuration/2));
-				  	gainGlide.addSegment(0f, (float) ((strokeDuration/4)-20));
+			  		gainGlide.addSegment(0f, (float) (strokeDuration*0.1));
+				  	gainGlide.addSegment(maxVolume, (float) (strokeDuration*0.3));
+				  	gainGlide.addSegment(maxVolume, (float) (strokeDuration*0.3));
+				  	gainGlide.addSegment(0f, (float) ((strokeDuration*0.3)));
 			  
 
 			  g.addInput(gsp);
+			  p.addInput(gsp);
 		    
 		    // connect gsp to ac
-		    ac.out.addInput(g);
+		    //ac.out.addInput(g);
+		    ac.out.addInput(p);
 		    
 		    // begin audio processing
 		    ac.start();									

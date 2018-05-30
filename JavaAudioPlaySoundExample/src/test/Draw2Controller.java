@@ -45,8 +45,8 @@ public class Draw2Controller {
 	//STATES
 	public int READY = 0;
 	public int PAN_READY = 1;
-	public int PANNING =2;
-	public int state = READY;
+	public int NOTREADY =-1;
+	public int state = NOTREADY;
 	long time;
 	long velocityTime;
 	
@@ -66,6 +66,8 @@ public class Draw2Controller {
 	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
         @Override
         public void handle(MouseEvent me) {
+        	state = READY;
+        	model.pathToNull();
         //	System.out.println("x = "+me.getX());
         //	System.out.println("y = "+me.getY());
         	
@@ -147,13 +149,13 @@ public class Draw2Controller {
             		updatePoints(me.getX(),me.getY());            	
                 	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
             	            	velocities.forEach(a ->{            	            		
-            	            		if (a.y > 0.044) {
+            	            		if (a.y > 0.044) {            	            		
             	            			a.x = 0;
-            	            		}            		            		
+            	            		}
             	});	            		
             //	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
             	
-            	model.playStaggeredSoundThreads(System.currentTimeMillis()-time);
+            	model.playStaggeredSoundThreads(System.currentTimeMillis()-time, velocities, mouseCoordinates);
             	mouseCoordinates=new ArrayList<Coordinate>();
             	
             	distanceTraveled = 0;
@@ -161,7 +163,7 @@ public class Draw2Controller {
             	model.pathToNull();
             	model.notifySubscribers();
             	}
-                state = READY;
+                state = NOTREADY;
                 
             }
         });

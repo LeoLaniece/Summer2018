@@ -58,12 +58,17 @@ public class SoundThread extends Thread{
 			//this leads to odd behavior, keep investigating.
 			//one of the loops reaches 0 well before the others.
 
-			player.mixStreamsFor2(audioInputStreams, loopCount, audioInputStreams2, loopCount2,
+			//player.mixStreamsFor2(audioInputStreams, loopCount, audioInputStreams2, loopCount2,
 				//	audioInputStreams3, loopCount3, 
-					mixPercentages, duration, panValues);
+				//	mixPercentages, duration, panValues);
 			
 			//test for panning the sound
-			//player.playFor(f3, duration, panValues);
+			player.playFor(f3, duration, panValues);
+			
+			
+			//experiemtns for toneDrawing
+			//ToneDrawing t = new ToneDrawing(strokeDuration);
+			
 	   }
 	   
 	   public void start () {

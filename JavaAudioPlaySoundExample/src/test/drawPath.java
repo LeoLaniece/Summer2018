@@ -12,12 +12,12 @@ import javafx.scene.shape.LineTo;
  *
  */
 public class drawPath extends Thread{
-	ArrayList<Path> paths;
+	Path path;
 	double x;
 	double y;
 	
-	public drawPath(ArrayList<Path> modelPaths, double X, double Y) {
-		paths = modelPaths;
+	public drawPath(Path paths, double X, double Y) {
+		path = paths;
 		x = X;
 		y = Y;
 		run();
@@ -25,7 +25,7 @@ public class drawPath extends Thread{
 
 	@Override
 	public void run() {
-		paths.get(paths.size()-1).getElements().add(new LineTo(x,y));		
+		path.getElements().add(new LineTo(x,y));		
 	}
 
 }

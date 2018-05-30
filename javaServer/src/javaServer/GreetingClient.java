@@ -44,9 +44,12 @@ public GreetingClient(String [] args) {
     //  ObjectOutputStream objectOut = new ObjectOutputStream(outToServer);
       //start second stage
       SecondStage clientStage = new SecondStage();
-
+      model = clientStage.m;
       
+
+     // DataInputStream objectIn = new DataInputStream(client.getInputStream());
       ClientListener clientListener = new ClientListener(clientStage.m, clientStage.c,out);
+      
       
    } catch (UnknownHostException e) {
 	// TODO Auto-generated catch block
@@ -60,18 +63,39 @@ public GreetingClient(String [] args) {
     	  DataInputStream objectIn;    	  
 		try {
 			objectIn = new DataInputStream(client.getInputStream());
-			      //wait for a message, print the message
-      String msg = "Greeting client";
-      int temp = 0;
-      while (msg!="exit") {
-    	  //receive path info from server, use the info to build a path and add the new path to your client model.
-    	  //need,     	  
-    	
-     	 msg = (String) objectIn.readUTF();
-     	temp = Integer.parseInt(objectIn.readUTF());
-     	  System.out.println("client got message: "+msg+temp);
-     	 
-     	 } 									
+			      //wait for a message, print the message  	      	
+          boolean isNetPathAlive = false;
+          String msg = "greetingServer";
+          String pathPaint = "";
+          double[] line = new double[3];
+          while (msg!="exit") {
+        	  
+         	 
+         	 msg = (String) objectIn.readUTF();
+         	 isNetPathAlive = Boolean.parseBoolean(objectIn.readUTF());
+         	 
+         	 line[0] = Double.parseDouble((objectIn.readUTF()));
+         	 line[1] = Double.parseDouble(objectIn.readUTF());        	 
+         	 pathPaint = objectIn.readUTF();
+         	 line[2] = Double.parseDouble(objectIn.readUTF());
+         	// System.out.println("Client got msg :"+ msg);
+         	 //figure out why this is null?
+         	 if (model.netWorkPath == null) {
+         		 model.createNewPathFromNetwork(line,pathPaint);
+         	 }
+         	 if (model.netWorkPath!=null) {
+         		 model.updateNewPathFromNetwork(line);
+         	 }        	 
+         	 if (isNetPathAlive == false) {
+         		 model.netWorkPath = null;
+         	 }
+         	 
+         	 
+         	 model.notifySubscribers();
+         	
+     	 }
+          
+          client.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

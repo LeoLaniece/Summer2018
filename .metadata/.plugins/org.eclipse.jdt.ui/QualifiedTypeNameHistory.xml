@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="net.beadsproject.beads.data.Sample"/>
-<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.GranularSamplePlayer"/>
-<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Static"/>
 <fullyQualifiedTypeName name="net.beadsproject.beads.ugens.WavePlayer"/>
 <fullyQualifiedTypeName name="net.beadsproject.beads.data.Buffer"/>
 <fullyQualifiedTypeName name="java.io.InputStream"/>
@@ -12,7 +9,6 @@
 <fullyQualifiedTypeName name="java.awt.event.ActionListener"/>
 <fullyQualifiedTypeName name="java.awt.FlowLayout"/>
 <fullyQualifiedTypeName name="javax.management.timer.Timer"/>
-<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
 <fullyQualifiedTypeName name="javafx.event.ActionEvent"/>
 <fullyQualifiedTypeName name="javafx.event.EventHandler"/>
 <fullyQualifiedTypeName name="java.awt.event.KeyListener"/>
@@ -33,4 +29,15 @@
 <fullyQualifiedTypeName name="java.io.ObjectOutputStream"/>
 <fullyQualifiedTypeName name="java.io.DataOutputStream"/>
 <fullyQualifiedTypeName name="test.modelListener"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.data.Sample"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.core.AudioContext"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.GranularSamplePlayer"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Static"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.core.UGen"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Glide"/>
+<fullyQualifiedTypeName name="test.Draw2Controller"/>
+<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
+<fullyQualifiedTypeName name="java.awt.event.WindowEvent"/>
+<fullyQualifiedTypeName name="javafx.stage.WindowEvent"/>
+<fullyQualifiedTypeName name="javafx.scene.paint.Paint"/>
 </qualifiedTypeNameHistroy>

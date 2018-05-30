@@ -18,16 +18,32 @@ public class ServerListener extends ClientListener {
 	@Override
 	public void modelChanged() {
 		//send the serialized modelPathsArray to the server
-		ArrayList<Path> modelPaths = model.modelPaths;
-		try {
-			//out.writeObject("Passed at least a string!!!");
-			out.writeUTF("Server model changed!");
-			out.writeUTF(Integer.toString(30));
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (controller.state ==controller.READY) {								
+			try {
+				//out.writeObject("Passed at least a string!!!");
+				out.writeUTF("Server model changed!");// + client.getLocalSocketAddress());
+				//is the path Alive
+				if (model.path == null) {
+					out.writeUTF("false");
+				}else {
+					out.writeUTF("true");
+				}
+				
+				//sending the line over			
+				out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7)));
+				out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7)));	
+				
+				System.out.println("x = "+model.currentPathCoordinate.x+(model.iModel.viewPortX*7)+" y = "+model.currentPathCoordinate.y+(model.iModel.viewPortY*7));
+				//sending the colour over
+				out.writeUTF(model.sampleLine.getStroke().toString());
+				//send the strokeWidth over
+				out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 	}
+}
 }

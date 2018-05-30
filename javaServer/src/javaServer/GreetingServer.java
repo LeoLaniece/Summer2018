@@ -80,9 +80,9 @@ public void run() {
         		 model.netWorkPath = null;
         	 }
         	 
-        	 
+        	// System.out.println("Server got msg :"+ msg);
         	 model.notifySubscribers();
-        	System.out.println("Server got msg :"+ msg);
+        	
         	 }                                  
 		         
          server.close();
