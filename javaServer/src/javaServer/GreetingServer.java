@@ -72,11 +72,14 @@ public void run() {
         	 
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
-        		// line[0] = line[0]+(model.iModel.viewPortX*7);
-        		// line[1] = line[1]+(model.iModel.viewPortY*7);
+        		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
+        		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
         		 model.createNewPathFromNetwork(line,pathPaint);
-        	 }
+        	 }else
         	 if (model.netWorkPath!=null) {
+        		 //calculate coordinate offsets
+        		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
+        		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
         		 model.updateNewPathFromNetwork(line);
         	 }        	 
         	 if (isNetPathAlive == false) {

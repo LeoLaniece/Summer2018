@@ -101,7 +101,7 @@ public class StaggeredSoundThread extends Thread{
 				
 				//percentage of mixing really doesn't do much
 				//but ill leave it here for now.
-	              if (file1Count/totalCount <= 1) {//mixPercentages.get(mixPercentagesIncrement)) {
+	              if (file1Count/totalCount <= 0.2) {//mixPercentages.get(mixPercentagesIncrement)) {
 	            	  gate = 0;
 	              }else {
 	           	   gate = 1;

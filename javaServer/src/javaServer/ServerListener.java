@@ -30,10 +30,10 @@ public class ServerListener extends ClientListener {
 				}
 				
 				//sending the line over			
-				out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7)));
-				out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7)));	
+				out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
+				out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));	
 				
-				System.out.println("x = "+model.currentPathCoordinate.x+(model.iModel.viewPortX*7)+" y = "+model.currentPathCoordinate.y+(model.iModel.viewPortY*7));
+				//System.out.println("x = "+model.currentPathCoordinate.x+(model.iModel.viewPortX*7)+" y = "+model.currentPathCoordinate.y+(model.iModel.viewPortY*7));
 				
 				//sending the colour over
 				out.writeUTF(model.sampleLine.getStroke().toString());

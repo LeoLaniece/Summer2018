@@ -61,7 +61,7 @@ public class Draw2Controller {
 		timeOfChange = new ArrayList<>();
 		points = new Coordinate[4];
 		 mouseCoordinates=new ArrayList<Coordinate>();
-		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
+		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= model.player.fileLength(f1)*1000;
 		//setPoints();
@@ -277,9 +277,9 @@ public class Draw2Controller {
             		}
             		
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
-            			//model.playPathInteractively(velocities.get(velocities.size()-1).x, mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
-            			//		clipDuration);
-            			//time = System.currentTimeMillis();
+            			model.playPathInteractively(velocities.get(velocities.size()-1).x, mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
+            					clipDuration);
+            			time = System.currentTimeMillis();
             			
             		}
             		

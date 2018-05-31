@@ -36,10 +36,10 @@ public class AnInteractiveStaggeredThread extends Thread{
 		
 		@Override
 		 public void run() {
-				File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");					
+				File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");					
 				float maxVolume = (float) (1 *(velocity));	
 				if (pathAngle <90) {
-					maxVolume = 1;
+					maxVolume = 10;
 				}
 				System.out.println("velocity "+velocity);
 				System.out.println("pathAngle "+pathAngle);
@@ -89,12 +89,12 @@ public class AnInteractiveStaggeredThread extends Thread{
 					  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));
 				  
 
-				  g.addInput(gsp);
+				  g.addInput(p);
 				  p.addInput(gsp);
 			    
 			    // connect gsp to ac
-			    //ac.out.addInput(g);
-			    ac.out.addInput(p);
+			    ac.out.addInput(g);
+			    //ac.out.addInput(p);
 			    
 			    // begin audio processing
 			    ac.start();									
