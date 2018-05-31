@@ -46,6 +46,11 @@ public class Draw2Model {
     public InteractionModel iModel;
     PlayPathSound p = null;
     drawPath dP = null;
+    Coordinate[] pathAngleCalculationCoordinates = new Coordinate[3];
+    int pathAngleCalculationCoordinatesUpdateCount = 2;
+    public double currentPathAngle;
+    public 	Draw2View view;
+    public Draw2miniMap radarView;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -88,29 +93,99 @@ public class Draw2Model {
     	modelListeners.forEach(a->a.modelChanged());
     }
 	//this bit should call a method in the model, just pass in the coordinates.
-	public void startPath(double x, double y) {				
+	public void startPath(double x1, double y1) {		
+		//relativize the coordinates for strorage
+		double x = x1/radarView.width;
+		double y = y1/radarView.height;	
+		System.out.println("radarView width "+radarView.width);
+		System.out.println("radarView h "+radarView.height);
     path = new Path();   
     path.setSmooth(true);
     path.setStrokeWidth(sampleLine.getStrokeWidth());    
-    path.setStroke(sampleLine.getStroke());
+    path.setStroke(sampleLine.getStroke());    
     path.getElements().add(new MoveTo(x, y));
     modelPathsCoordinates.add(new Coordinate(x,y));    
     currentPathCoordinate = new Coordinate(x,y);
     iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
     iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
+    initializePathAngleCalculationCoordinates(x,y);
+    pathAngleCalculationCoordinatesUpdateCount =1;
     lineGroup.getChildren().add(path);
     modelPaths.add(path);   
     System.out.println("created path");
 	}
 	
+	/**
+	 * initializes the pathAngleCalculationCoordinates
+	 * @param x
+	 * @param y
+	 */
+	public void initializePathAngleCalculationCoordinates(double x, double y) {
+		pathAngleCalculationCoordinates[0] = new Coordinate(x,y);
+		pathAngleCalculationCoordinates[1] = new Coordinate(0,0);
+		pathAngleCalculationCoordinates[2] = new Coordinate(0,0);
+	}
+	
+	/**
+	 * updates the pathAngleCalculationCoordinates
+	 * @param x
+	 * @param y
+	 */
+	public void updatePathAngleCalculationCoordinates(double x, double y) {
+		pathAngleCalculationCoordinates[2].x = pathAngleCalculationCoordinates[1].x;
+		pathAngleCalculationCoordinates[2].y = pathAngleCalculationCoordinates[1].y;
+		pathAngleCalculationCoordinates[1].x = pathAngleCalculationCoordinates[0].x;
+		pathAngleCalculationCoordinates[1].y = pathAngleCalculationCoordinates[0].y;
+		pathAngleCalculationCoordinates[0] = new Coordinate(x,y);
+		pathAngleCalculationCoordinatesUpdateCount++;
+	}
 
 	
 	public void strokePath(double x, double y) {
+		//relativize the coordinates for strorage
+		x = x/radarView.width;
+		y = y/radarView.height;	
 		dP = new drawPath(path, x,y);
 		currentPathCoordinate = new Coordinate(x,y);
-		//path.getElements().add(new LineTo(x, y));
+		updatePathAngleCalculationCoordinates(x,y);
+		//record 3 previous coordinates of the current path elements
+		//need to initialize the array[3], in the startpath function
+		//need to update the array every time this function is called
+		//if there are at least 3 'new' coordinates, 		
+		if (pathAngleCalculationCoordinatesUpdateCount>2) {
+			currentPathAngle =calculatePathCornerStatus();
+		}				
 		notifySubscribers();
 	}
+	
+	/**
+	 * calculates if the current path has cut a corner based on its 3 previous coordinates
+	 * 
+	 */
+	public double calculatePathCornerStatus() {
+		//calculate the sides of the triangle
+		//calculate the angles of the triangle
+		//find angle at point p2.
+		//double result = atan2(P3.y - P1.y, P3.x - P1.x) -
+        //        atan2(P2.y - P1.y, P2.x - P1.x);
+		//double result = Math.atan2(pathAngleCalculationCoordinates[2].y -pathAngleCalculationCoordinates[0].y,pathAngleCalculationCoordinates[2].x -pathAngleCalculationCoordinates[0].x) -
+		//		Math.atan2(pathAngleCalculationCoordinates[1].y -pathAngleCalculationCoordinates[0].y,pathAngleCalculationCoordinates[1].x -pathAngleCalculationCoordinates[0].x);
+		double da = calculateDistance(pathAngleCalculationCoordinates[0].x, pathAngleCalculationCoordinates[0].y, pathAngleCalculationCoordinates[1].x, pathAngleCalculationCoordinates[1].y);
+		double db = calculateDistance(pathAngleCalculationCoordinates[1].x, pathAngleCalculationCoordinates[1].y, pathAngleCalculationCoordinates[2].x, pathAngleCalculationCoordinates[2].y);
+		double dc = calculateDistance(pathAngleCalculationCoordinates[2].x, pathAngleCalculationCoordinates[2].y, pathAngleCalculationCoordinates[0].x, pathAngleCalculationCoordinates[0].y);
+		double result = Math.acos((Math.pow(da, 2)+Math.pow(db, 2)-Math.pow(dc, 2))/(2*da*db));
+		//System.out.println("current path angle = "+Math.toDegrees(result));
+		//return a value, use it in sound generator.
+		return Math.toDegrees(result);
+	}
+	
+	public double calculateDistance(double x, double y,double x2, double y2) {
+		double result = Math.sqrt((Math.pow(x2-x, 2)+Math.pow(y2-y, 2)));
+		return result;
+		
+	}
+	
+	
 	public void pathToNull() {
 		dP = null;
 		path = null;
@@ -140,9 +215,27 @@ public class Draw2Model {
 		t.start();
 	}
 	
+	/**
+	 * play 
+	 * @param duration
+	 * @param velocities
+	 * @param mouseCoordinates
+	 */
+	
 	public void playStaggeredSoundThreads(double duration, ArrayList<Coordinate> velocities, ArrayList<Coordinate> mouseCoordinates) {
 		ArrayList<Float> panValues = calculatePanValues(mouseCoordinates);	
 		StaggeredSoundThread t = new StaggeredSoundThread("Stagered sound", player, duration, velocities, panValues);
+		t.start();
+	}
+	
+	/**
+	 * play the sound of the path as it is being drawn
+	 * 
+	 */
+	public void playPathInteractively(double velocity, Coordinate mouseCoordinate, double pathAngle, double clipDuration) {
+		float panValue = calculatePanValue(mouseCoordinate);	
+		
+		AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
 		t.start();
 	}
 	
@@ -232,6 +325,20 @@ public class Draw2Model {
 	}
 	
 	/**
+	 * will calculate a single pan value based on the given coordinate
+	 */
+	public float calculatePanValue(Coordinate mouse) {
+		float panValue = 0;
+		if (mouse.x <400) {
+			panValue= (float) ((-1) + mouse.x/400f);
+		}
+		if (mouse.x >=400 && mouse.x < 800) {
+			panValue =(float)(mouse.x -400)/400;
+		}
+		return panValue;
+	}
+	
+	/**
 	 * calculate masterVolume values
 	 */
 	public ArrayList<Float> calculateVolumeValues(ArrayList<Coordinate> velocities){
@@ -267,7 +374,6 @@ public class Draw2Model {
 		netWorkPath.setSmooth(true);
 		netWorkPath.setStrokeWidth(points[2]);
 		netWorkPath.setStroke(Paint.valueOf(pathPaint));
-		
 		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
@@ -282,5 +388,12 @@ public class Draw2Model {
 	
 	public void updateNewPathFromNetwork(double[] points) {
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));		
-	}	
+	}
+	
+	public void setModelView(Draw2View v) {
+		view = v;
+	}
+	public void setModelRadarView(Draw2miniMap v) {
+		radarView = v;
+	}
 }

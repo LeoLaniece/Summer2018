@@ -17,12 +17,15 @@ public class Draw3 extends Application{
 	    public void start(Stage primaryStage) throws InterruptedException {
 	        primaryStage.setTitle("Drawing Tool");
 	        //a type of layout	        
+	        int SceneWidth = 800;
+	        int SceneHeight = 600;
 	        StackPane root = new StackPane();	        
-	        Scene scene = new Scene(root, 800,500);
+	        Scene scene = new Scene(root, SceneWidth,SceneHeight);
 	        Draw2Model model = new Draw2Model();
-	        Draw2View view = new Draw2View(800,300,model);
+	        Draw2View view = new Draw2View(SceneWidth,SceneHeight-200,model);
 	        //make the radarView a scale of the size of the logical size of the view
-	        Draw2miniMap radarView = new Draw2miniMap(1000/7,1000/7,model);
+	        
+	        Draw2miniMap radarView = new Draw2miniMap(1000,1000,model);
 	        InteractionModel iModel = new InteractionModel(model,view);
 	        model.setIModel(iModel);
 	        view.setIModel(iModel);
@@ -39,6 +42,9 @@ public class Draw3 extends Application{
 	        model.addSubscriber(view);
 	        model.addSubscriber(radarView);
 	        controller.setIModel(iModel);
+	        model.setModelView(view);
+	        model.setModelRadarView(radarView);
+	        view.setModelRadarView(radarView);
 
 	        primaryStage.setScene(scene);
 	        primaryStage.show();

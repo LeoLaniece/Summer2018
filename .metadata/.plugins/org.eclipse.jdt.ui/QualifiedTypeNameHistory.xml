@@ -40,4 +40,5 @@
 <fullyQualifiedTypeName name="java.awt.event.WindowEvent"/>
 <fullyQualifiedTypeName name="javafx.stage.WindowEvent"/>
 <fullyQualifiedTypeName name="javafx.scene.paint.Paint"/>
+<fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Panner"/>
 </qualifiedTypeNameHistroy>

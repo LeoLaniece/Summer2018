@@ -71,6 +71,9 @@ public void run() {
         	 
         	 
         	 if (model.netWorkPath == null) {
+        		 //calculate coordinate offsets
+        		// line[0] = line[0]+(model.iModel.viewPortX*7);
+        		// line[1] = line[1]+(model.iModel.viewPortY*7);
         		 model.createNewPathFromNetwork(line,pathPaint);
         	 }
         	 if (model.netWorkPath!=null) {

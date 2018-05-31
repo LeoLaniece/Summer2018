@@ -37,9 +37,9 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	int scale;
 	
 	
-	public Draw2miniMap(double h, double w, Draw2Model m) {
+	public Draw2miniMap(double w, double h, Draw2Model m) {
 		
-		super(h,w,m);
+		super(w,h,m);
 		
 		setCanvas(3,4);
 		
@@ -48,7 +48,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	}
 	public void drawViewPort() {
 		gc.setStroke(Color.CADETBLUE);
-		gc.strokeRect(iModel.viewPortX, iModel.viewPortY, iModel.viewPortHeight, iModel.viewPortWidth);
+		gc.strokeRect(iModel.viewPortX, iModel.viewPortY, iModel.viewPortWidth,iModel.viewPortHeight);
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	@Override
 	public void setCanvas(double h, double w) {
 		scale =7;
-		c = new Canvas(1000/scale,1000/scale);
+		c = new Canvas(width/scale,height/scale);
 		gc = c.getGraphicsContext2D();
 		this.getChildren().add(c);
 		
@@ -86,10 +86,12 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		//draw the paths within the off set bounds of the viewPort
 		//when a path is created, record the location of viewPort X and Y
 		//for that path, always draw it with the X and Y offset.
+		double viewHeight = model.view.height;
+		double viewWidth = model.view.width;
 				for (int i=0; i<model.modelPaths.size();i++) {	
 					gc.beginPath();
-					gc.moveTo(model.modelPathsCoordinates.get(i).x/scale + iModel.viewPortXYLocation.get(i).x,
-							model.modelPathsCoordinates.get(i).y/scale+ iModel.viewPortXYLocation.get(i).y );											
+					gc.moveTo(model.modelPathsCoordinates.get(i).x*width/scale + iModel.viewPortXYLocation.get(i).x,
+							model.modelPathsCoordinates.get(i).y*height/scale+ iModel.viewPortXYLocation.get(i).y );											
 					gc.setStroke(model.modelPaths.get(i).getStroke());
 					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth()/scale);
 					if (model.modelPaths.get(i).getElements().size()>0) {
@@ -99,7 +101,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 					forEach(a -> {				
 						if (a instanceof LineTo) {
 						//your code
-						gc.lineTo(((LineTo) a).getX()/scale +viewPortOffSetX , ((LineTo) a).getY()/scale +viewPortOffSetY);	
+						gc.lineTo(((LineTo) a).getX()*width/scale +viewPortOffSetX , ((LineTo) a).getY()*height/scale +viewPortOffSetY);	
 						
 						}			
 					});

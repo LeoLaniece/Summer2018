@@ -7,6 +7,7 @@ package test;
 
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import javafx.scene.input.MouseEvent;
@@ -49,6 +50,8 @@ public class Draw2Controller {
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
+	double clipStaggerIncrement;
+	double clipDuration;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
@@ -58,6 +61,9 @@ public class Draw2Controller {
 		timeOfChange = new ArrayList<>();
 		points = new Coordinate[4];
 		 mouseCoordinates=new ArrayList<Coordinate>();
+		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
+		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
+		 clipDuration= model.player.fileLength(f1)*1000;
 		//setPoints();
 		
 	//when shift key is down, pan the canvas to new area's
@@ -155,7 +161,7 @@ public class Draw2Controller {
             	});	            		
             //	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
             	
-            	model.playStaggeredSoundThreads(System.currentTimeMillis()-time, velocities, mouseCoordinates);
+            //	model.playStaggeredSoundThreads(System.currentTimeMillis()-time, velocities, mouseCoordinates);
             	mouseCoordinates=new ArrayList<Coordinate>();
             	
             	distanceTraveled = 0;
@@ -183,8 +189,8 @@ public class Draw2Controller {
             		//but only if it is a drag allowed in the view port 
             		if (iModel.viewPortX +dx >=0 &&
             				iModel.viewPortY +dy >=0&&
-            				(iModel.viewPortX +iModel.viewPortHeight + dx) <=1000/7 &&
-            				(iModel.viewPortY +iModel.viewPortWidth +dy) <=1000/7) {
+            				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7 &&
+            				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {
             		iModel.viewPortX += dx/7;
             		iModel.viewPortY += dy/7;
             		//drag the paths around to make it seem like we are panning the background
@@ -201,7 +207,7 @@ public class Draw2Controller {
             	if (state ==READY) {
             		
                 	updatePoints(me.getX(),me.getY());            	
-                	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
+                	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));                	
                 	velocityTime = System.currentTimeMillis();
             	//set up relativized view coordinates
             	double viewx = me.getX()/view.width;
@@ -263,7 +269,20 @@ public class Draw2Controller {
                 	
                 	//create new path in the controller
                 	
-                	model.strokePath(me.getX(), me.getY());
+                	model.strokePath(me.getX(), me.getY());                	
+            		if (model.pathAngleCalculationCoordinatesUpdateCount>2) {
+            			if (model.currentPathAngle < 90) {
+            				velocities.get(velocities.size()-1).x = 10;
+            			}
+            		}
+            		
+            		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
+            			//model.playPathInteractively(velocities.get(velocities.size()-1).x, mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
+            			//		clipDuration);
+            			//time = System.currentTimeMillis();
+            			
+            		}
+            		
                 	//view.strokePath(viewx, viewy); 
                 	//view.startPath(viewx, viewy);
                 
@@ -349,4 +368,12 @@ public class Draw2Controller {
 	public void setIModel(InteractionModel iM) {
 		iModel = iM;
 	}
+	   /**
+	    * will calculate the stagger increment for a submitted file 
+	    */
+	   public double calculateStaggerIncrement(File f) {
+		   double clipDuration = model.player.fileLength(f)*1000;
+			double clipOverlapDuration = 0.8;//0.865;
+			return (clipDuration)-(clipDuration*clipOverlapDuration);			
+	   }
 }

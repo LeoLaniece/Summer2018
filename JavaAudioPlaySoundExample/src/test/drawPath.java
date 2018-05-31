@@ -27,5 +27,7 @@ public class drawPath extends Thread{
 	public void run() {
 		path.getElements().add(new LineTo(x,y));		
 	}
+	
+	
 
 }

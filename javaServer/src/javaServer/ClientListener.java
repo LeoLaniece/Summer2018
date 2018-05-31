@@ -49,9 +49,18 @@ public class ClientListener implements modelListener{
 				out.writeUTF("true");
 			}
 			
-			//sending the line over			
-			out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7)));
-			out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7)));			
+			//sending the line over		
+			//keep trying to figure out why this is not working
+			//check the model current pathCoordinate?
+			//check your ratio's
+			out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX/model.radarView.width)));
+			out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY/model.radarView.height)));	
+			System.out.println("viewPortX "+model.iModel.viewPortX);
+			System.out.println("viewPortY "+model.iModel.viewPortY);
+			System.out.println("viewPortX "+(model.iModel.viewPortX/model.radarView.width));
+			System.out.println("viewPortY "+(model.iModel.viewPortY/model.radarView.height));
+
+
 			//sending the colour over
 			out.writeUTF(model.sampleLine.getStroke().toString());
 			//send the strokeWidth over

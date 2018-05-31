@@ -44,16 +44,18 @@ public class Draw2View extends Pane implements modelListener{
 	GraphicsContext gc;
 	double pathStartx=0;
 	double pathStarty=0;
-	double height;
-	double width;
+	public double height;
+	public double width;
 	double logicalHeight;
 	double logicalWidth;
 	public Group lineGroup;
 	InteractionModel iModel;
+	public Draw2miniMap radarView;
 	
 	//put in a logical size?
-	public Draw2View(double h, double w, Draw2Model m) {
+	public Draw2View(double w, double h, Draw2Model m) {
 		model = m;
+		//canvas height and width
 		height = h;
 		width = w;
 		logicalHeight = 1000;
@@ -62,7 +64,7 @@ public class Draw2View extends Pane implements modelListener{
 		
 		topPane = new Pane();
 		
-		setCanvas(1000,1000);
+		setCanvas(logicalHeight,logicalWidth);
 		setLineGroup();     
 		mainViewOnly();
 	}
@@ -75,10 +77,10 @@ public class Draw2View extends Pane implements modelListener{
 		
 		root.getChildren().add(underCanvas);
 		VBox UCLeft = new VBox();
-		UCLeft.setPrefWidth(width);
+		UCLeft.setPrefWidth(height);
 		UCLeft.setAlignment(Pos.BOTTOM_LEFT);
 		VBox UCRight = new VBox();
-		UCRight.setPrefWidth(width);
+		UCRight.setPrefWidth(height);
 		UCRight.setAlignment(Pos.BOTTOM_RIGHT);
 		underCanvas.getChildren().add(UCLeft);
 		underCanvas.getChildren().add(UCRight);
@@ -90,18 +92,18 @@ public class Draw2View extends Pane implements modelListener{
 		StackPane group = new StackPane();
 		group.getChildren().add(lineGroup);
 		group.setAlignment(Pos.TOP_LEFT);
-		group.setPrefHeight(300);
-		group.setPrefWidth(800);
+		group.setPrefHeight(height);
+		group.setPrefWidth(width);
 		topPane.getChildren().add(group);
 		
 	}
 
 	
 	public void setCanvas(double h, double w) {
-		c = new Canvas(800,300);
+		c = new Canvas(width,height);
 		gc = c.getGraphicsContext2D();
 		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, 800, 500);
+		gc.fillRect(0, 0, width,height);
 		gc.setFill(Color.RED);
 		gc.fillRect(375, 150, 50, 50);
 		
@@ -170,10 +172,12 @@ public class Draw2View extends Pane implements modelListener{
 	
 	public void drawModelPaths() {
 		//DRAW MODELpATHS
+		//darw the relativized modelpath coordinates
+		//do everything the same, but! multiply by the canvas height and width where appropriate
 				for (int i=0; i<model.modelPaths.size();i++) {	
 					gc.beginPath();
-					gc.moveTo(model.modelPathsCoordinates.get(i).x +(iModel.modelPathsTranslateByCoordinates.get(i).x),
-							model.modelPathsCoordinates.get(i).y +(iModel.modelPathsTranslateByCoordinates.get(i).y));											
+					gc.moveTo(model.modelPathsCoordinates.get(i).x*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(i).x),
+							model.modelPathsCoordinates.get(i).y*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(i).y));											
 					gc.setStroke(model.modelPaths.get(i).getStroke());
 					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth());
 					if (model.modelPaths.get(i).getElements().size()>0) {
@@ -183,7 +187,7 @@ public class Draw2View extends Pane implements modelListener{
 					forEach(a -> {				
 						if (a instanceof LineTo) {
 						//your code
-						gc.lineTo(((LineTo) a).getX() +translateX, ((LineTo) a).getY()+translateY);	
+						gc.lineTo(((LineTo) a).getX()*radarView.width +translateX, ((LineTo) a).getY()*radarView.height+translateY);	
 						
 						}			
 					});
@@ -196,7 +200,7 @@ public class Draw2View extends Pane implements modelListener{
 	
 	public void modelChanged() {
 		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, height, width);
+		gc.fillRect(0, 0, width, height);
 		gc.setFill(Color.RED);
 		gc.fillRect(375, 150, 50, 50);
 		drawModelPaths();				
@@ -215,87 +219,15 @@ public class Draw2View extends Pane implements modelListener{
 		gc.strokeLine(pathStartx, pathStarty, x*width, y*height);
 	}
 	
-		/*
-        Button btnClear = new Button();
-        btnClear.setText("Clear");
-        
-        StackPane stackpane = new StackPane();
-        stackpane.setPrefHeight(model.MAXSTROKE);
-        stackpane.setPrefWidth(model.sampleLine.getEndX() + model.MAXSTROKE);
-        stackpane.setAlignment(Pos.CENTER);
-        stackpane.getChildren().add(model.sampleLine);
 
-        // Build the color label and its layout container
-        final Label colorLabel = new Label("color: blue");
-        StackPane stackpane2 = new StackPane();
-        stackpane2.setPrefHeight(model.MAXSTROKE);
-        stackpane2.setPrefWidth(model.sampleLine.getEndX() + model.MAXSTROKE);
-        stackpane2.setAlignment(Pos.CENTER_LEFT);
-        stackpane2.getChildren().add(colorLabel);
-
-        // Build the HBox layout container for the two stackpane's
-        HBox lineBox = new HBox(20);
-        lineBox.setAlignment(Pos.CENTER);
-        lineBox.getChildren().addAll(stackpane, stackpane2);
-        
-     // Build the color picker and use a flowpane
-        FlowPane flow = new FlowPane();
-        flow.setVgap(2);
-        flow.setHgap(2);
-        flow.setPrefWrapLength(400);
-        
-        // Get the declared fields for the Color class
-        Field[] colorFields = Color.class.getDeclaredFields();
-        for (Field fieldname : colorFields) {
-            int mods = fieldname.getModifiers();
-            
-            // Only look at the field if it's public, static, and NOT 'TRANSPARENT'
-            if (Modifier.isPublic(mods) && Modifier.isStatic(mods)
-                    && !(fieldname.getName().equals("TRANSPARENT"))) {
-                try {
-                    Color c = Color.web(fieldname.getName());
-                    
-                    // Make a rectangle with that field name's color
-                    final Rectangle r = new Rectangle(15, 15, c);
-                    
-                    // Configure the rectangle
-                    r.setCursor(Cursor.HAND);
-                    Tooltip t = new Tooltip(fieldname.getName().toLowerCase());
-                    Tooltip.install(r, t);
-                    r.setUserData(t.getText());
-                    flow.getChildren().add(r);
-                }catch (IllegalArgumentException e) {
-                    // just ignore it if for some reason we can't make
-                    // a color
-                }
-            }
-        }
-        
-     // Build the layout container for the VBox utility box and the flowpane
-        HBox toolBox = new HBox(10);
-        toolBox.setAlignment(Pos.TOP_CENTER);
-        toolBox.getChildren().addAll(utilBox, flow);        
-        
-        // Build the canvas
-        final Rectangle canvas = new Rectangle(scene.getWidth() - 20, scene.getHeight() - 230);
-        canvas.setCursor(Cursor.CROSSHAIR);
-        canvas.setFill(Color.LIGHTGRAY);
-        
-        // Build the VBox container for the lineBox, canvas, and toolBox
-        VBox vb = new VBox(20);
-        vb.setLayoutX(10);
-        vb.setLayoutY(20);
-        vb.getChildren().addAll(lineBox, canvas, toolBox);
-        root.getChildren().addAll(vb, lineGroup);
-        
-                    
-	}*/
 	public void setModel(Draw2Model m) {
 		model = m;
 	}
 	public void setIModel(InteractionModel iM) {
 		iModel = iM;
 	}
-
+	public void setModelRadarView(Draw2miniMap v) {
+		radarView = v;
+	}
 
 }

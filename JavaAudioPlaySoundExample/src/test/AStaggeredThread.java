@@ -72,7 +72,7 @@ public class AStaggeredThread extends StaggeredSoundThread{
 		    Envelope panGlide = new Envelope(ac, panValue);
 		    		    
 		    // create a Glide to control the gain - give it 5000ms ramp time
-		    Envelope gainGlide = new Envelope(ac, 1.0f);		    
+		    Envelope gainGlide = new Envelope(ac, 0.0f);		    
 		    
 		    // instantiate a GranularSamplePlayer
 		    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);
@@ -95,12 +95,12 @@ public class AStaggeredThread extends StaggeredSoundThread{
 				  	gainGlide.addSegment(0f, (float) ((strokeDuration*0.3)));
 			  
 
-			  g.addInput(gsp);
+			  g.addInput(p);
 			  p.addInput(gsp);
 		    
 		    // connect gsp to ac
-		    //ac.out.addInput(g);
-		    ac.out.addInput(p);
+		    ac.out.addInput(g);
+		   // ac.out.addInput(p);
 		    
 		    // begin audio processing
 		    ac.start();									

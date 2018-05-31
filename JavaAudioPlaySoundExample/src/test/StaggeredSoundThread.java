@@ -69,6 +69,10 @@ public class StaggeredSoundThread extends Thread{
 
 				int velocityIndex =0;
 				velocities.get(0).x =1;
+				
+				if (panValues.size() ==0) {
+					panValues.add(0f);
+				}
 				int panValueIndex =0;
 				int panValueIncrement = panValues.size()/howManyClips;
 				Float panValue = 0f;
@@ -77,6 +81,8 @@ public class StaggeredSoundThread extends Thread{
 				//get max volume to equal a quadratic curve from ratio of velocity between 10-0 and 1.0-0.0
 				//ask a math person how to do this?
 				maxVolume = (float) (1 *(velocities.get(velocityIndex).x));
+				System.out.println("velocity "+velocities.get(velocityIndex).x);
+				System.out.println("maxVol "+maxVolume);
 				velocityIndex+=velocityIncrement;
 				
 				panValue = panValues.get(panValueIndex);
@@ -116,8 +122,7 @@ public class StaggeredSoundThread extends Thread{
 	   public double calculateStaggerIncrement(File f) {
 		   double clipDuration = player.fileLength(f)*1000;
 			double clipOverlapDuration = 0.865;//0.8;
-			return (clipDuration)-(clipDuration*clipOverlapDuration);
-			
+			return (clipDuration)-(clipDuration*clipOverlapDuration);			
 	   }
 	   
 	   public void fixVelocityCount() {
