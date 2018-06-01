@@ -7,6 +7,7 @@ package test;
 
 
 import java.awt.event.KeyEvent;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+
 
 public class Draw2Controller {
 	public Draw2View view;
@@ -52,6 +54,7 @@ public class Draw2Controller {
 	long velocityTime;
 	double clipStaggerIncrement;
 	double clipDuration;
+	public MouseTest soundVelocityThread;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
@@ -123,7 +126,11 @@ public class Draw2Controller {
         	model.startPath(me.getX(),me.getY());
         	velocities = new ArrayList<>();
         	velocityTime = System.currentTimeMillis();
-        	mouseCoordinates.add(new Coordinate(me.getX(),me.getY()));
+        	
+        	//relativize the mouse coordinates, do same as for start path
+        	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
+        	//soundVelocityThread = new MouseTest();
+        	//soundVelocityThread.start();
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
         	}
@@ -137,7 +144,8 @@ public class Draw2Controller {
             @Override
             public void handle(MouseEvent me) {                     	            	
             	if (state == READY) {
-            		
+            		//soundVelocityThread.preStop();
+            		//soundVelocityThread.stop();
             	//still need sound generated appropriately for the sustained sections of the stroke
             		//-can fix this by using longer recordings from the start so that they loop less?
             		//-they would sound less distorted
@@ -213,7 +221,7 @@ public class Draw2Controller {
             	double viewx = me.getX()/view.width;
             	double viewy = me.getY()/view.height;            	
         		//just for consisitency
-        		mouseCoordinates.add(new Coordinate(me.getX(),me.getY()));
+        		mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
             	//calculate distance travel
             	//calculate the velocity interactively
             	//last 4 points, take the average of the 3 velocities

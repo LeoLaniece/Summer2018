@@ -59,8 +59,22 @@ public void run() {
          String msg = "greetingServer";
          String pathPaint = "";
          double[] line = new double[3];
+         int clientState;
          while (msg!="exit") {
+        	 //get the client state
+        	 clientState = Integer.parseInt(objectIn.readUTF());
         	 
+        	 if (clientState == controller.PAN_READY) {
+        		 //draw a second viewport on the miniMap!!
+        		 line[0] = Double.parseDouble((objectIn.readUTF()));
+            	 line[1] = Double.parseDouble(objectIn.readUTF());           
+            	 model.radarView.modelChanged();
+            	 //want these values to be relative to the minimap logical size
+            	 model.radarView.drawViewPortFromNet(line[0], line[1]);           	         		         		 
+        		// System.out.println("client is panning their minimap");        		 
+        	 }
+        	 
+        	 if (clientState == controller.READY) {
         	 msg = (String) objectIn.readUTF();
         	 isNetPathAlive = Boolean.parseBoolean(objectIn.readUTF());
         	 
@@ -86,10 +100,11 @@ public void run() {
         		 model.netWorkPath = null;
         	 }
         	 
-        	// System.out.println("Server got msg :"+ msg);
+        	 //System.out.println("Server got msg :"+ msg);
         	 model.notifySubscribers();
         	
-        	 }                                  
+        	 }    
+         }
 		         
          server.close();
          
@@ -106,16 +121,14 @@ public void run() {
 public static void main(String [] args, Draw2Model m, Draw2Controller c) {
 	//test for javaFX component
 	
-   int port = 9080;//Integer.parseInt(args[0]);
+   int port = 9080;
    try {
       Thread t = new GreetingServer(port,m, c);
       t.start();
    } catch (IOException e) {
       e.printStackTrace();
    }   
-   
-   //Scanner sc = new Scanner(System.in);
-   
+      
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

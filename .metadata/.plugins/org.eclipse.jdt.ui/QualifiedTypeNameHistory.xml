@@ -41,4 +41,7 @@
 <fullyQualifiedTypeName name="javafx.stage.WindowEvent"/>
 <fullyQualifiedTypeName name="javafx.scene.paint.Paint"/>
 <fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Panner"/>
+<fullyQualifiedTypeName name="test.AnInteractiveStaggeredThread"/>
+<fullyQualifiedTypeName name="test.Grain2Files"/>
+<fullyQualifiedTypeName name="threadDemo.MouseTest"/>
 </qualifiedTypeNameHistroy>

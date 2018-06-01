@@ -26,7 +26,7 @@ public class AnInteractiveStaggeredThread extends Thread{
 		 * @param panValuedouble
 		 * @param clipDuration
 		 */
-		AnInteractiveStaggeredThread(String name,  double velocities, float panValue, double pathAngle, double clipDuration) {							
+		public AnInteractiveStaggeredThread(String name,  double velocities, float panValue, double pathAngle, double clipDuration) {							
 			this.name = name;
 			velocity =velocities;
 			this.panValue =panValue;
@@ -41,9 +41,7 @@ public class AnInteractiveStaggeredThread extends Thread{
 				if (pathAngle <90) {
 					maxVolume = 10;
 				}
-				System.out.println("velocity "+velocity);
-				System.out.println("pathAngle "+pathAngle);
-				System.out.println("max volume "+maxVolume);
+				System.out.println("panvalue "+panValue);
 			    // instantiate the AudioContext
 			    AudioContext ac = new AudioContext();
 			    

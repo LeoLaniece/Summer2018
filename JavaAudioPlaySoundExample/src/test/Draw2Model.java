@@ -97,8 +97,8 @@ public class Draw2Model {
 		//relativize the coordinates for strorage
 		double x = x1/radarView.width;
 		double y = y1/radarView.height;	
-		System.out.println("radarView width "+radarView.width);
-		System.out.println("radarView h "+radarView.height);
+		//System.out.println("radarView width "+radarView.width);
+		//System.out.println("radarView h "+radarView.height);
     path = new Path();   
     path.setSmooth(true);
     path.setStrokeWidth(sampleLine.getStrokeWidth());    
@@ -233,8 +233,7 @@ public class Draw2Model {
 	 * 
 	 */
 	public void playPathInteractively(double velocity, Coordinate mouseCoordinate, double pathAngle, double clipDuration) {
-		float panValue = calculatePanValue(mouseCoordinate);	
-		
+		float panValue = calculatePanValue(mouseCoordinate);			
 		AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
 		t.start();
 	}
@@ -329,11 +328,20 @@ public class Draw2Model {
 	 */
 	public float calculatePanValue(Coordinate mouse) {
 		float panValue = 0;
-		if (mouse.x <400) {
-			panValue= (float) ((-1) + mouse.x/400f);
+		if (radarView.hasNetMiniMap == true) {						
+		Coordinate viewPointCenter = radarView.calculateNetViewPortCenter();	
+		System.out.println("netPortX "+viewPointCenter.x);
+		System.out.println("mouseX "+mouse.x);
+		
+		if (mouse.x < viewPointCenter.x) {
+			panValue= (float) ((-1) + mouse.x/viewPointCenter.x);
 		}
-		if (mouse.x >=400 && mouse.x < 800) {
-			panValue =(float)(mouse.x -400)/400;
+		if (mouse.x >=viewPointCenter.x && mouse.x < 1.0) {
+			//calculate distance from centerPoint to edge, 1-centerpoint 
+			//distance from mouse to center point				
+			//fix this
+			panValue =(float) ((mouse.x -(viewPointCenter.x))/(1-viewPointCenter.x));
+		}		
 		}
 		return panValue;
 	}

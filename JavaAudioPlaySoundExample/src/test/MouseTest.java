@@ -1,4 +1,4 @@
-package threadDemo;
+package test;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -30,9 +30,7 @@ import javafx.scene.paint.Color;
  *
  * @author gutwin
  */
-
-//have this calculating all the time, when the mouse pressed action is fired, play tsound is enabled.
-public class MouseTest extends Application {
+public class MouseTest extends Thread {
 
     ArrayList<MouseRecord> points;
     ArrayList<Dot> dots;
@@ -46,8 +44,8 @@ public class MouseTest extends Application {
     public double clipDuration;
     
     
-    @Override
-    public void stop() {
+    
+    public void preStop() {
         timer1.cancel();
         timer1.purge();
         timer2.cancel();
@@ -55,20 +53,23 @@ public class MouseTest extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+  //  public void start(Stage primaryStage) {
+  //  }
+    
+    public void run() {
         mv = new MouseView(1400, 600);
         points = new ArrayList<>();
         windowSize = 8;
         dots = new ArrayList<>();
         maxVelocity = 30.0;
 
-        StackPane root = new StackPane();
-        root.getChildren().add(mv);
+        //StackPane root = new StackPane();
+        //root.getChildren().add(mv);
 
-        Scene scene = new Scene(root);
+       // Scene scene = new Scene(root);
 
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
+        //primaryStage.setTitle("Hello World!");
+       // primaryStage.setScene(scene);
        // primaryStage.show();
         //leo's addition
 		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
@@ -81,8 +82,7 @@ public class MouseTest extends Application {
         timer1.schedule(new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
-                    public void run() {
-                    	 
+                    public void run() {                    	 
                         points.add(new MouseRecord(MouseInfo.getPointerInfo().getLocation(), System.currentTimeMillis()));
                         dots.add(new Dot(mv.currentX++, calculateVelocity()));
                         if (System.currentTimeMillis()-time > clipStaggerIncrement) {
@@ -204,7 +204,7 @@ public class MouseTest extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+      //  launch(args);
     }
 	   /**
 	    * will calculate the stagger increment for a submitted file 

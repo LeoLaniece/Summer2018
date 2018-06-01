@@ -35,6 +35,8 @@ import javafx.scene.canvas.GraphicsContext;
 public class Draw2miniMap extends Draw2View implements modelListener {
 	
 	int scale;
+	public boolean hasNetMiniMap = false; 
+	public double netMiniMapX, netMiniMapY;
 	
 	
 	public Draw2miniMap(double w, double h, Draw2Model m) {
@@ -46,9 +48,21 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		this.gc.setStroke(Color.BLACK);
 		this.gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 	}
+	
+	
 	public void drawViewPort() {
+		gc.setLineWidth(5);
 		gc.setStroke(Color.CADETBLUE);
 		gc.strokeRect(iModel.viewPortX, iModel.viewPortY, iModel.viewPortWidth,iModel.viewPortHeight);
+	}
+	
+	public void drawViewPortFromNet(double x, double y) {
+		hasNetMiniMap = true;
+		gc.setLineWidth(1);
+		gc.setStroke(Color.YELLOW);
+		gc.strokeRect(x, y, iModel.viewPortWidth, iModel.viewPortHeight);
+		netMiniMapX =x;
+		netMiniMapY =y;
 	}
 	
 	@Override
@@ -117,9 +131,36 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		this.gc.setStroke(Color.BLACK);
 		this.gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 		drawViewPort();
-		drawModelPaths();				
+		drawModelPaths();	
+		if (hasNetMiniMap == true){
+			drawViewPortFromNet(netMiniMapX, netMiniMapY);
+		}
 	}
 	
+	public Coordinate calculateNetViewPortCenter() {		 
+		System.out.println("netMiniMap center "+(((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width);
+		//System.out.println("viewport relative width "+iModel.viewPortWidth);
+		return new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 
+				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);
+	}
 	
+	/**
+	 * what is the max distance the center point is from the edge?
+	 * @param netViewPortCenter
+	 * @return
+	 */
+	public Coordinate distanceFromNVP(Coordinate netViewPortCenter) {
+		//check top and bottom
+		//take the larger value		
+		double xDist = netViewPortCenter.x;
+		if (xDist < (iModel.viewPortWidth - netViewPortCenter.x)) {
+			xDist = iModel.viewPortWidth - netViewPortCenter.x;
+		}
+		double yDist = netViewPortCenter.y;
+		if (yDist < (iModel.viewPortHeight - netViewPortCenter.y)) {
+			yDist = iModel.viewPortHeight - netViewPortCenter.y;
+		}		
+		return new Coordinate(xDist,yDist);
+	}
 
 }

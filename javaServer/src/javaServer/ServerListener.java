@@ -17,9 +17,19 @@ public class ServerListener extends ClientListener {
 
 	@Override
 	public void modelChanged() {
+		try {
+			
+			//send the controller state over
+			out.writeUTF(Integer.toString(controller.state));
+			
+			if (controller.state == controller.PAN_READY) {
+				out.writeUTF(Double.toString(model.iModel.viewPortX));
+				out.writeUTF(Double.toString(model.iModel.viewPortY));	
+			}
+		
 		//send the serialized modelPathsArray to the server
 		if (controller.state ==controller.READY) {								
-			try {
+			
 				//out.writeObject("Passed at least a string!!!");
 				out.writeUTF("Server model changed!");// + client.getLocalSocketAddress());
 				//is the path Alive
@@ -39,7 +49,7 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(model.sampleLine.getStroke().toString());
 				//send the strokeWidth over
 				out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
-				
+		}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -47,4 +57,4 @@ public class ServerListener extends ClientListener {
 		
 	}
 }
-}
+

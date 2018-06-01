@@ -21,7 +21,7 @@ public class SecondStage extends Stage {
 	SecondStage(){
 		setTitle("Drawing Tool client");
         //a type of layout	        
-		int SceneWidth = 1000;
+		int SceneWidth = 800;
         int SceneHeight = 600;
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, SceneWidth,SceneHeight);
@@ -29,7 +29,7 @@ public class SecondStage extends Stage {
         Draw2View view = new Draw2View(SceneWidth,SceneHeight-200,model);
         //make the radarView a scale of the size of the logical size of the view
         
-        Draw2miniMap radarView = new Draw2miniMap(2000,2000,model);
+        Draw2miniMap radarView = new Draw2miniMap(1000,1000,model);
         InteractionModel iModel = new InteractionModel(model,view);
         model.setIModel(iModel);
         view.setIModel(iModel);
@@ -54,6 +54,8 @@ public class SecondStage extends Stage {
         c.setIModel(iModel);
 
         setScene(scene);
+        setX(800);
+        setY(0);
         show();
         m = model;
         		} catch (InterruptedException e) {

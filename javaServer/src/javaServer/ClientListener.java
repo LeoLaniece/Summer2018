@@ -37,11 +37,19 @@ public class ClientListener implements modelListener{
     lineGroup.getChildren().add(path);
     modelPaths.add(path);          
 		 */
-
-		if (controller.state ==controller.READY) {								
 		try {
-			
-			out.writeUTF("Client model changed!");// + client.getLocalSocketAddress());
+		//send the controllerstate over
+		out.writeUTF(Integer.toString(controller.state));
+		
+		if (controller.state == controller.PAN_READY) {
+			out.writeUTF(Double.toString(model.iModel.viewPortX));
+			out.writeUTF(Double.toString(model.iModel.viewPortY));	
+		}
+
+										
+		
+			if (controller.state ==controller.READY) {
+			out.writeUTF("Client model changed!");
 			//is the path Alive
 			if (model.path == null) {
 				out.writeUTF("false");
@@ -70,6 +78,8 @@ public class ClientListener implements modelListener{
 			//send the strokeWidth over
 			out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
 			
+			
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,4 +88,4 @@ public class ClientListener implements modelListener{
 		
 	}
 	
-}
+

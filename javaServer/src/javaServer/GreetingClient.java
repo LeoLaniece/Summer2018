@@ -20,6 +20,7 @@ public class GreetingClient extends Thread{
 	
 	public Draw2View view;
 	public Draw2Model model;
+	public Draw2Controller controller;
 	public static Socket client;
 	
 
@@ -45,6 +46,7 @@ public GreetingClient(String [] args) {
       //start second stage
       SecondStage clientStage = new SecondStage();
       model = clientStage.m;
+      controller = clientStage.c;
       
 
      // DataInputStream objectIn = new DataInputStream(client.getInputStream());
@@ -68,9 +70,21 @@ public GreetingClient(String [] args) {
           String msg = "greetingServer";
           String pathPaint = "";
           double[] line = new double[3];
-          while (msg!="exit") {
-        	  
+          int serverState;
+          while (msg!="exit") {       	          	  
+         	 //get the client state
+         	 serverState = Integer.parseInt(objectIn.readUTF());
          	 
+         	 if (serverState == controller.PAN_READY) {
+         		 //draw a second viewport on the miniMap!!
+         		 line[0] = Double.parseDouble((objectIn.readUTF()));
+             	 line[1] = Double.parseDouble(objectIn.readUTF());           
+             	 model.radarView.modelChanged();
+             	 model.radarView.drawViewPortFromNet(line[0], line[1]);           	         		         		 
+         		// System.out.println("client is panning their minimap");        		 
+         	 }
+        	  
+         	 if (serverState == controller.READY) {
          	 msg = (String) objectIn.readUTF();
          	 isNetPathAlive = Boolean.parseBoolean(objectIn.readUTF());
          	 
@@ -78,7 +92,7 @@ public GreetingClient(String [] args) {
          	 line[1] = Double.parseDouble(objectIn.readUTF());        	 
          	 pathPaint = objectIn.readUTF();
          	 line[2] = Double.parseDouble(objectIn.readUTF());
-         	// System.out.println("Client got msg :"+ msg);
+         	 //System.out.println("Client got msg :"+ msg);
          	 //figure out why this is null?
          	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
@@ -100,6 +114,7 @@ public GreetingClient(String [] args) {
          	 model.notifySubscribers();
          	
      	 }
+          }
           
           client.close();
 		} catch (IOException e) {
@@ -108,6 +123,14 @@ public GreetingClient(String [] args) {
 		}      
             
       }
+      
+   /*   public static void main(String[] args) {
+    	   String[] arr = new String[2];
+    	   arr[0] = "DESKTOP-3QFK6AS";
+    	   arr[1] = "9080";
+    	   GreetingClient GC = new GreetingClient(arr);
+    	   GC.start();
+      }*/ 
       
       
 
