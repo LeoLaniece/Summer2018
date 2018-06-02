@@ -45,11 +45,16 @@ public class MouseTest extends Thread {
     
     
     
+    
     public void preStop() {
         timer1.cancel();
         timer1.purge();
         timer2.cancel();
         timer2.purge();
+    }
+    
+    public double getVelocity() {
+    	return calculateVelocity();
     }
 
     @Override
@@ -77,6 +82,7 @@ public class MouseTest extends Thread {
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= player.fileLength(f1)*1000;
         time =System.currentTimeMillis();
+        System.out.println("runin in the velocitycalculator");
         
         timer1 = new java.util.Timer();
         timer1.schedule(new TimerTask() {
@@ -85,27 +91,27 @@ public class MouseTest extends Thread {
                     public void run() {                    	 
                         points.add(new MouseRecord(MouseInfo.getPointerInfo().getLocation(), System.currentTimeMillis()));
                         dots.add(new Dot(mv.currentX++, calculateVelocity()));
-                        if (System.currentTimeMillis()-time > clipStaggerIncrement) {
+                     /*   if (System.currentTimeMillis()-time > clipStaggerIncrement) {
                         	    AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("sound", calculateVelocity(),
                         		0, 180, clipDuration);
                         t.start();
                         time = System.currentTimeMillis();
-                        }
+                        }*/
 
                     }
                 });
             }
-        }, 1000, 5);
-        timer2 = new java.util.Timer();
+        }, 1000, 10);
+       /* timer2 = new java.util.Timer();
         timer2.schedule(new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {
-                        mv.draw();
+                       // mv.draw();
                     }
                 });
             }
-        }, 1000, 100);
+        }, 1000, 100);*/
     }
 
     private double calculateVelocity() {

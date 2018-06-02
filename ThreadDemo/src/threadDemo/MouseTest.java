@@ -124,6 +124,10 @@ public class MouseTest extends Application {
                 previous = current;
             }
         }
+        if (total/elapsed == NaN) {
+        	
+        }
+        
         return total / elapsed;
     }
 

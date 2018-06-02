@@ -67,6 +67,8 @@ public class Draw2Controller {
 		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= model.player.fileLength(f1)*1000;
+     	//soundVelocityThread = new MouseTest();
+     	//soundVelocityThread.start();
 		//setPoints();
 		
 	//when shift key is down, pan the canvas to new area's
@@ -129,8 +131,12 @@ public class Draw2Controller {
         	
         	//relativize the mouse coordinates, do same as for start path
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
-        	//soundVelocityThread = new MouseTest();
-        	//soundVelocityThread.start();
+
+        	
+			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
+					mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
+					clipDuration, clipStaggerIncrement);
+        	
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
         	}
@@ -175,6 +181,7 @@ public class Draw2Controller {
             	distanceTraveled = 0;
             	
             	model.pathToNull();
+            	model.stopSoundGenerator();
             	model.notifySubscribers();
             	}
                 state = NOTREADY;
@@ -284,10 +291,14 @@ public class Draw2Controller {
             			}
             		}
             		
+            		model.updateSoundGeneratorVelocity(velocities.get(velocities.size()-1).x);
+            		time = System.currentTimeMillis();
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
-            			model.playPathInteractively(velocities.get(velocities.size()-1).x, mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
-            					clipDuration);
-            			time = System.currentTimeMillis();
+            		//	model.playPathInteractively(,////soundVelocityThread.getVelocity()
+            		//			mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
+            		//			clipDuration);
+            		//	
+            			//System.out.println("velocity "+soundVelocityThread.getVelocity());            					
             			
             		}
             		
@@ -305,7 +316,6 @@ public class Draw2Controller {
 	}
 	
 	//velocity calculation functions
-	//need to test these
 	/**
 	 * initializes the points for velocity calculation of given stroke
 	 * x,y = mousePressed location
@@ -326,7 +336,7 @@ public class Draw2Controller {
 
 		long startTime = System.currentTimeMillis();		
 		for (int i =3;i>0;) {
-			if (System.currentTimeMillis()-startTime >10) {
+			if (System.currentTimeMillis()-startTime >5) {
 				points[i].x = points[i-1].x;
 			points[i].y = points[i-1].y;
 			points[i].time = System.currentTimeMillis();
@@ -335,7 +345,7 @@ public class Draw2Controller {
 				i--;
 			}			
 		}
-		while (System.currentTimeMillis()-startTime <10) {
+		while (System.currentTimeMillis()-startTime <5) {
 			//wait
 		}
 		points[0].x = x;

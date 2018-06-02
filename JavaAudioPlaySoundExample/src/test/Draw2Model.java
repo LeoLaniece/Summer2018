@@ -51,6 +51,7 @@ public class Draw2Model {
     public double currentPathAngle;
     public 	Draw2View view;
     public Draw2miniMap radarView;
+    public AnInteractiveStaggeredSoundGenerator soundGenerator;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -232,11 +233,23 @@ public class Draw2Model {
 	 * play the sound of the path as it is being drawn
 	 * 
 	 */
-	public void playPathInteractively(double velocity, Coordinate mouseCoordinate, double pathAngle, double clipDuration) {
+	public void playPathInteractively(double velocity, Coordinate mouseCoordinate,
+			double pathAngle, double clipDuration, double clipStaggerIncrement) {
 		float panValue = calculatePanValue(mouseCoordinate);			
-		AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
-		t.start();
+		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
+		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",velocity,panValue, pathAngle, clipDuration,clipStaggerIncrement);
+		soundGenerator.start();
 	}
+	
+	public void stopSoundGenerator() {
+		soundGenerator.setMouseReleased(true);
+	}
+	
+	public void updateSoundGeneratorVelocity(double v) {
+		soundGenerator.setVelocity(v);
+	}
+	
+
 	
 	
 	public void play() {
@@ -325,8 +338,14 @@ public class Draw2Model {
 	
 	/**
 	 * will calculate a single pan value based on the given coordinate
+	 * the coordinate is expected to be the center of the other user's netViewPort
 	 */
 	public float calculatePanValue(Coordinate mouse) {
+		//need to adjust the mouse values based on the current minimap displacement
+		System.out.println("my minimap viewport X "+iModel.viewPortX);
+		double relativeViewPortX = (iModel.viewPortX*7)/radarView.width;
+		mouse.x = mouse.x +relativeViewPortX;
+		
 		float panValue = 0;
 		if (radarView.hasNetMiniMap == true) {						
 		Coordinate viewPointCenter = radarView.calculateNetViewPortCenter();	
@@ -340,7 +359,12 @@ public class Draw2Model {
 			//calculate distance from centerPoint to edge, 1-centerpoint 
 			//distance from mouse to center point				
 			//fix this
-			panValue =(float) ((mouse.x -(viewPointCenter.x))/(1-viewPointCenter.x));
+			//mouse x needs to be adjusted by the currrent location of the viewport!
+			
+			panValue = (float) ((mouse.x -viewPointCenter.x)/(1-viewPointCenter.x));
+			
+			//System.out.println("mouse - netPortX "+(mouse.x-viewPointCenter.x));
+			//System.out.println("1 -viewpointcenter "+(1-viewPointCenter.x));
 		}		
 		}
 		return panValue;

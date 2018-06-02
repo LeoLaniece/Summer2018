@@ -36,8 +36,9 @@ public class AnInteractiveStaggeredThread extends Thread{
 		
 		@Override
 		 public void run() {
-				File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");					
-				float maxVolume = (float) (1 *(velocity));	
+				File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
+				File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
+				float maxVolume = (float) ((velocity));	
 				if (pathAngle <90) {
 					maxVolume = 10;
 				}
@@ -46,10 +47,12 @@ public class AnInteractiveStaggeredThread extends Thread{
 			    AudioContext ac = new AudioContext();
 			    
 			    // load the source sample from a file
-			    Sample sourceSample = null;			    			    
+			    Sample sourceSample = null;		
+			    Sample sourceSample2 = null;
 			    try
 			    {
 			      sourceSample = new Sample(f1.toString());
+			      sourceSample2 = new Sample(f2.toString());
 			    }
 			    catch(Exception e)
 			    {
@@ -74,9 +77,12 @@ public class AnInteractiveStaggeredThread extends Thread{
 			    
 			    // instantiate a GranularSamplePlayer
 			    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);			    
+			    GranularSamplePlayer gsp2 = new GranularSamplePlayer(ac, sourceSample2);
+			   
 			    
 			    // set the grain size to a fixed 10ms
 			    gsp.setGrainSize(new Static(ac, 100.0f));
+			    gsp2.setGrainSize(new Static(ac, 100.0f));
 			    
 			    Panner p = new Panner(ac, panGlide);			    
 			    
@@ -92,9 +98,28 @@ public class AnInteractiveStaggeredThread extends Thread{
 			    
 			    // connect gsp to ac
 			    ac.out.addInput(g);
+			    ac.start();
+			    try {
+					sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			    ac.out.addInput(gsp2);
+			    ac.out.clearInputConnections();
+				  Gain g2 = new Gain(ac, 1, gainGlide);
+			  		gainGlide.addSegment(0f, (float) (clipDuration*0.1));
+				  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
+				  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
+				  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));
+				  	g2.addInput(gsp);
+			    
+			    ac.out.addInput(g2);
+			    ac.start();
+			   // ac.out.addInput(gsp2);
 			    //ac.out.addInput(p);
 			    
 			    // begin audio processing
-			    ac.start();									
+			    									
 		}
 }
