@@ -24,30 +24,18 @@ public class ClientListener implements modelListener{
 	public void modelChanged() {
 		//what do i need to send to the server so that it can replicate the path i have drawn.
 		//start by sending a line over
-		
-		
-		/*
-		 * startPath(double x, double y)
-		 * path.setStrokeWidth(sampleLine.getStrokeWidth());
-    path.setStroke(sampleLine.getStroke());
-    path.getElements().add(new MoveTo(x, y));    
-    modelPathsCoordinates.add(new Coordinate(x,y));    
-    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
-    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
-    lineGroup.getChildren().add(path);
-    modelPaths.add(path);          
-		 */
 		try {
-		//send the controllerstate over
-		out.writeUTF(Integer.toString(controller.state));
-		
+		//send the controller state over
+		out.writeUTF(Integer.toString(controller.state));		
+		//if user is panning the background, send viewPortCoordinates over
 		if (controller.state == controller.PAN_READY) {
 			out.writeUTF(Double.toString(model.iModel.viewPortX));
 			out.writeUTF(Double.toString(model.iModel.viewPortY));	
-		}
-
-										
+		}	
 		
+		//if the user is ready to draw a path
+		//send over all the path drawing info
+		//send over the path sound info
 			if (controller.state ==controller.READY) {
 			out.writeUTF("Client model changed!");
 			//is the path Alive
@@ -58,25 +46,26 @@ public class ClientListener implements modelListener{
 			}
 			
 			//sending the line over		
-			//keep trying to figure out why this is not working
-			//check the model current pathCoordinate?
-			//works! 
-			//now substract from the receiving end
 			out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
-			out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));	
-		//	System.out.println("currentpathcoordinate x "+model.currentPathCoordinate.x+" y "+model.currentPathCoordinate.y);			
-		//	System.out.println("viewPortX "+model.iModel.viewPortX);
-		//	System.out.println("viewPortY "+model.iModel.viewPortY);
-		//	System.out.println("width "+(model.radarView.width));
-		//	System.out.println("height "+(model.radarView.height));
-		//	System.out.println("viewPortX/width "+(model.iModel.viewPortX*7/model.radarView.width));
-		//	System.out.println("viewPortY/height "+(model.iModel.viewPortY*7/model.radarView.height));
-			
+			out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));				
 
 			//sending the colour over
 			out.writeUTF(model.sampleLine.getStroke().toString());
 			//send the strokeWidth over
 			out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
+			
+			//sending the sound over
+			//velocity
+			out.writeUTF(Double.toString(controller.soundVelocityThread.getVelocity()));
+			//mouseCoordinates
+			out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x));
+			out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y));
+			//angle
+			out.writeUTF(Double.toString(model.currentPathAngle));
+			//clipDuration
+			out.writeUTF(Double.toString(controller.clipDuration));
+			//clipStaggerIncrement
+			out.writeUTF(Double.toString(controller.clipStaggerIncrement));
 			
 			
 			}

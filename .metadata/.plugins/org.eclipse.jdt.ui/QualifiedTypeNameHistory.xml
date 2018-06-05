@@ -44,4 +44,5 @@
 <fullyQualifiedTypeName name="test.AnInteractiveStaggeredThread"/>
 <fullyQualifiedTypeName name="test.Grain2Files"/>
 <fullyQualifiedTypeName name="threadDemo.MouseTest"/>
+<fullyQualifiedTypeName name="java.net.URL"/>
 </qualifiedTypeNameHistroy>

@@ -28,20 +28,20 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	 * @param panValuedouble
 	 * @param clipDuration
 	 */
-	public AnInteractiveStaggeredSoundGenerator(String name,  double velocities, float panValue, 
-			double pathAngle, double clipDuration, double clipStaggerIncrement) {							
+	public AnInteractiveStaggeredSoundGenerator(String name,  double velocities, float panValue 
+			, double clipDuration, double clipStaggerIncrement) {							
 		this.name = name;
 		velocity =velocities;
 		this.panValue =panValue;
 		this.clipDuration = clipDuration;
-		this.pathAngle =pathAngle;
+		this.pathAngle =180;
 		this.clipStaggerIncrement =clipStaggerIncrement;
 	}
 	
 	@Override
 	 public void run() {
 		AudioContext ac = new AudioContext();
-		Gain g;
+		Panner g;
 		while (!mouseReleased) {			
 			g = setUpSamplePlayer(ac);		  
 		    ac.out.addInput(g);
@@ -60,21 +60,24 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 		mouseReleased = x;
 	}
 	
-	public Gain setUpSamplePlayer(AudioContext ac) {
+	public Panner setUpSamplePlayer(AudioContext ac) {
 		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
 		//File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
 		
-		//wil silence the sound generator when the user stops moving his mouse cursor, but does not release the press.
+		//will silence the sound generator when the user stops moving his mouse cursor, but does not release the press.
 		if (System.currentTimeMillis()-timeSinceLastUpdate > 100) {
 			velocity =0;
 		}
 		
 		float maxVolume = (float) ((velocity));	
 		if (pathAngle <90&&velocity!=0) {
+			//don't want the angle calculator
 			//maxVolume = 10;
 		}
+		
 		System.out.println("velocity "+velocity);
 		System.out.println("maxVolume "+maxVolume);
+		System.out.println("path angle "+pathAngle);
 	    // instantiate the AudioContext
 	    
 	    
@@ -100,7 +103,9 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	      System.out.println(e.getMessage());
 	      e.printStackTrace();
 	      System.exit(1);
-	    }
+	    }	    	    
+	    //it seems that the - = right side and + = left side?
+	    //or they mixmatched the stickers on my headphones?
 	    
 	    Envelope panGlide = new Envelope(ac, panValue);
 	    		    
@@ -124,9 +129,9 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 			  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));
 		  
 
-		  g.addInput(p);
-		  p.addInput(gsp);
-		  return g;
+		  g.addInput(gsp);
+		  p.addInput(g);
+		  return p;
 	}
 	public void setVelocity(double velocity) {
 		this.velocity =velocity;
@@ -134,5 +139,8 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	}
 	public void setPanValue(float panValue) {
 		this.panValue = panValue;
+	}
+	public void setAngle(double pathAngle) {
+		this.pathAngle = pathAngle;
 	}
 }

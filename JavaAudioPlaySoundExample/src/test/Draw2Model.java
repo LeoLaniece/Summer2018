@@ -224,20 +224,20 @@ public class Draw2Model {
 	 */
 	
 	public void playStaggeredSoundThreads(double duration, ArrayList<Coordinate> velocities, ArrayList<Coordinate> mouseCoordinates) {
-		ArrayList<Float> panValues = calculatePanValues(mouseCoordinates);	
-		StaggeredSoundThread t = new StaggeredSoundThread("Stagered sound", player, duration, velocities, panValues);
-		t.start();
+		//ArrayList<Float> panValues = calculatePanValues(mouseCoordinates);	
+		//StaggeredSoundThread t = new StaggeredSoundThread("Stagered sound", player, duration, velocities, panValues);
+		//t.start();
 	}
 	
 	/**
 	 * play the sound of the path as it is being drawn
 	 * 
 	 */
-	public void playPathInteractively(double velocity, Coordinate mouseCoordinate,
-			double pathAngle, double clipDuration, double clipStaggerIncrement) {
-		float panValue = calculatePanValue(mouseCoordinate); 			
+	public void playPathInteractively(double velocity, Coordinate mouseCoordinate
+			, double clipDuration, double clipStaggerIncrement) {
+		float panValue = doNotCalculatePanValue(mouseCoordinate); 			
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
-		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",velocity,panValue, pathAngle, clipDuration,clipStaggerIncrement);
+		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",velocity,panValue, clipDuration,clipStaggerIncrement);
 		soundGenerator.start();
 	}
 	
@@ -245,12 +245,21 @@ public class Draw2Model {
 		soundGenerator.setMouseReleased(true);
 	}
 	
+	public void updateSoundGeneratorPathAngle() {		
+		soundGenerator.setAngle(currentPathAngle);
+	}
+	
+	public void updateSoundGeneratorPathAngleFromNet(double angle) {		
+		soundGenerator.setAngle(angle);
+	}
+	
 	public void updateSoundGeneratorVelocity(double v) {
 		soundGenerator.setVelocity(v);
 	}
 	
 	public void updateSoundGeneratorPanValue(Coordinate mouseCoordinate) {
-		float panValue = calculatePanValue(mouseCoordinate);
+		//float panValue = calculatePanValue(mouseCoordinate);
+		float panValue = doNotCalculatePanValue(mouseCoordinate);
 		soundGenerator.setPanValue(panValue);
 	}
 	
@@ -325,20 +334,29 @@ public class Draw2Model {
 	 * @param location
 	 * @return
 	 */
-	public ArrayList<Float> calculatePanValues(ArrayList<Coordinate> location){
-		ArrayList<Float> panValues = new ArrayList<>();
+	public float doNotCalculatePanValue(Coordinate location){
+		//ArrayList<Float> panValues = new ArrayList<>();
 		//box center is at 400
 		//if x < 400 pan value should be between -1 and 0
 		//if x >400 and <800 value should be between 0 and 1
-		location.forEach(a -> {
-			if (a.x < 400) {
-				panValues.add( (float) ((-1) + a.x/400f));
+		//System.out.println("location x "+location.x);
+		location.x = location.x *1000;
+		//System.out.println("location x "+location.x);
+		float panValue = 0;
+			if (location.x < 400) {
+				panValue = (float) ((-1) + location.x/400f);
 			}
-			if (a.x >=400 && a.x < 800) {
-				panValues.add((float)(a.x -400)/400);
+			if (location.x >=400 && location.x < 800) {
+				panValue = (float)(location.x -400)/400;
 			}
-		});				
-		return panValues;
+			/*if (panValue > 0.3) {
+				panValue = 1.0f;
+			}
+			if (panValue < -0.3) {
+				panValue = -1.0f;
+			}	*/		
+			
+		return panValue;
 	}
 	
 	/**
@@ -347,6 +365,8 @@ public class Draw2Model {
 	 */
 	public float calculatePanValue(Coordinate mouse) {
 		//need to adjust the mouse values based on the current minimap displacement
+		//if the user is drawing more than +-0.3 of the netViewPort center, the value should be -1 or 1.
+		
 	//	System.out.println("my minimap viewport X "+iModel.viewPortX);
 		
 		
@@ -356,8 +376,8 @@ public class Draw2Model {
 		float panValue = 0;
 		if (radarView.hasNetMiniMap == true) {						
 		Coordinate viewPointCenter = radarView.calculateNetViewPortCenter();	
-		System.out.println("netPortX "+viewPointCenter.x);
-		System.out.println("mouseX "+mouse.x);
+		//System.out.println("netPortX "+viewPointCenter.x);
+		//System.out.println("mouseX "+mouse.x);
 		
 		if (mouse.x < viewPointCenter.x) {
 			panValue= (float) ((-1) + mouse.x/viewPointCenter.x);
@@ -366,13 +386,19 @@ public class Draw2Model {
 			//calculate distance from centerPoint to edge, 1-centerpoint 
 			//distance from mouse to center point				
 			//fix this
-			//mouse x needs to be adjusted by the currrent location of the viewport!
-			
+			//mouse x needs to be adjusted by the currrent location of the viewport!			
 			panValue = (float) ((mouse.x -viewPointCenter.x)/(1-viewPointCenter.x));
 			
 			//System.out.println("mouse - netPortX "+(mouse.x-viewPointCenter.x));
 			//System.out.println("1 -viewpointcenter "+(1-viewPointCenter.x));
-		}		
+			}
+		/*if (panValue > 0.3) {
+			panValue = 1;
+		}
+		if (panValue < -0.3) {
+			panValue = -1;
+		}*/
+		
 		}
 		return panValue;
 	}

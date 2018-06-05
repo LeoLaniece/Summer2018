@@ -14,6 +14,7 @@ import javafx.scene.layout.StackPane;
 import java.util.Scanner;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import test.Coordinate;
 import test.Draw2Controller;
 import test.Draw2Model;
 import test.Draw2View;
@@ -39,6 +40,8 @@ public GreetingServer(int port, Draw2Model m, Draw2Controller c) throws IOExcept
 }
 
 public void run() {
+	
+	
    while(true) {
       try {    	      	      	  
          System.out.println("Waiting for client on port " + 
@@ -58,7 +61,7 @@ public void run() {
          boolean isNetPathAlive = false;
          String msg = "greetingServer";
          String pathPaint = "";
-         double[] line = new double[3];
+         double[] line = new double[9];
          int clientState;
          while (msg!="exit") {
         	 //get the client state
@@ -83,24 +86,52 @@ public void run() {
         	 pathPaint = objectIn.readUTF();
         	 line[2] = Double.parseDouble(objectIn.readUTF());
         	 
+        
+        	 //velocity
+        	 line[3] = Double.parseDouble(objectIn.readUTF());
+        	 //mouseCoordinates
+        	 line[4] = Double.parseDouble(objectIn.readUTF());
+        	 line[5] = Double.parseDouble(objectIn.readUTF());
+        	 //angle
+        	 line[6] = Double.parseDouble(objectIn.readUTF());
+        	 //clipDuration
+        	 line[7] = Double.parseDouble(objectIn.readUTF());
+        	 //clipStaggerIncrement
+        	 line[8] = Double.parseDouble(objectIn.readUTF());
+        	 
+        	 System.out.println("made it past the reading!");
         	 
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
         		 model.createNewPathFromNetwork(line,pathPaint);
+        		 //start the path sound
+        		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
+        		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);        		 
         	 }else
         	 if (model.netWorkPath!=null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
         		 model.updateNewPathFromNetwork(line);
+        		 //update the sound generator
+         		model.updateSoundGeneratorVelocity(line[3]);
+         		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
+         		model.updateSoundGeneratorPanValue(mouseCoordinate);
+         		model.updateSoundGeneratorPathAngleFromNet(line[6]);
+        		 
         	 }        	 
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;
+        		 model.stopSoundGenerator();
         	 }
         	 
-        	 //System.out.println("Server got msg :"+ msg);
+        	 
+        	 
+        	 
+        	 
+        	 
         	 model.notifySubscribers();
         	
         	 }    

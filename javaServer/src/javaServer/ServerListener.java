@@ -27,28 +27,38 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(Double.toString(model.iModel.viewPortY));	
 			}
 		
-		//send the serialized modelPathsArray to the server
-		if (controller.state ==controller.READY) {								
-			
-				//out.writeObject("Passed at least a string!!!");
+		
+		if (controller.state ==controller.READY) {														
 				out.writeUTF("Server model changed!");// + client.getLocalSocketAddress());
 				//is the path Alive
 				if (model.path == null) {
 					out.writeUTF("false");
 				}else {
 					out.writeUTF("true");
-				}
-				
+				}				
 				//sending the line over			
 				out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
-				out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));	
-				
-				//System.out.println("x = "+model.currentPathCoordinate.x+(model.iModel.viewPortX*7)+" y = "+model.currentPathCoordinate.y+(model.iModel.viewPortY*7));
+				out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));				
 				
 				//sending the colour over
 				out.writeUTF(model.sampleLine.getStroke().toString());
 				//send the strokeWidth over
 				out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
+				
+				//sending the sound over
+				//velocity
+				out.writeUTF(Double.toString(controller.soundVelocityThread.getVelocity()));
+				//mouseCoordinates
+				out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x));
+				out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y));
+				//angle
+				out.writeUTF(Double.toString(model.currentPathAngle));
+				//clipDuration
+				out.writeUTF(Double.toString(controller.clipDuration));
+				//clipStaggerIncrement
+				out.writeUTF(Double.toString(controller.clipStaggerIncrement));
+				
+				
 		}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

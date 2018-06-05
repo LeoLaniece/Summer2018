@@ -24,30 +24,37 @@ public class Example_2 {
 					}         // Instantiate the SoundSystem:  
 			SoundSystem mySoundSystem = new SoundSystem();  
 			// play some background music:     
-			//mySoundSystem.backgroundMusic( "Music 1", "beethoven.mid", true ); 
+			mySoundSystem.backgroundMusic( "Source 1", "1234.wav", true ); 
 			// wait a bit before playing the explosions:  
 			//sleep( 2000 );         // play 15 explosions, right and left: 
+			mySoundSystem.setVolume( "Source 1", 0.5f ); 
+			//mySoundSystem.setMasterVolume( 0f ); 
 			for( int x = 0; x < 15; x++ )         {     
 				// If x is divisible by 2, play to the right:     
 				if( x % 2 == 0 ) {  
 					System.out.println("right side");
-					//mySoundSystem.quickPlay( false, "explosion.wav", false, 
-					//		1000, 0, 0, 
-					//		SoundSystemConfig.ATTENUATION_ROLLOFF,  
-					//		SoundSystemConfig.getDefaultRolloff()   
-					//		);   
+					mySoundSystem.setPosition( "Source 1", 0.1f, 0, 0 );
+					//mySoundSystem.setVolume( "Source 1", 0f ); 
+				//	mySoundSystem.quickPlay( false, "explosionShort.wav", false, 
+				//			0.5f, 0, 0, 
+				//			SoundSystemConfig.ATTENUATION_ROLLOFF,  
+				//			SoundSystemConfig.getDefaultRolloff()   
+				//			);   
 				}
 				// Otherwise play to the left:    
 				else {             
 					System.out.println("left side");
-					mySoundSystem.quickPlay( false, "explosion.wav", false,
-							(1000), 0, 0, 
-							SoundSystemConfig.ATTENUATION_ROLLOFF,     
-							SoundSystemConfig.getDefaultRolloff() 
-							); 
+					mySoundSystem.setPosition( "Source 1", 1f, 0, 0 );
+					//mySoundSystem.setVolume( "Source 1", 0.5f ); 
+				//	mySoundSystem.quickPlay( false, "explosionShort.wav", false,
+				//			5, 0, 0, 
+				//			SoundSystemConfig.ATTENUATION_ROLLOFF,     
+				//			SoundSystemConfig.getDefaultRolloff()); 
+				//			System.out.println(SoundSystemConfig.getDefaultRolloff());
+							
 				}
 				// wait a bit so the explosions don't all start at once
-				sleep( 1000 );
+				sleep( 2000 );
 			}
 	}
 		

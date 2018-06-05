@@ -32,6 +32,7 @@
 		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID"/>
 		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"/>
 		<list key="WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID">
+			<item value="C:\Users\HCI Lab\Desktop\Leo Laniece summer 2018\imported projects\src"/>
 			<item value="C:\Users\HCI Lab\Desktop\Leo Laniece summer 2018\sound recordings"/>
 		</list>
 	</section>
