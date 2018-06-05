@@ -1,6 +1,7 @@
 package test;
 
 import java.lang.reflect.Field;
+import javafx.application.Platform;
 
 
 import javafx.scene.shape.LineTo; 
@@ -170,8 +171,8 @@ public class Draw2View extends Pane implements modelListener{
         UCRight.getChildren().add(flow);
 	}
 	
-	public void drawModelPaths() {
-		//DRAW MODELpATHS
+	public void drawModelPaths() {	
+		    	//DRAW MODELpATHS
 		//darw the relativized modelpath coordinates
 		//do everything the same, but! multiply by the canvas height and width where appropriate
 				for (int i=0; i<model.modelPaths.size();i++) {	
@@ -195,15 +196,22 @@ public class Draw2View extends Pane implements modelListener{
 				}
 					
 				}
+
+
 	}
 	
 	
 	public void modelChanged() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {		
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
 		gc.setFill(Color.RED);
 		gc.fillRect(375, 150, 50, 50);
 		drawModelPaths();				
+		    }
+		});
 	}
 	public void startPath(double x, double y) {
 		//should take into account the size of the view

@@ -235,7 +235,7 @@ public class Draw2Model {
 	 */
 	public void playPathInteractively(double velocity, Coordinate mouseCoordinate,
 			double pathAngle, double clipDuration, double clipStaggerIncrement) {
-		float panValue = calculatePanValue(mouseCoordinate);			
+		float panValue = calculatePanValue(mouseCoordinate); 			
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
 		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",velocity,panValue, pathAngle, clipDuration,clipStaggerIncrement);
 		soundGenerator.start();
@@ -247,6 +247,11 @@ public class Draw2Model {
 	
 	public void updateSoundGeneratorVelocity(double v) {
 		soundGenerator.setVelocity(v);
+	}
+	
+	public void updateSoundGeneratorPanValue(Coordinate mouseCoordinate) {
+		float panValue = calculatePanValue(mouseCoordinate);
+		soundGenerator.setPanValue(panValue);
 	}
 	
 
@@ -342,7 +347,9 @@ public class Draw2Model {
 	 */
 	public float calculatePanValue(Coordinate mouse) {
 		//need to adjust the mouse values based on the current minimap displacement
-		System.out.println("my minimap viewport X "+iModel.viewPortX);
+	//	System.out.println("my minimap viewport X "+iModel.viewPortX);
+		
+		
 		double relativeViewPortX = (iModel.viewPortX*7)/radarView.width;
 		mouse.x = mouse.x +relativeViewPortX;
 		

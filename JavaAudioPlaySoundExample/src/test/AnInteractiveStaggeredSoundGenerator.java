@@ -47,10 +47,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 		    ac.out.addInput(g);
 		    ac.start();	
 		    try {
-				sleep( (long)(clipStaggerIncrement));							
-				g = setUpSamplePlayer(ac);
-				ac.out.addInput(g);
-				 ac.start();	
+				sleep( (long)(clipStaggerIncrement));								
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -66,7 +63,9 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	public Gain setUpSamplePlayer(AudioContext ac) {
 		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
 		//File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
-		if (timeSinceLastUpdate -System.currentTimeMillis() > 100) {
+		
+		//wil silence the sound generator when the user stops moving his mouse cursor, but does not release the press.
+		if (System.currentTimeMillis()-timeSinceLastUpdate > 100) {
 			velocity =0;
 		}
 		
@@ -132,5 +131,8 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	public void setVelocity(double velocity) {
 		this.velocity =velocity;
 		timeSinceLastUpdate = System.currentTimeMillis();
+	}
+	public void setPanValue(float panValue) {
+		this.panValue = panValue;
 	}
 }

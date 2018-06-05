@@ -8,6 +8,7 @@ package test;
 
 import javafx.application.Application;
 
+
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -82,27 +83,40 @@ public class MouseTest extends Thread {
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= player.fileLength(f1)*1000;
         time =System.currentTimeMillis();
-        System.out.println("runin in the velocitycalculator");
+        //System.out.println("runin in the velocitycalculator");
         
-        timer1 = new java.util.Timer();
+        
+        while (true) {
+        	if (System.currentTimeMillis()-time >5) {
+        points.add(new MouseRecord(MouseInfo.getPointerInfo().getLocation(), System.currentTimeMillis()));
+        dots.add(new Dot(mv.currentX++, calculateVelocity()));
+        time = System.currentTimeMillis();
+        	}
+
+        }
+        
+
+        
+        
+        /*timer1 = new java.util.Timer();
         timer1.schedule(new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {                    	 
                         points.add(new MouseRecord(MouseInfo.getPointerInfo().getLocation(), System.currentTimeMillis()));
                         dots.add(new Dot(mv.currentX++, calculateVelocity()));
-                     /*   if (System.currentTimeMillis()-time > clipStaggerIncrement) {
+                        if (System.currentTimeMillis()-time > clipStaggerIncrement) {
                         	    AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("sound", calculateVelocity(),
                         		0, 180, clipDuration);
                         t.start();
                         time = System.currentTimeMillis();
-                        }*/
+                        }
 
                     }
                 });
             }
         }, 1000, 10);
-       /* timer2 = new java.util.Timer();
+        timer2 = new java.util.Timer();
         timer2.schedule(new TimerTask() {
             public void run() {
                 Platform.runLater(new Runnable() {

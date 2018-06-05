@@ -1,6 +1,7 @@
 package test;
 
 import java.lang.reflect.Field;
+import javafx.application.Platform;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -96,45 +97,53 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	}
 	@Override
 	public void drawModelPaths() {
-		//DRAW MODELpATHS
-		//draw the paths within the off set bounds of the viewPort
-		//when a path is created, record the location of viewPort X and Y
-		//for that path, always draw it with the X and Y offset.
-		double viewHeight = model.view.height;
-		double viewWidth = model.view.width;
-				for (int i=0; i<model.modelPaths.size();i++) {	
-					gc.beginPath();
-					gc.moveTo(model.modelPathsCoordinates.get(i).x*width/scale + iModel.viewPortXYLocation.get(i).x,
-							model.modelPathsCoordinates.get(i).y*height/scale+ iModel.viewPortXYLocation.get(i).y );											
-					gc.setStroke(model.modelPaths.get(i).getStroke());
-					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth()/scale);
-					if (model.modelPaths.get(i).getElements().size()>0) {
-					final double viewPortOffSetX = iModel.viewPortXYLocation.get(i).x;
-					final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;
-					model.modelPaths.get(i).getElements().
-					forEach(a -> {				
-						if (a instanceof LineTo) {
-						//your code
-						gc.lineTo(((LineTo) a).getX()*width/scale +viewPortOffSetX , ((LineTo) a).getY()*height/scale +viewPortOffSetY);	
-						
-						}			
-					});
-					gc.stroke();
-				}					
-				}
+		
+
+				//DRAW MODELpATHS
+				//draw the paths within the off set bounds of the viewPort
+				//when a path is created, record the location of viewPort X and Y
+				//for that path, always draw it with the X and Y offset.
+				double viewHeight = model.view.height;
+				double viewWidth = model.view.width;
+						for (int i=0; i<model.modelPaths.size();i++) {	
+							gc.beginPath();
+							gc.moveTo(model.modelPathsCoordinates.get(i).x*width/scale + iModel.viewPortXYLocation.get(i).x,
+									model.modelPathsCoordinates.get(i).y*height/scale+ iModel.viewPortXYLocation.get(i).y );											
+							gc.setStroke(model.modelPaths.get(i).getStroke());
+							gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth()/scale);
+							if (model.modelPaths.get(i).getElements().size()>0) {
+							final double viewPortOffSetX = iModel.viewPortXYLocation.get(i).x;
+							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;
+							model.modelPaths.get(i).getElements().
+							forEach(a -> {				
+								if (a instanceof LineTo) {
+								//your code
+								gc.lineTo(((LineTo) a).getX()*width/scale +viewPortOffSetX , ((LineTo) a).getY()*height/scale +viewPortOffSetY);	
+								
+								}			
+							});
+							gc.stroke();
+						}					
+						}		
 	}
 	@Override
 	public void modelChanged() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
 		gc.setLineWidth(1);
-		this.gc.setStroke(Color.BLACK);
-		this.gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
+		gc.setStroke(Color.BLACK);
+		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 		drawViewPort();
 		drawModelPaths();	
 		if (hasNetMiniMap == true){
 			drawViewPortFromNet(netMiniMapX, netMiniMapY);
 		}
+		
+		    }
+		});
 	}
 	
 	public Coordinate calculateNetViewPortCenter() {		 

@@ -67,8 +67,8 @@ public class Draw2Controller {
 		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= model.player.fileLength(f1)*1000;
-     	//soundVelocityThread = new MouseTest();
-     	//soundVelocityThread.start();
+     	soundVelocityThread = new MouseTest();
+     	soundVelocityThread.start();
 		//setPoints();
 		
 	//when shift key is down, pan the canvas to new area's
@@ -291,13 +291,14 @@ public class Draw2Controller {
             			}
             		}
             		
-            		model.updateSoundGeneratorVelocity(velocities.get(velocities.size()-1).x);
+            		model.updateSoundGeneratorVelocity(10);//soundVelocityThread.getVelocity());
+            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
             		time = System.currentTimeMillis();
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
-            		//	model.playPathInteractively(,////soundVelocityThread.getVelocity()
-            		//			mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
-            		//			clipDuration);
-            		//	
+            			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x
+            			//		mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
+            			///		clipDuration);
+            			
             			//System.out.println("velocity "+soundVelocityThread.getVelocity());            					
             			
             		}
