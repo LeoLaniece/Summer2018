@@ -122,7 +122,11 @@ public class Draw2View extends Pane implements modelListener{
 		
 		UCLeft.getChildren().add(stackpane);		
 		UCLeft.getChildren().add(model.strokeSlider);
-		UCLeft.getChildren().add(model.btnClear);		
+		UCLeft.getChildren().add(model.btnClear);
+		UCLeft.getChildren().add(model.btnPencil);
+		UCLeft.getChildren().add(model.btnMetal);
+		UCLeft.getChildren().add(model.btnEraser);
+		
 		UCRight.getChildren().add(model.colorLabel);
 	}
 	
@@ -175,23 +179,36 @@ public class Draw2View extends Pane implements modelListener{
 		    	//DRAW MODELpATHS
 		//darw the relativized modelpath coordinates
 		//do everything the same, but! multiply by the canvas height and width where appropriate
-				for (int i=0; i<model.modelPaths.size();i++) {	
+				for (int i=0; i<model.getModelPaths().size();i++) {	 
 					gc.beginPath();
 					gc.moveTo(model.modelPathsCoordinates.get(i).x*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(i).x),
 							model.modelPathsCoordinates.get(i).y*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(i).y));											
-					gc.setStroke(model.modelPaths.get(i).getStroke());
-					gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth());
-					if (model.modelPaths.get(i).getElements().size()>0) {
+					gc.setStroke(model.getModelPaths().get(i).getStroke());
+					gc.setLineWidth(model.getModelPaths().get(i).getStrokeWidth());
+					if (model.getModelPaths().get(i).getElements().size()>0) {
 					final double translateX = iModel.modelPathsTranslateByCoordinates.get(i).x;
-					final double translateY = iModel.modelPathsTranslateByCoordinates.get(i).y;						
-					model.modelPaths.get(i).getElements().
-					forEach(a -> {				
+					final double translateY = iModel.modelPathsTranslateByCoordinates.get(i).y;											
+					synchronized (model.getModelPaths()) {						
+						for (int a = 0; a<model.getModelPaths().get(i).getElements().size(); a++) {
+							if (model.getModelPaths().get(i).getElements().get(a) instanceof LineTo) {
+							gc.lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()*radarView.width
+									+translateX, 
+									((LineTo) model.getModelPaths().get(i).getElements().get(a)).getY()*radarView.height
+									+translateY);	
+							}
+						}
+						
+					/*	model.getModelPaths().get(i).getElements().
+						forEach(a -> {				
 						if (a instanceof LineTo) {
 						//your code
-						gc.lineTo(((LineTo) a).getX()*radarView.width +translateX, ((LineTo) a).getY()*radarView.height+translateY);	
-						
+						gc.lineTo(((LineTo) a).getX()*radarView.width +translateX, 
+								((LineTo) a).getY()*radarView.height+translateY);							
 						}			
-					});
+					});*/
+						
+					}
+					
 					gc.stroke();
 				}
 					

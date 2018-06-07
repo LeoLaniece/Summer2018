@@ -22,7 +22,7 @@ import test.modelListener;
 
 import java.io.*;
 
-public class GreetingServer extends Thread {
+public class DrawingServer extends Thread {
 private ServerSocket serverSocket;
 
 public Draw2View view;
@@ -31,7 +31,7 @@ public Socket server;
 public Draw2Controller controller;
 
 
-public GreetingServer(int port, Draw2Model m, Draw2Controller c) throws IOException {
+public DrawingServer(int port, Draw2Model m, Draw2Controller c) throws IOException {
    serverSocket = new ServerSocket(port);
    serverSocket.setSoTimeout(100000);
    model = m;
@@ -73,8 +73,7 @@ public void run() {
             	 line[1] = Double.parseDouble(objectIn.readUTF());           
             	 model.radarView.modelChanged();
             	 //want these values to be relative to the minimap logical size
-            	 model.radarView.drawViewPortFromNet(line[0], line[1]);           	         		         		 
-        		// System.out.println("client is panning their minimap");        		 
+            	 model.radarView.drawViewPortFromNet(line[0], line[1]);           	         		         		     		        		 
         	 }
         	 
         	 if (clientState == controller.READY) {
@@ -84,8 +83,11 @@ public void run() {
         	 line[0] = Double.parseDouble((objectIn.readUTF()));
         	 line[1] = Double.parseDouble(objectIn.readUTF());        	 
         	 pathPaint = objectIn.readUTF();
-        	 line[2] = Double.parseDouble(objectIn.readUTF());
-        	 
+        	 try {
+        	 line[2] = Double.parseDouble(objectIn.readUTF());     
+        	 }catch (java.lang.NumberFormatException e) {
+        		 System.out.println("exception "+e);
+        	 }
         
         	 //velocity
         	 line[3] = Double.parseDouble(objectIn.readUTF());
@@ -98,8 +100,6 @@ public void run() {
         	 line[7] = Double.parseDouble(objectIn.readUTF());
         	 //clipStaggerIncrement
         	 line[8] = Double.parseDouble(objectIn.readUTF());
-        	 
-        	 System.out.println("made it past the reading!");
         	 
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
@@ -123,7 +123,7 @@ public void run() {
         		 
         	 }        	 
         	 if (isNetPathAlive == false) {
-        		 model.netWorkPath = null;
+        		 model.netWorkPath = null;        		 
         		 model.stopSoundGenerator();
         	 }
         	 
@@ -154,17 +154,17 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
 	
    int port = 9080;
    try {
-      Thread t = new GreetingServer(port,m, c);
+      Thread t = new DrawingServer(port,m, c);
       t.start();
    } catch (IOException e) {
       e.printStackTrace();
    }   
       
-   String[] arr = new String[2];
+ /*  String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";
    GreetingClient GC = new GreetingClient(arr);
-   GC.start();
+   GC.start();*/
 }
 
 

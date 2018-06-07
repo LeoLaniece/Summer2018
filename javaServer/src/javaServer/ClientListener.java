@@ -22,8 +22,6 @@ public class ClientListener implements modelListener{
 	
 	@Override
 	public void modelChanged() {
-		//what do i need to send to the server so that it can replicate the path i have drawn.
-		//start by sending a line over
 		try {
 		//send the controller state over
 		out.writeUTF(Integer.toString(controller.state));		
@@ -36,14 +34,15 @@ public class ClientListener implements modelListener{
 		//if the user is ready to draw a path
 		//send over all the path drawing info
 		//send over the path sound info
-			if (controller.state ==controller.READY) {
+			if (controller.state ==controller.READY) {			
 			out.writeUTF("Client model changed!");
-			//is the path Alive
+			
+			//is the path Alive, add on to an existing path or create a new path
 			if (model.path == null) {
 				out.writeUTF("false");
 			}else {
 				out.writeUTF("true");
-			}
+			}			
 			
 			//sending the line over		
 			out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
@@ -65,9 +64,7 @@ public class ClientListener implements modelListener{
 			//clipDuration
 			out.writeUTF(Double.toString(controller.clipDuration));
 			//clipStaggerIncrement
-			out.writeUTF(Double.toString(controller.clipStaggerIncrement));
-			
-			
+			out.writeUTF(Double.toString(controller.clipStaggerIncrement));						
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

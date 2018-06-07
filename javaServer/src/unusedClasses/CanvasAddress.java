@@ -1,4 +1,4 @@
-package javaServer;
+package unusedClasses;
 
 import java.io.Serializable;
 import javafx.scene.canvas.Canvas;

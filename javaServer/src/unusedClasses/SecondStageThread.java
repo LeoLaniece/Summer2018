@@ -1,5 +1,6 @@
-package javaServer;
+package unusedClasses;
 
+import javaServer.ClientDrawingStage;
 import test.Draw2Model;
 
 public class SecondStageThread extends Thread{
@@ -8,8 +9,8 @@ public class SecondStageThread extends Thread{
 	
 	
 	public void run() {
-		SecondStage s2 = new SecondStage();
-		model = s2.m;
+		//SecondStage s2 = new SecondStage();
+		//model = s2.m;
 	}
 
 }

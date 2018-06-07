@@ -25,12 +25,12 @@ public class ServerListener extends ClientListener {
 			if (controller.state == controller.PAN_READY) {
 				out.writeUTF(Double.toString(model.iModel.viewPortX));
 				out.writeUTF(Double.toString(model.iModel.viewPortY));	
-			}
-		
+			}		
 		
 		if (controller.state ==controller.READY) {														
-				out.writeUTF("Server model changed!");// + client.getLocalSocketAddress());
+				out.writeUTF("Server model changed!");
 				//is the path Alive
+				//path is not null when other user is drawing on your canvas?
 				if (model.path == null) {
 					out.writeUTF("false");
 				}else {
@@ -56,9 +56,7 @@ public class ServerListener extends ClientListener {
 				//clipDuration
 				out.writeUTF(Double.toString(controller.clipDuration));
 				//clipStaggerIncrement
-				out.writeUTF(Double.toString(controller.clipStaggerIncrement));
-				
-				
+				out.writeUTF(Double.toString(controller.clipStaggerIncrement));								
 		}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

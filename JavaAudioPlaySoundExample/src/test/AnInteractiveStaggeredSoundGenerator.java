@@ -1,6 +1,13 @@
 package test;
 
 import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.data.Sample;
@@ -20,6 +27,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	public boolean mouseReleased = false;
 	double clipStaggerIncrement;
 	public long timeSinceLastUpdate =0;
+	File soundFile;
 	
 	/**
 	 * takes the stroke velocity panValue and clip duration to produce a sound for you!
@@ -29,13 +37,32 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	 * @param clipDuration
 	 */
 	public AnInteractiveStaggeredSoundGenerator(String name,  double velocities, float panValue 
-			, double clipDuration, double clipStaggerIncrement) {							
+			, double clipDuration, double clipStaggerIncrement, File soundFile) {							
 		this.name = name;
 		velocity =velocities;
 		this.panValue =panValue;
 		this.clipDuration = clipDuration;
 		this.pathAngle =180;
 		this.clipStaggerIncrement =clipStaggerIncrement;
+		this.soundFile = soundFile;
+		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\impact.WAV");	
+		try {
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(f1);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioIn);			
+			clip.start();
+		} catch (LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	@Override
@@ -61,7 +88,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	}
 	
 	public Panner setUpSamplePlayer(AudioContext ac) {
-		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
+		//File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
 		//File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
 		
 		//will silence the sound generator when the user stops moving his mouse cursor, but does not release the press.
@@ -70,14 +97,14 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 		}
 		
 		float maxVolume = (float) ((velocity));	
-		if (pathAngle <90&&velocity!=0) {
+		if (pathAngle <= 90 && velocity!=0) {
 			//don't want the angle calculator
-			//maxVolume = 10;
+			//maxVolume += 3;
 		}
 		
-		System.out.println("velocity "+velocity);
-		System.out.println("maxVolume "+maxVolume);
-		System.out.println("path angle "+pathAngle);
+		//System.out.println("velocity "+velocity);
+		//System.out.println("maxVolume "+maxVolume);
+		//System.out.println("path angle "+pathAngle);
 	    // instantiate the AudioContext
 	    
 	    
@@ -86,7 +113,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	   // Sample sourceSample2 = null;
 	    try
 	    {
-	      sourceSample = new Sample(f1.toString());
+	      sourceSample = new Sample(soundFile.toString());
 	     // sourceSample2 = new Sample(f2.toString());
 	    }
 	    catch(Exception e)

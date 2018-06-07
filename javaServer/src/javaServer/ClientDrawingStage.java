@@ -14,11 +14,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-public class SecondStage extends Stage {
+public class ClientDrawingStage extends Stage {
 	public Draw2Model m;
 	public Draw2Controller c;
 	
-	SecondStage(){
+	ClientDrawingStage(){
 		setTitle("Drawing Tool client");
         //a type of layout	        
 		int SceneWidth = 800;

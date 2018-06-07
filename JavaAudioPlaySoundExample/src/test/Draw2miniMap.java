@@ -96,32 +96,43 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		//do nothing
 	}
 	@Override
-	public void drawModelPaths() {
-		
-
+	public void drawModelPaths() {		
 				//DRAW MODELpATHS
 				//draw the paths within the off set bounds of the viewPort
 				//when a path is created, record the location of viewPort X and Y
 				//for that path, always draw it with the X and Y offset.
 				double viewHeight = model.view.height;
 				double viewWidth = model.view.width;
-						for (int i=0; i<model.modelPaths.size();i++) {	
+						for (int i=0; i<model.getModelPaths().size();i++) {	
 							gc.beginPath();
 							gc.moveTo(model.modelPathsCoordinates.get(i).x*width/scale + iModel.viewPortXYLocation.get(i).x,
 									model.modelPathsCoordinates.get(i).y*height/scale+ iModel.viewPortXYLocation.get(i).y );											
-							gc.setStroke(model.modelPaths.get(i).getStroke());
-							gc.setLineWidth(model.modelPaths.get(i).getStrokeWidth()/scale);
-							if (model.modelPaths.get(i).getElements().size()>0) {
+							gc.setStroke(model.getModelPaths().get(i).getStroke());
+							gc.setLineWidth(model.getModelPaths().get(i).getStrokeWidth()/scale);
+							if (model.getModelPaths().get(i).getElements().size()>0) {
 							final double viewPortOffSetX = iModel.viewPortXYLocation.get(i).x;
 							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;
-							model.modelPaths.get(i).getElements().
+							synchronized (this) {
+							for (int a = 0; a<model.getModelPaths().get(i).getElements().size(); a++) {
+								if (model.getModelPaths().get(i).getElements().get(a) instanceof LineTo) {
+								gc.lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()
+										*width/scale +viewPortOffSetX, 
+										((LineTo) model.getModelPaths().get(i).getElements().get(a)).getY()
+										*height/scale +viewPortOffSetY);	
+								}
+							}
+								
+							/*	
+							model.getModelPaths().get(i).getElements().
 							forEach(a -> {				
 								if (a instanceof LineTo) {
 								//your code
-								gc.lineTo(((LineTo) a).getX()*width/scale +viewPortOffSetX , ((LineTo) a).getY()*height/scale +viewPortOffSetY);	
+								gc.lineTo(((LineTo) a).getX()*width/scale +viewPortOffSetX ,
+										((LineTo) a).getY()*height/scale +viewPortOffSetY);	
 								
 								}			
-							});
+							});*/
+							}
 							gc.stroke();
 						}					
 						}		

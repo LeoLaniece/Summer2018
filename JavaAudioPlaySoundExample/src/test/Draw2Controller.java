@@ -64,7 +64,7 @@ public class Draw2Controller {
 		timeOfChange = new ArrayList<>();
 		points = new Coordinate[4];
 		 mouseCoordinates=new ArrayList<Coordinate>();
-		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");	
+		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= model.player.fileLength(f1)*1000;
      	soundVelocityThread = new MouseTest();
@@ -133,9 +133,9 @@ public class Draw2Controller {
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
 
         	
-			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
-					mouseCoordinates.get(mouseCoordinates.size()-1),  
-					clipDuration, clipStaggerIncrement);
+			//model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
+			//		mouseCoordinates.get(mouseCoordinates.size()-1),  
+			//		clipDuration, clipStaggerIncrement);
         	
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
@@ -180,7 +180,7 @@ public class Draw2Controller {
             	
             	distanceTraveled = 0;            	
             	model.pathToNull();
-            	model.stopSoundGenerator();
+            	//model.stopSoundGenerator();
             	model.notifySubscribers();
             	mouseCoordinates=new ArrayList<Coordinate>();
             	}
@@ -209,11 +209,11 @@ public class Draw2Controller {
             		iModel.viewPortX += dx/7;
             		iModel.viewPortY += dy/7;
             		//drag the paths around to make it seem like we are panning the background
-            		for (int a = 0; a < model.modelPaths.size(); a++) {
+            		for (int a = 0; a < model.getModelPaths().size(); a++) {
             			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;
             			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
-            			model.modelPaths.get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
-            			model.modelPaths.get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
+            			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
+            			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
             		}            		
             		  model.notifySubscribers();    		
             		}            		
@@ -291,10 +291,10 @@ public class Draw2Controller {
             			}
             		}
             		
-            		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
-            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
-            		model.updateSoundGeneratorPathAngle();
-            		time = System.currentTimeMillis();
+            	//	model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
+            	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+            	//	model.updateSoundGeneratorPathAngle();
+            	//	time = System.currentTimeMillis();
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
             			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x
             			//		mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 

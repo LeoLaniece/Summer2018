@@ -35,6 +35,11 @@ public class Draw2Model {
     public static final Double MAXSTROKE = 30.0;
     public static final Double MINSTROKE = 1.0;
     Button btnClear;
+    Button btnPencil;
+    Button btnMetal;
+    Button btnEraser;
+    
+    
     Slider strokeSlider;
     Label labelStroke;
     public final Line sampleLine; 
@@ -52,6 +57,8 @@ public class Draw2Model {
     public 	Draw2View view;
     public Draw2miniMap radarView;
     public AnInteractiveStaggeredSoundGenerator soundGenerator;
+    public int count =0;
+    public File selectedSoundFile;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -60,7 +67,7 @@ public class Draw2Model {
     	modelPathsTranslateByCoordinates = new ArrayList<>();
     	path = null;
     	lineGroup = new Group();
-    	
+    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
     	
     	btnClear = new Button("Clear");
     	btnClear.setOnAction(new EventHandler<ActionEvent>() {
@@ -73,6 +80,8 @@ public class Draw2Model {
             }
         });    	
     	
+    	setUpStrokeObjectButtons();
+    	
     	strokeSlider = new Slider(MINSTROKE, MAXSTROKE, DEFAULTSTROKE);
     	labelStroke = new Label("Stroke Width");
     	sampleLine = new Line(0, 0, 140, 0);
@@ -84,9 +93,40 @@ public class Draw2Model {
         File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
         File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
         player = new Grain2Files(soundFile, soundFile2);
-        player.changeFrequency(0);
-        
+        player.changeFrequency(0);        
     }
+    
+    public synchronized ArrayList<Path> getModelPaths(){
+    	return modelPaths;
+    }
+    
+    public void setUpStrokeObjectButtons() {
+    	btnPencil = new Button("Pencil");
+    	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {  
+            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+                notifySubscribers();
+            }
+        });    	
+    	btnMetal = new Button("Metal");
+    	btnMetal.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {  
+            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+                notifySubscribers();
+            }
+        });    	
+    	btnEraser = new Button("Eraser");
+    	btnEraser.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {  
+            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraser.WAV");
+                notifySubscribers();
+            }
+        });    	
+    }
+    
+    
+    
+    
     public void addSubscriber(modelListener ml) {
     	modelListeners.add(ml);
     }
@@ -105,6 +145,7 @@ public class Draw2Model {
     path.setStrokeWidth(sampleLine.getStrokeWidth());    
     path.setStroke(sampleLine.getStroke());    
     path.getElements().add(new MoveTo(x, y));
+    path.getElements().add(new LineTo(x,y));
     modelPathsCoordinates.add(new Coordinate(x,y));    
     currentPathCoordinate = new Coordinate(x,y);
     iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
@@ -112,8 +153,7 @@ public class Draw2Model {
     initializePathAngleCalculationCoordinates(x,y);
     pathAngleCalculationCoordinatesUpdateCount =1;
     lineGroup.getChildren().add(path);
-    modelPaths.add(path);   
-    System.out.println("created path");
+    getModelPaths().add(path);       
 	}
 	
 	/**
@@ -174,11 +214,21 @@ public class Draw2Model {
 		double da = calculateDistance(pathAngleCalculationCoordinates[0].x, pathAngleCalculationCoordinates[0].y, pathAngleCalculationCoordinates[1].x, pathAngleCalculationCoordinates[1].y);
 		double db = calculateDistance(pathAngleCalculationCoordinates[1].x, pathAngleCalculationCoordinates[1].y, pathAngleCalculationCoordinates[2].x, pathAngleCalculationCoordinates[2].y);
 		double dc = calculateDistance(pathAngleCalculationCoordinates[2].x, pathAngleCalculationCoordinates[2].y, pathAngleCalculationCoordinates[0].x, pathAngleCalculationCoordinates[0].y);
-		double result = Math.acos((Math.pow(da, 2)+Math.pow(db, 2)-Math.pow(dc, 2))/(2*da*db));
+		double result = Math.acos((Math.pow(db, 2)+Math.pow(da, 2)-Math.pow(dc, 2))/(2*db*da));
+		if (isNaN(result)) {
+			result = 0;
+		}
+		//System.out.println("distance a = "+da);
+		//System.out.println("distance b = "+db);
+		//System.out.println("distance c = "+dc);
 		//System.out.println("current path angle = "+Math.toDegrees(result));
-		//return a value, use it in sound generator.
+		//return a value, use it in sound generator.		
+		//System.out.println("path elements count "+path.getElements().size());
+		//System.out.println("path angle "+pathAngle);
 		return Math.toDegrees(result);
 	}
+	
+	public boolean isNaN(double x){return x != x;}
 	
 	public double calculateDistance(double x, double y,double x2, double y2) {
 		double result = Math.sqrt((Math.pow(x2-x, 2)+Math.pow(y2-y, 2)));
@@ -190,7 +240,7 @@ public class Draw2Model {
 	public void pathToNull() {
 		dP = null;
 		path = null;
-		netWorkPath = null;
+		//netWorkPath = null;
 	}
 	
 	public void calculateStroke(double distanceTraveled, long startTime) {
@@ -237,12 +287,14 @@ public class Draw2Model {
 			, double clipDuration, double clipStaggerIncrement) {
 		float panValue = doNotCalculatePanValue(mouseCoordinate); 			
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
-		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",velocity,panValue, clipDuration,clipStaggerIncrement);
+		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
+				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile);
 		soundGenerator.start();
 	}
 	
 	public void stopSoundGenerator() {
 		soundGenerator.setMouseReleased(true);
+		System.out.println("stopSound generator");
 	}
 	
 	public void updateSoundGeneratorPathAngle() {		
@@ -447,7 +499,7 @@ public class Draw2Model {
 	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
 	    lineGroup.getChildren().add(netWorkPath);
-	    modelPaths.add(netWorkPath); 
+	    getModelPaths().add(netWorkPath); 
 	    notifySubscribers();
 	}
 	
