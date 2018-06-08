@@ -137,6 +137,17 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 						}					
 						}		
 	}
+	
+	@Override
+	public void paintOverPaths() {
+		gc.setFill(Color.WHITE);
+		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
+		gc.setLineWidth(1);
+		gc.setStroke(Color.BLACK);
+		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
+		drawViewPort();
+	}
+	
 	@Override
 	public void modelChanged() {
 		Platform.runLater(new Runnable() {

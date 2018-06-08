@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -27,7 +28,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	public boolean mouseReleased = false;
 	double clipStaggerIncrement;
 	public long timeSinceLastUpdate =0;
-	File soundFile;
+	File sustainFile; 
 	
 	/**
 	 * takes the stroke velocity panValue and clip duration to produce a sound for you!
@@ -37,19 +38,21 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	 * @param clipDuration
 	 */
 	public AnInteractiveStaggeredSoundGenerator(String name,  double velocities, float panValue 
-			, double clipDuration, double clipStaggerIncrement, File soundFile) {							
+			, double clipDuration, double clipStaggerIncrement, File sustainFile, File impactFile) {							
 		this.name = name;
 		velocity =velocities;
 		this.panValue =panValue;
 		this.clipDuration = clipDuration;
 		this.pathAngle =180;
 		this.clipStaggerIncrement =clipStaggerIncrement;
-		this.soundFile = soundFile;
-		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\impact.WAV");	
+		this.sustainFile = sustainFile;			
 		try {
-			AudioInputStream audioIn = AudioSystem.getAudioInputStream(f1);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(impactFile);
 			Clip clip = AudioSystem.getClip();
-			clip.open(audioIn);			
+			clip.open(audioIn);	
+			FloatControl gainControl = 
+				    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+				gainControl.setValue(6.0f); // Reduce volume by 10 decibels.			
 			clip.start();
 		} catch (LineUnavailableException e) {
 			// TODO Auto-generated catch block
@@ -102,7 +105,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 			//maxVolume += 3;
 		}
 		
-		//System.out.println("velocity "+velocity);
+		System.out.println("velocity "+velocity);
 		//System.out.println("maxVolume "+maxVolume);
 		//System.out.println("path angle "+pathAngle);
 	    // instantiate the AudioContext
@@ -113,7 +116,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	   // Sample sourceSample2 = null;
 	    try
 	    {
-	      sourceSample = new Sample(soundFile.toString());
+	      sourceSample = new Sample(sustainFile.toString());
 	     // sourceSample2 = new Sample(f2.toString());
 	    }
 	    catch(Exception e)

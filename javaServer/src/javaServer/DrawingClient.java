@@ -22,6 +22,7 @@ public class DrawingClient extends Thread{
 	public Draw2Model model;
 	public Draw2Controller controller;
 	public static Socket client;
+	public int transaction = 1;
 	
 
 public DrawingClient(String [] args) {
@@ -57,6 +58,8 @@ public DrawingClient(String [] args) {
     	  //initialize variables which will store information received from the drawing server
     	  DataInputStream objectIn;    	  
 		try {
+			
+			
 		  objectIn = new DataInputStream(client.getInputStream());			      	      	
           boolean isNetPathAlive = false;          
           String pathPaint = "";
@@ -64,6 +67,12 @@ public DrawingClient(String [] args) {
           double[] line = new double[9];
           int serverState;
           while (true) {       	          	  
+        	  boolean transactComplete = false;
+        	  while (!transactComplete) {
+        		  transactComplete = Boolean.parseBoolean(objectIn.readUTF());
+        	  }
+        	  //model.netTransaction = false;
+        	  
          	 //get the client state
          	 serverState = Integer.parseInt(objectIn.readUTF());
          	 
@@ -121,15 +130,15 @@ public DrawingClient(String [] args) {
          		model.updateSoundGeneratorVelocity(line[3]);
          		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
          		model.updateSoundGeneratorPanValue(mouseCoordinate);
-         		model.updateSoundGeneratorPathAngleFromNet(line[6]);
-        		 
+         		model.updateSoundGeneratorPathAngleFromNet(line[6]);        		 
         	 }        	 
         	 //end the path and path sound generator
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;
         		 model.stopSoundGenerator();
         	 }        	          	          	 
-         	 model.notifySubscribers();         	
+        	 model.netTransaction = true;
+         	 model.notifySubscribers();
      	 }
           }                    
 		} catch (IOException e) {

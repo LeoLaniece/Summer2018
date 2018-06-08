@@ -6,7 +6,7 @@ package test;
 
 
 
-import java.awt.event.KeyEvent;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,6 +17,8 @@ import javax.sound.sampled.LineUnavailableException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.*;
+import javafx.scene.input.KeyEvent; 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -24,6 +26,7 @@ import javafx.scene.shape.Path;
 
 
 public class Draw2Controller {
+	public final Draw2Controller me = this;
 	public Draw2View view;
 	public Draw2Model model;
 	public Draw2miniMap radarView;
@@ -49,6 +52,7 @@ public class Draw2Controller {
 	public int READY = 0;
 	public int PAN_READY = 1;
 	public int NOTREADY =-1;
+	public int FREEZE = 2;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
@@ -70,13 +74,29 @@ public class Draw2Controller {
      	soundVelocityThread = new MouseTest();
      	soundVelocityThread.start();
 		//setPoints();
-		
-	//when shift key is down, pan the canvas to new area's
-		
+     	
+     	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent key) {	
+				FreezeQuiz fr = null;
+				System.out.println(key.getText());
+				if (key.getText().equals("f")) {
+					if (state != FREEZE) {
+						System.out.println(key.getText());
+						state = FREEZE;
+						view.paintOverPaths();
+						radarView.paintOverPaths();
+						//launch a pop up window requesting for the location of the other user and his activity?
+						fr = new FreezeQuiz(me);											
+					}																	
+				}				
+			}     		
+     	});
 	
 	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
         @Override
         public void handle(MouseEvent me) {
+        	if (state!=FREEZE) {
         	state = READY;
         	model.pathToNull();
         //	System.out.println("x = "+me.getX());
@@ -133,15 +153,15 @@ public class Draw2Controller {
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
 
         	
-			//model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
-			//		mouseCoordinates.get(mouseCoordinates.size()-1),  
-			//		clipDuration, clipStaggerIncrement);
+			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
+					mouseCoordinates.get(mouseCoordinates.size()-1),  
+					clipDuration, clipStaggerIncrement);
         	
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
         	}
         	
-                        		                        
+        	}            		                        
         }
     });
 	
@@ -149,6 +169,7 @@ public class Draw2Controller {
 	view.c.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {                     	            	
+            	if (state!=FREEZE) {
             	if (state == READY) {
             		//soundVelocityThread.preStop();
             		//soundVelocityThread.stop();
@@ -180,12 +201,13 @@ public class Draw2Controller {
             	
             	distanceTraveled = 0;            	
             	model.pathToNull();
-            	//model.stopSoundGenerator();
+            	model.stopSoundGenerator();
             	model.notifySubscribers();
             	mouseCoordinates=new ArrayList<Coordinate>();
             	}
                 state = NOTREADY;
                 
+            }
             }
         });
 	
@@ -291,9 +313,9 @@ public class Draw2Controller {
             			}
             		}
             		
-            	//	model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
-            	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
-            	//	model.updateSoundGeneratorPathAngle();
+            		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
+            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+            		model.updateSoundGeneratorPathAngle();
             	//	time = System.currentTimeMillis();
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
             			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x
@@ -316,6 +338,9 @@ public class Draw2Controller {
         });		
 
 	}
+	
+
+	
 	
 	//velocity calculation functions
 	/**

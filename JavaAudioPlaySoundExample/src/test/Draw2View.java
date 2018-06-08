@@ -217,6 +217,11 @@ public class Draw2View extends Pane implements modelListener{
 
 	}
 	
+	public void paintOverPaths() {
+		gc.setFill(Color.WHITE);
+		gc.fillRect(0, 0, width, height);
+	}
+	
 	
 	public void modelChanged() {
 		Platform.runLater(new Runnable() {

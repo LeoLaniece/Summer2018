@@ -39,6 +39,7 @@ public class Draw2Model {
     Button btnMetal;
     Button btnEraser;
     
+    public boolean netTransaction = true;
     
     Slider strokeSlider;
     Label labelStroke;
@@ -59,6 +60,7 @@ public class Draw2Model {
     public AnInteractiveStaggeredSoundGenerator soundGenerator;
     public int count =0;
     public File selectedSoundFile;
+    File selectedImpactFile;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -68,7 +70,7 @@ public class Draw2Model {
     	path = null;
     	lineGroup = new Group();
     	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-    	
+    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
     	btnClear = new Button("Clear");
     	btnClear.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
@@ -105,21 +107,24 @@ public class Draw2Model {
     	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
             	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-                notifySubscribers();
+            	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
+            	notifySubscribers();
             }
         });    	
     	btnMetal = new Button("Metal");
     	btnMetal.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {  
+            public void handle(ActionEvent event) {              	
             	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
-                notifySubscribers();
+            	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalImpact.WAV");
+            	notifySubscribers();
             }
         });    	
     	btnEraser = new Button("Eraser");
     	btnEraser.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
-            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraser.WAV");
-                notifySubscribers();
+            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserOnPaperFast.WAV");
+            	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
+            	notifySubscribers();
             }
         });    	
     }
@@ -288,13 +293,12 @@ public class Draw2Model {
 		float panValue = doNotCalculatePanValue(mouseCoordinate); 			
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
 		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
-				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile);
+				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);
 		soundGenerator.start();
 	}
 	
 	public void stopSoundGenerator() {
-		soundGenerator.setMouseReleased(true);
-		System.out.println("stopSound generator");
+		soundGenerator.setMouseReleased(true);		
 	}
 	
 	public void updateSoundGeneratorPathAngle() {		

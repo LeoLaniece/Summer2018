@@ -57,6 +57,9 @@ public class LaunchServer extends Application{
         view.setModelRadarView(radarView);
         model.setModelRadarView(radarView);
 
+       // view.onKeyPressedProperty();
+       // view.setOnKeyPressed(controller::handleKeyPressed());
+        
         primaryStage.setScene(scene);
         primaryStage.setX(0);
         primaryStage.setY(0);

@@ -29,6 +29,7 @@ public Draw2View view;
 public Draw2Model model;
 public Socket server;
 public Draw2Controller controller;
+public int transaction = 1;
 
 
 public DrawingServer(int port, Draw2Model m, Draw2Controller c) throws IOException {
@@ -119,8 +120,7 @@ public void run() {
          		model.updateSoundGeneratorVelocity(line[3]);
          		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
          		model.updateSoundGeneratorPanValue(mouseCoordinate);
-         		model.updateSoundGeneratorPathAngleFromNet(line[6]);
-        		 
+         		model.updateSoundGeneratorPathAngleFromNet(line[6]);        		 
         	 }        	 
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;        		 
@@ -131,7 +131,7 @@ public void run() {
         	 
         	 
         	 
-        	 
+        	 model.netTransaction = true;
         	 model.notifySubscribers();
         	
         	 }    

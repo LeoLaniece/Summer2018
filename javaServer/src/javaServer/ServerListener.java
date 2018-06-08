@@ -9,6 +9,7 @@ import test.Draw2Controller;
 import test.Draw2Model;
 
 public class ServerListener extends ClientListener {
+	public int transaction = 1;
 
 	public ServerListener(Draw2Model m, Draw2Controller c, DataOutputStream o) {
 		super(m, c, o);
@@ -16,9 +17,12 @@ public class ServerListener extends ClientListener {
 	}
 
 	@Override
-	public void modelChanged() {
+	public synchronized void modelChanged() {
 		try {
-			
+			//send transaction over
+		//out.writeUTF(Boolean.toString(model.netTransaction));
+		
+		if (model.netTransaction) {											
 			//send the controller state over
 			out.writeUTF(Integer.toString(controller.state));
 			
@@ -27,8 +31,10 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(Double.toString(model.iModel.viewPortY));	
 			}		
 		
-		if (controller.state ==controller.READY) {														
+		if (controller.state ==controller.READY) { 
+			//need to not send info too often?
 				out.writeUTF("Server model changed!");
+				
 				//is the path Alive
 				//path is not null when other user is drawing on your canvas?
 				if (model.path == null) {
@@ -36,6 +42,7 @@ public class ServerListener extends ClientListener {
 				}else {
 					out.writeUTF("true");
 				}				
+				
 				//sending the line over			
 				out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
 				out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));				
@@ -56,13 +63,16 @@ public class ServerListener extends ClientListener {
 				//clipDuration
 				out.writeUTF(Double.toString(controller.clipDuration));
 				//clipStaggerIncrement
-				out.writeUTF(Double.toString(controller.clipStaggerIncrement));								
+				out.writeUTF(Double.toString(controller.clipStaggerIncrement));		
+		}
 		}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
+		}	
 	}
-}
+
+
 
