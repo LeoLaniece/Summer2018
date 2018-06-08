@@ -1,6 +1,7 @@
 package javaServer;
 
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,9 +9,11 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 //File Name GreetingClient.java
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import test.*;
 import javafx.scene.canvas.Canvas;
@@ -64,51 +67,60 @@ public DrawingClient(String [] args) {
           boolean isNetPathAlive = false;          
           String pathPaint = "";
           String msg = "";
+          String fullmsg = "";
           double[] line = new double[9];
           int serverState;
           while (true) {       	          	  
-        	  boolean transactComplete = false;
-        	  while (!transactComplete) {
-        		  transactComplete = Boolean.parseBoolean(objectIn.readUTF());
-        	  }
-        	  //model.netTransaction = false;
-        	  
+        	  //model.netTransaction = false;        	  
          	 //get the client state
-         	 serverState = Integer.parseInt(objectIn.readUTF());
+        	  fullmsg = objectIn.readUTF();
+        		String msgline;
+        		ArrayList<String> netInfo = new ArrayList<>();
+        		BufferedReader reader = new BufferedReader(new StringReader(fullmsg));        				
+        		try {
+        			while ((msgline = reader.readLine()) != null) {
+        			    netInfo.add(msgline);		    
+        			}
+        		} catch (IOException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+        		int netInfoIndex = 0;        	  
+         	 serverState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
          	 
          	 //if server is panning move all paths by...
          	 //adjust the server's minimap location
          	 if (serverState == controller.PAN_READY) {
          		 //draw a second viewport on the miniMap!
-         		 line[0] = Double.parseDouble((objectIn.readUTF()));
-             	 line[1] = Double.parseDouble(objectIn.readUTF());           
+         		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+             	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;                     	              	 
              	 model.radarView.modelChanged();
              	 model.radarView.drawViewPortFromNet(line[0], line[1]);          	         		         		          		        		 
          	 }
         	  
          	 //if server is drawing a path, replicate path and produce sound
          	 if (serverState == controller.READY) {
-         	 msg = (String) objectIn.readUTF();
-         	 
+         	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
          	 //draw path info
-         	 isNetPathAlive = Boolean.parseBoolean(objectIn.readUTF());         	 
-         	 line[0] = Double.parseDouble((objectIn.readUTF()));
-         	 line[1] = Double.parseDouble(objectIn.readUTF());        	 
-         	 pathPaint = objectIn.readUTF();
-         	 line[2] = Double.parseDouble(objectIn.readUTF());
+         	 isNetPathAlive = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
+         	 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+         	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
+         	 pathPaint = netInfo.get(netInfoIndex); netInfoIndex++;
+         	 line[2] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
 
          	 //path sound info
         	 //velocity
-        	 line[3] = Double.parseDouble(objectIn.readUTF());
+        	 line[3] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //mouseCoordinates
-        	 line[4] = Double.parseDouble(objectIn.readUTF());
-        	 line[5] = Double.parseDouble(objectIn.readUTF());
+        	 line[4] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+        	 line[5] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //angle
-        	 line[6] = Double.parseDouble(objectIn.readUTF());
+        	 line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //clipDuration
-        	 line[7] = Double.parseDouble(objectIn.readUTF());
+        	 line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //clipStaggerIncrement
-        	 line[8] = Double.parseDouble(objectIn.readUTF());        	         	 
+        	 line[8] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;     	         	 
+        	 //fullmsg = objectIn.readUTF();
         	 
         	 //start new path
         	 if (model.netWorkPath == null) {
@@ -139,6 +151,7 @@ public DrawingClient(String [] args) {
         	 }        	          	          	 
         	 model.netTransaction = true;
          	 model.notifySubscribers();
+         	 System.out.println(fullmsg);
      	 }
           }                    
 		} catch (IOException e) {

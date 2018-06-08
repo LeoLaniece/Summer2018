@@ -22,68 +22,90 @@ public class ClientListener implements modelListener{
 	}
 	
 	@Override
-	public void modelChanged() {
+	public synchronized void modelChanged() {
 		try {
-		//send the controller state over
+			//send transaction over
+		//out.writeUTF(Boolean.toString(model.netTransaction));
+			ArrayList<String> msg = new ArrayList<String>();
 		
-		out.writeUTF(Integer.toString(controller.state));		
-		System.out.println("msgs sent "+count++);
-		//if user is panning the background, send viewPortCoordinates over
-		if (controller.state == controller.PAN_READY) {
-			out.writeUTF(Double.toString(model.iModel.viewPortX));
-			out.writeUTF(Double.toString(model.iModel.viewPortY));	
-		}	
+												
+			//send the controller state over
+			//out.writeUTF(Integer.toString(controller.state));
+			msg.add(Integer.toString(controller.state)+"\n");
+			
+			if (controller.state == controller.PAN_READY) {
+				//out.writeUTF(Double.toString(model.iModel.viewPortX));
+				msg.add(Double.toString(model.iModel.viewPortX)+"\n");
+				//out.writeUTF(Double.toString(model.iModel.viewPortY));	
+				msg.add(Double.toString(model.iModel.viewPortY)+"\n");
+				//send single string over the net
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}
+				out.writeUTF(fullmsg);
+			}		
 		
-		//if the user is ready to draw a path
-		//send over all the path drawing info
-		//send over the path sound info
-			if (controller.state ==controller.READY) {			
-			out.writeUTF("Client model changed!");
-			System.out.println("msgs sent "+count++);
-			//is the path Alive, add on to an existing path or create a new path
-			if (model.path == null) {
-				out.writeUTF("false");
-			}else {
-				out.writeUTF("true");
-			}			
-			System.out.println("msgs sent "+count++);
-			//sending the line over		
-			out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
-			System.out.println("msgs sent "+count++);
-			out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));				
-			System.out.println("msgs sent "+count++);
-			//sending the colour over
-			out.writeUTF(model.sampleLine.getStroke().toString());
-			System.out.println("msgs sent "+count++);
-			//send the strokeWidth over
-			out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
-			System.out.println("msgs sent "+count++);
-			
-			//sending the sound over
-			//velocity
-			out.writeUTF(Double.toString(controller.soundVelocityThread.getVelocity()));
-			System.out.println("msgs sent "+count++);
-			//mouseCoordinates
-			out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x));
-			System.out.println("msgs sent "+count++);
-			out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y));
-			System.out.println("msgs sent "+count++);
-			//angle
-			out.writeUTF(Double.toString(model.currentPathAngle));
-			System.out.println("msgs sent "+count++);
-			//clipDuration
-			out.writeUTF(Double.toString(controller.clipDuration));
-			System.out.println("msgs sent "+count++);
-			//clipStaggerIncrement
-			out.writeUTF(Double.toString(controller.clipStaggerIncrement));	
-			System.out.println("msgs sent "+count++);
-			
+		if (controller.state ==controller.READY) { 
+			//need to not send info too often?
+			//	out.writeUTF("Server model changed!");
+				msg.add("Server model changed!"+"\n");
+				//is the path Alive
+				//path is not null when other user is drawing on your canvas?
+				if (model.path == null) {
+			//		out.writeUTF("false");
+					msg.add("false"+"\n");
+				}else {
+			//		out.writeUTF("true");
+					msg.add("true"+"\n");
+				}				
+				
+				//sending the line over			
+			//	out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
+				msg.add(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width))+"\n");
+			//	out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));	
+				msg.add(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height))+"\n");
+				
+				//sending the colour over
+			//	out.writeUTF(model.sampleLine.getStroke().toString());
+				msg.add(model.sampleLine.getStroke().toString()+"\n");
+				//send the strokeWidth over
+			//	out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
+				msg.add(Double.toString(model.sampleLine.getStrokeWidth())+"\n");
+				
+				//sending the sound over
+				//velocity
+			//	out.writeUTF(Double.toString(controller.soundVelocityThread.getVelocity()));
+				msg.add(Double.toString(controller.soundVelocityThread.getVelocity())+"\n");
+				//mouseCoordinates
+			//	out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x));
+				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x)+"\n");
+			//	out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y));
+				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y)+"\n");
+				//angle
+			//	out.writeUTF(Double.toString(model.currentPathAngle));
+				msg.add(Double.toString(model.currentPathAngle)+"\n");
+				//clipDuration
+			//	out.writeUTF(Double.toString(controller.clipDuration));
+				msg.add(Double.toString(controller.clipDuration)+"\n");
+				//clipStaggerIncrement
+			//	out.writeUTF(Double.toString(controller.clipStaggerIncrement));
+				msg.add(Double.toString(controller.clipStaggerIncrement)+"\n");
+				
+				//send one msg over
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}
+				out.writeUTF(fullmsg);
+		}
+		
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		}
+		
+		}	
 		
 	}
 	

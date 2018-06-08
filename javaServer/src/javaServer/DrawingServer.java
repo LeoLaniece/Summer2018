@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -61,46 +63,58 @@ public void run() {
          
          boolean isNetPathAlive = false;
          String msg = "greetingServer";
+         String fullmsg = "";
          String pathPaint = "";
          double[] line = new double[9];
          int clientState;
          while (msg!="exit") {
         	 //get the client state
-        	 clientState = Integer.parseInt(objectIn.readUTF());
+       	  fullmsg = objectIn.readUTF();
+       		String msgline;
+       		ArrayList<String> netInfo = new ArrayList<>();
+       		BufferedReader reader = new BufferedReader(new StringReader(fullmsg));        				
+       		try {
+       			while ((msgline = reader.readLine()) != null) {
+       			    netInfo.add(msgline);		    
+       			}
+       		} catch (IOException e) {
+       			// TODO Auto-generated catch block
+       			e.printStackTrace();
+       		}
+       		int netInfoIndex = 0;   
+        	 
+        	 clientState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 
         	 if (clientState == controller.PAN_READY) {
         		 //draw a second viewport on the miniMap!!
-        		 line[0] = Double.parseDouble((objectIn.readUTF()));
-            	 line[1] = Double.parseDouble(objectIn.readUTF());           
+        		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+             	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;           
             	 model.radarView.modelChanged();
             	 //want these values to be relative to the minimap logical size
             	 model.radarView.drawViewPortFromNet(line[0], line[1]);           	         		         		     		        		 
         	 }
         	 
         	 if (clientState == controller.READY) {
-        	 msg = (String) objectIn.readUTF();
-        	 isNetPathAlive = Boolean.parseBoolean(objectIn.readUTF());
-        	 
-        	 line[0] = Double.parseDouble((objectIn.readUTF()));
-        	 line[1] = Double.parseDouble(objectIn.readUTF());        	 
-        	 pathPaint = objectIn.readUTF();
-        	 try {
-        	 line[2] = Double.parseDouble(objectIn.readUTF());     
-        	 }catch (java.lang.NumberFormatException e) {
-        		 System.out.println("exception "+e);
-        	 }
-        
-        	 //velocity
-        	 line[3] = Double.parseDouble(objectIn.readUTF());
-        	 //mouseCoordinates
-        	 line[4] = Double.parseDouble(objectIn.readUTF());
-        	 line[5] = Double.parseDouble(objectIn.readUTF());
-        	 //angle
-        	 line[6] = Double.parseDouble(objectIn.readUTF());
-        	 //clipDuration
-        	 line[7] = Double.parseDouble(objectIn.readUTF());
-        	 //clipStaggerIncrement
-        	 line[8] = Double.parseDouble(objectIn.readUTF());
+             	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
+             	 //draw path info
+             	 isNetPathAlive = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
+             	 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+             	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
+             	 pathPaint = netInfo.get(netInfoIndex); netInfoIndex++;
+             	 line[2] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+
+             	 //path sound info
+            	 //velocity
+            	 line[3] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	 //mouseCoordinates
+            	 line[4] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	 line[5] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	 //angle
+            	 line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	 //clipDuration
+            	 line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	 //clipStaggerIncrement
+            	 line[8] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++; 
         	 
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
@@ -126,11 +140,6 @@ public void run() {
         		 model.netWorkPath = null;        		 
         		 model.stopSoundGenerator();
         	 }
-        	 
-        	 
-        	 
-        	 
-        	 
         	 model.netTransaction = true;
         	 model.notifySubscribers();
         	
@@ -160,11 +169,11 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
       e.printStackTrace();
    }   
       
- /*  String[] arr = new String[2];
+   String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";
-   GreetingClient GC = new GreetingClient(arr);
-   GC.start();*/
+   DrawingClient GC = new DrawingClient(arr);
+   GC.start();
 }
 
 
