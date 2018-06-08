@@ -134,6 +134,7 @@ public class Draw2Controller {
         		state = PAN_READY;   
             	x = me.getX();
             	y = me.getY();
+            	model.beginViewPortMovementSound();
         		
         	}else {
         		state = READY;
@@ -153,9 +154,9 @@ public class Draw2Controller {
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
 
         	
-			//model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
-			//		mouseCoordinates.get(mouseCoordinates.size()-1),  
-			//		clipDuration, clipStaggerIncrement);
+			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
+					mouseCoordinates.get(mouseCoordinates.size()-1),  
+					clipDuration, clipStaggerIncrement);
         	
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
@@ -201,13 +202,18 @@ public class Draw2Controller {
             	
             	distanceTraveled = 0;            	
             	model.pathToNull();
-            	//model.stopSoundGenerator();
+            	model.stopSoundGenerator();
             	model.notifySubscribers();
             	mouseCoordinates=new ArrayList<Coordinate>();
             	}
-                state = NOTREADY;
-                
+            	
+            	if (state == PAN_READY) {
+            		System.out.println("stop the VPDS");
+            		model.stopVPDS();
+            	}
+                state = NOTREADY;                
             }
+            	
             }
         });
 	
@@ -313,9 +319,9 @@ public class Draw2Controller {
             			}
             		}
             		
-            		//model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
-            	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
-            	//	model.updateSoundGeneratorPathAngle();
+            		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
+            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+            		model.updateSoundGeneratorPathAngle();
             	//	time = System.currentTimeMillis();
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
             			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x

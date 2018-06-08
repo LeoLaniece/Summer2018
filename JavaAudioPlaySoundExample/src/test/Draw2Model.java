@@ -3,6 +3,7 @@ package test;
 import java.io.File;
 
 
+
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
@@ -39,6 +40,7 @@ public class Draw2Model {
     Button btnMetal;
     Button btnEraser;
     
+    public ViewPortDisplacementSound VPDS;
     public boolean netTransaction = true;
     
     Slider strokeSlider;
@@ -145,6 +147,11 @@ public class Draw2Model {
 		double y = y1/radarView.height;	
 		//System.out.println("radarView width "+radarView.width);
 		//System.out.println("radarView h "+radarView.height);
+		if (path != null) {
+			pathToNull();
+		}
+		
+		
     path = new Path();   
     path.setSmooth(true);
     path.setStrokeWidth(sampleLine.getStrokeWidth());    
@@ -290,7 +297,10 @@ public class Draw2Model {
 	 */
 	public void playPathInteractively(double velocity, Coordinate mouseCoordinate
 			, double clipDuration, double clipStaggerIncrement) {
-		float panValue = doNotCalculatePanValue(mouseCoordinate); 			
+		float panValue = doNotCalculatePanValue(mouseCoordinate); 	
+		if (soundGenerator != null) {
+			stopSoundGenerator();
+		}
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
 		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
 				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);
@@ -496,6 +506,7 @@ public class Draw2Model {
 		netWorkPath.setStrokeWidth(points[2]);
 		netWorkPath.setStroke(Paint.valueOf(pathPaint));
 		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
+		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
 
@@ -516,5 +527,13 @@ public class Draw2Model {
 	}
 	public void setModelRadarView(Draw2miniMap v) {
 		radarView = v;
+	}
+	
+	public void beginViewPortMovementSound() { 
+		VPDS = new ViewPortDisplacementSound();
+		VPDS.start();
+	}
+	public void stopVPDS() {
+		VPDS.updateDisplacementProgress();
 	}
 }

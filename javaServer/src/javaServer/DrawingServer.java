@@ -97,7 +97,8 @@ public void run() {
         	 if (clientState == controller.READY) {
              	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
              	 //draw path info
-             	 isNetPathAlive = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
+             	 isNetPathAlive = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;
+             	
              	 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
              	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
              	 pathPaint = netInfo.get(netInfoIndex); netInfoIndex++;
@@ -139,6 +140,7 @@ public void run() {
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;        		 
         		 model.stopSoundGenerator();
+        		 System.out.println("stopped the sound generator!");
         	 }
         	 model.netTransaction = true;
         	 model.notifySubscribers();
@@ -169,11 +171,11 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
       e.printStackTrace();
    }   
       
-   String[] arr = new String[2];
+   /*String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";
    DrawingClient GC = new DrawingClient(arr);
-   GC.start();
+   GC.start();*/
 }
 
 

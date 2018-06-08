@@ -29,7 +29,6 @@ INDEX VERSION 1.130+C:\Users\HCI Lab\eclipse-workspace\.metadata\.plugins\org.ec
 1055199166.index
 1158385457.index
 1093488887.index
-1057182068.index
 2944604336.index
 4121661813.index
 916900781.index

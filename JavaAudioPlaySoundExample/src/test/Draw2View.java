@@ -3,7 +3,6 @@ package test;
 import java.lang.reflect.Field;
 import javafx.application.Platform;
 
-
 import javafx.scene.shape.LineTo; 
 
 import java.lang.reflect.Modifier;

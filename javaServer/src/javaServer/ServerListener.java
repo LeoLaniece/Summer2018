@@ -50,9 +50,11 @@ public class ServerListener extends ClientListener {
 				if (model.path == null) {
 			//		out.writeUTF("false");
 					msg.add("false"+"\n");
+					//System.out.println("sent false");
 				}else {
 			//		out.writeUTF("true");
 					msg.add("true"+"\n");
+					//System.out.println("sent true");
 				}				
 				
 				//sending the line over			
