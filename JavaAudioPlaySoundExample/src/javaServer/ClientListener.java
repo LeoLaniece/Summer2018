@@ -1,31 +1,35 @@
 package javaServer;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import test.Draw2Controller;
-import test.Draw2Model;
+import test.*;
+public class ClientListener implements modelListener{
 
-public class ServerListener extends ClientListener {
+	public Draw2Model model;
+	public Draw2Controller controller;
+	public DataOutputStream out;
+	public int count =0;
 	
-	public int msgCount = 0;
-	public ServerListener(Draw2Model m, Draw2Controller c, DataOutputStream o) {
-		super(m, c, o);
-		// TODO Auto-generated constructor stub
+	public ClientListener(Draw2Model m, Draw2Controller c, DataOutputStream o) {
+		model = m;
+		controller = c;
+		out =o;
+		//model.setPathActivityListener(this);
+		model.addSubscriber(this);
 	}
 	
 	@Override
-	public void modelChanged() {
-		
-	}
-	
-	public synchronized void pathActivity() {
+	public synchronized void modelChanged() {
 		try {
 			//send transaction over
 		//out.writeUTF(Boolean.toString(model.netTransaction));
-			ArrayList<String> msg = new ArrayList<String>();														
+			ArrayList<String> msg = new ArrayList<String>();
+		
+												
 			//send the controller state over
 			//out.writeUTF(Integer.toString(controller.state));
 			msg.add(Integer.toString(controller.state)+"\n");
@@ -41,8 +45,6 @@ public class ServerListener extends ClientListener {
 					fullmsg += msg.get(i);
 				}
 				out.writeUTF(fullmsg);
-				msgCount++;
-				System.out.println("msg count "+msgCount);
 			}		
 		
 		if (controller.state ==controller.READY) { 
@@ -54,11 +56,9 @@ public class ServerListener extends ClientListener {
 				if (model.path == null) {
 			//		out.writeUTF("false");
 					msg.add("false"+"\n");
-					//System.out.println("sent false");
 				}else {
 			//		out.writeUTF("true");
 					msg.add("true"+"\n");
-					//System.out.println("sent true");
 				}				
 				
 				//sending the line over			
@@ -81,7 +81,6 @@ public class ServerListener extends ClientListener {
 				//mouseCoordinates
 			//	out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x));
 				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x)+"\n");
-				
 			//	out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y));
 				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y)+"\n");
 				//angle
@@ -93,6 +92,8 @@ public class ServerListener extends ClientListener {
 				//clipStaggerIncrement
 			//	out.writeUTF(Double.toString(controller.clipStaggerIncrement));
 				msg.add(Double.toString(controller.clipStaggerIncrement)+"\n");
+				//current timbre
+				msg.add(Integer.toString(model.currentTimbre));
 				
 				//send one msg over
 				String fullmsg = "";
@@ -100,8 +101,6 @@ public class ServerListener extends ClientListener {
 					fullmsg += msg.get(i);
 				}
 				out.writeUTF(fullmsg);
-				msgCount++;
-				System.out.println("msg count "+msgCount);
 		}
 		
 			} catch (IOException e) {
@@ -110,7 +109,7 @@ public class ServerListener extends ClientListener {
 			}
 		
 		}	
+		
 	}
-
-
+	
 

@@ -16,12 +16,9 @@ public class ServerListener extends ClientListener {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public void modelChanged() {
-		
-	}
-	
-	public synchronized void pathActivity() {
+	@Override 
+	public void modelChanged() {					
+	//public synchronized void pathThreadchanged() {
 		try {
 			//send transaction over
 		//out.writeUTF(Boolean.toString(model.netTransaction));
@@ -93,6 +90,8 @@ public class ServerListener extends ClientListener {
 				//clipStaggerIncrement
 			//	out.writeUTF(Double.toString(controller.clipStaggerIncrement));
 				msg.add(Double.toString(controller.clipStaggerIncrement)+"\n");
+				//current timbre
+				msg.add(Integer.toString(model.currentTimbre));
 				
 				//send one msg over
 				String fullmsg = "";

@@ -42,9 +42,7 @@ public DrawingServer(int port, Draw2Model m, Draw2Controller c) throws IOExcepti
 
 }
 
-public void run() {
-	
-	
+public void run() {		
    while(true) {
       try {    	      	      	  
          System.out.println("Waiting for client on port " + 
@@ -115,12 +113,16 @@ public void run() {
             	 line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 //clipStaggerIncrement
             	 line[8] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++; 
+            	//timbre selection
+            	 int netTimbre = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex ++;
         	 
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
         		 model.createNewPathFromNetwork(line,pathPaint);
+        		//set timbre
+        		 model.setTimbre(netTimbre);
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
         		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);        		 
@@ -169,8 +171,8 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-      
-   /*String[] arr = new String[2];
+   /*   
+   String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";
    DrawingClient GC = new DrawingClient(arr);

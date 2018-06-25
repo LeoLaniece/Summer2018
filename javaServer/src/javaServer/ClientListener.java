@@ -18,7 +18,8 @@ public class ClientListener implements modelListener{
 		model = m;
 		controller = c;
 		out =o;
-		model.addSubscriber(this);
+		//model.setPathActivityListener(this);
+		//model.addSubscriber(this);
 	}
 	
 	@Override

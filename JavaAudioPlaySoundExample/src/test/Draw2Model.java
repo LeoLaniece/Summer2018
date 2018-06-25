@@ -4,6 +4,7 @@ import java.io.File;
 
 
 
+
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
@@ -11,6 +12,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 
+import javaServer.ClientListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -28,6 +30,7 @@ public class Draw2Model {
 	//the model listeners
 	ArrayList<modelListener> modelListeners;
 	Group lineGroup;
+	ClientListener pathActivityListener;
 	
     public Path path;  
     public Path netWorkPath = null;
@@ -63,6 +66,10 @@ public class Draw2Model {
     public int count =0;
     public File selectedSoundFile;
     File selectedImpactFile;
+    public int currentTimbre = 1;
+    public int PENCIL = 1;
+    public int METAL = 2;
+    public int ERASER = 3;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -108,27 +115,52 @@ public class Draw2Model {
     	btnPencil = new Button("Pencil");
     	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
-            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-            	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
-            	notifySubscribers();
+            	setPencilTimbre();
             }
         });    	
     	btnMetal = new Button("Metal");
     	btnMetal.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {              	
-            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
-            	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalImpact.WAV");
-            	notifySubscribers();
+            	setMetalTimbre();
             }
         });    	
     	btnEraser = new Button("Eraser");
     	btnEraser.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
-            	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserOnPaperFast.WAV");
-            	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
-            	notifySubscribers();
+            	setEraserTimbre();
             }
         });    	
+    }
+    
+    public void setTimbre(int t) {
+    	if (t == PENCIL ) {
+    		setPencilTimbre();
+    	}
+    	if (t == METAL) {
+    		setMetalTimbre();
+    	}
+    	if (t == ERASER) {
+    		setEraserTimbre();
+    	}
+    }
+    
+    public void setPencilTimbre() {
+    	currentTimbre =PENCIL;
+    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
+    	notifySubscribers();
+    }
+    public void setMetalTimbre() {
+    	currentTimbre =METAL;
+    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalImpact.WAV");
+    	notifySubscribers();
+    }
+    public void setEraserTimbre() {
+    	currentTimbre =ERASER;
+    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserOnPaperFast.WAV");
+    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
+    	notifySubscribers();
     }
     
     
@@ -137,6 +169,11 @@ public class Draw2Model {
     public void addSubscriber(modelListener ml) {
     	modelListeners.add(ml);
     }
+    
+    public void setPathActivityListener(ClientListener c) {
+    	pathActivityListener = c;
+    }
+    
     public void notifySubscribers() {
     	modelListeners.forEach(a->a.modelChanged());
     }
@@ -149,9 +186,7 @@ public class Draw2Model {
 		//System.out.println("radarView h "+radarView.height);
 		if (path != null) {
 			pathToNull();
-		}
-		
-		
+		}				
     path = new Path();   
     path.setSmooth(true);
     path.setStrokeWidth(sampleLine.getStrokeWidth());    
@@ -166,6 +201,7 @@ public class Draw2Model {
     pathAngleCalculationCoordinatesUpdateCount =1;
     lineGroup.getChildren().add(path);
     getModelPaths().add(path);       
+    //pathActivityListener.modelChanged();
 	}
 	
 	/**
@@ -208,6 +244,7 @@ public class Draw2Model {
 		if (pathAngleCalculationCoordinatesUpdateCount>2) {
 			currentPathAngle =calculatePathCornerStatus();
 		}				
+		//pathActivityListener.modelChanged();
 		notifySubscribers();
 	}
 	
@@ -252,6 +289,7 @@ public class Draw2Model {
 	public void pathToNull() {
 		dP = null;
 		path = null;
+	//	pathActivityListener.modelChanged();
 		//netWorkPath = null;
 	}
 	
