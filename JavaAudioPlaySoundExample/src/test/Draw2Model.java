@@ -574,4 +574,6 @@ public class Draw2Model {
 	public void stopVPDS() {
 		VPDS.updateDisplacementProgress();
 	}
+	//updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity())
+	
 }

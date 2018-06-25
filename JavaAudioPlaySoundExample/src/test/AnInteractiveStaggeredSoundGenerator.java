@@ -53,7 +53,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 			clip.open(audioIn);	
 			FloatControl gainControl = 
 				    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-				gainControl.setValue(6.0f); // Reduce volume by 10 decibels.			
+				gainControl.setValue(6.0f); 		
 			clip.start();
 		} catch (LineUnavailableException e) {
 			// TODO Auto-generated catch block

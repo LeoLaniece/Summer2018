@@ -1,13 +1,5 @@
 package test;
 
-
-
-
-
-
-
-
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -122,11 +114,7 @@ public class Draw2Controller {
         	if (model.p != null) {
         		System.out.println("mousepressed");
         		model.p.stop();
-        	}
-        	
-        	//while the mouse is pressed, always calculate the current velocity.
-        	//would probably be best to start a velocity calculation thread, but how do i update the coordinates in the thread?
-        	//pass in the view?
+        	}        	
         	
         	if (me.isShiftDown()) {
         		//pan the canvas
@@ -242,7 +230,8 @@ public class Draw2Controller {
             			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
             			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
             			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
-            		}            		
+            		}
+            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
             		  model.notifySubscribers();    		
             		}            		
             	}

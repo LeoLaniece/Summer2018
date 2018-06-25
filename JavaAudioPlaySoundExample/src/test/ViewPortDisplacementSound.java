@@ -3,6 +3,7 @@ import java.io.File;
 
 import java.io.IOException;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -24,33 +25,95 @@ public class ViewPortDisplacementSound extends Thread{
 	
 	public boolean displacementInProgress;
 	AudioContext ac;
+	private double clipDuration;
 	ViewPortDisplacementSound(){
 		this.displacementInProgress = true;
+		File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
+		clipDuration = fileLength(c)*1000;
+	}
+	
+	public float fileLength(File soundFile) {
+	     //calculate the time of the sustained sound file you will be using	      
+	      AudioInputStream audioInputStream4;		
+			try {
+				audioInputStream4 = AudioSystem.getAudioInputStream(soundFile);
+						AudioFormat format = audioInputStream4.getFormat();
+		      long audioFileLength = soundFile.length();
+		      int frameSize = format.getFrameSize();
+		      float frameRate = format.getFrameRate();
+		      return (audioFileLength / (frameSize * frameRate));
+			} catch (UnsupportedAudioFileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			return 0;		
 	}
 
 	@Override
 	 public void run() {
 		
+		//progress
+		//not getting sustained sound.		
 		//change the sound if you want something different
+		
+		while (displacementInProgress) {				
 		ac = new AudioContext();
-		WavePlayer wp = new WavePlayer(ac, 60*6, Buffer.SINE);
-		WavePlayer wp2 = new WavePlayer(ac, 60, Buffer.SINE);
-		Gain g2 = new Gain(ac, 1, 0.5f);				
-		g2.addInput(wp);
-		g2.addInput(wp2);
-		System.out.println("made it to the thread player");
+		Gain g2 = setUpSamplePlayer(ac);					
 		ac.out.addInput(g2);
 		ac.start();
-		while (displacementInProgress) {						
-		    	//change nothing	    		    
+		try {
+			sleep( (long)(clipDuration-(clipDuration*0.85)));
+			System.out.println("Sleeping for "+(clipDuration-(clipDuration*0.85)));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		ac.stop();		
-		System.out.println("ac stopped");
+		}
+		
+	}
+	
+	public Gain setUpSamplePlayer(AudioContext ac) {
+		 // load the source sample from a file
+	    Sample sourceSample = null;		
+	   // Sample sourceSample2 = null;
+	    try
+	    {
+	      sourceSample = new Sample("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
+	     // sourceSample2 = new Sample(f2.toString());
+	    }
+	    catch(Exception e)
+	    {
+	      /*
+	       * If the program exits with an error message,
+	       * then it most likely can't find the file
+	       * or can't open it. Make sure it is in the
+	       * root folder of your project in Eclipse.
+	       * Also make sure that it is a 16-bit,
+	       * 44.1kHz audio file. These can be created
+	       * using Audacity.
+	       */
+	      System.out.println(e.getMessage());
+	      e.printStackTrace();
+	      System.exit(1);
+	    }
+	    Envelope gainGlide = new Envelope(ac, 1.0f);
+	    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);			    
+  	    // set the grain size to a fixed 10ms
+	    gsp.setGrainSize(new Static(ac, 100.0f));	    
+	    Gain g = new Gain(ac, 1, gainGlide);
+  		gainGlide.addSegment(0f, (float) (clipDuration*0.1));
+	  	gainGlide.addSegment(3f, (float) (clipDuration*0.3));
+	  	gainGlide.addSegment(3f, (float) (clipDuration*0.3));
+	  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));  
+  g.addInput(gsp);
+	    return g;
 	}
 	
 	public void updateDisplacementProgress() {
-		displacementInProgress = false;
-		ac.stop();
+		displacementInProgress = false;		
 	}
 	
 }
