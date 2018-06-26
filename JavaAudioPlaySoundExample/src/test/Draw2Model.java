@@ -388,6 +388,7 @@ public class Draw2Model {
 		System.out.println("total time = "+time);
 	}
 
+	//do not erase
 	/**
 	 * most realistic sound so far!
 	 * now try to implement the velocity calculations 
@@ -553,11 +554,15 @@ public class Draw2Model {
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
 	    lineGroup.getChildren().add(netWorkPath);
 	    getModelPaths().add(netWorkPath); 
-	    notifySubscribers();
+	    //notifySubscribers();
+	    view.modelChanged();
+	    radarView.modelChanged();
 	}
 	
 	public void updateNewPathFromNetwork(double[] points) {
-		netWorkPath.getElements().add(new LineTo(points[0], points[1]));		
+		netWorkPath.getElements().add(new LineTo(points[0], points[1]));	
+	    view.modelChanged();
+	    radarView.modelChanged();
 	}
 	
 	public void setModelView(Draw2View v) {
@@ -574,6 +579,8 @@ public class Draw2Model {
 	public void stopVPDS() {
 		VPDS.updateDisplacementProgress();
 	}
-	//updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity())
+	public void updateVPDSGeneratorVelocity(double velocity) {
+		VPDS.updateVelocity(velocity);
+	}
 	
 }

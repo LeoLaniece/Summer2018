@@ -79,7 +79,8 @@ public class Draw2Controller {
 						view.paintOverPaths();
 						radarView.paintOverPaths();
 						//launch a pop up window requesting for the location of the other user and his activity?
-						fr = new FreezeQuiz(me);											
+						//need to pass in the location of other user's viewPort
+						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());											
 					}																	
 				}				
 			}     		
@@ -91,8 +92,6 @@ public class Draw2Controller {
         	if (state!=FREEZE) {
         	state = READY;
         	model.pathToNull();
-        //	System.out.println("x = "+me.getX());
-        //	System.out.println("y = "+me.getY());
         	
         	//keep thinking about this
         	//thread is possible
@@ -111,8 +110,7 @@ public class Draw2Controller {
         	
         	setPoints(me.getX(),me.getY());
         	
-        	if (model.p != null) {
-        		System.out.println("mousepressed");
+        	if (model.p != null) {        		
         		model.p.stop();
         	}        	
         	
@@ -142,9 +140,9 @@ public class Draw2Controller {
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
 
         	
-			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
-					mouseCoordinates.get(mouseCoordinates.size()-1),  
-					clipDuration, clipStaggerIncrement);
+			//model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
+			//		mouseCoordinates.get(mouseCoordinates.size()-1),  
+			//		clipDuration, clipStaggerIncrement);
         	
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
@@ -190,7 +188,7 @@ public class Draw2Controller {
             	
             	distanceTraveled = 0;            	
             	model.pathToNull();
-            	model.stopSoundGenerator();
+            	//model.stopSoundGenerator();
             	model.notifySubscribers();
             	mouseCoordinates=new ArrayList<Coordinate>();
             	}
@@ -231,7 +229,7 @@ public class Draw2Controller {
             			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
             			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
             		}
-            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		  model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
             		  model.notifySubscribers();    		
             		}            		
             	}
@@ -308,9 +306,9 @@ public class Draw2Controller {
             			}
             		}
             		
-            		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
-            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
-            		model.updateSoundGeneratorPathAngle();
+            	//	model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
+            	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+            	//	model.updateSoundGeneratorPathAngle();
             	//	time = System.currentTimeMillis();
             		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
             			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x

@@ -26,6 +26,9 @@ public class ViewPortDisplacementSound extends Thread{
 	public boolean displacementInProgress;
 	AudioContext ac;
 	private double clipDuration;
+	float maxVolume = 3f;
+	long timeSinceLastUpdate = System.currentTimeMillis();
+	
 	ViewPortDisplacementSound(){
 		this.displacementInProgress = true;
 		File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
@@ -65,8 +68,8 @@ public class ViewPortDisplacementSound extends Thread{
 		ac.out.addInput(g2);
 		ac.start();
 		try {
-			sleep( (long)(clipDuration-(clipDuration*0.85)));
-			System.out.println("Sleeping for "+(clipDuration-(clipDuration*0.85)));
+			sleep( (long)(clipDuration-(clipDuration*0.9)));
+			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -75,7 +78,10 @@ public class ViewPortDisplacementSound extends Thread{
 		
 	}
 	
-	public Gain setUpSamplePlayer(AudioContext ac) {
+	public Gain setUpSamplePlayer(AudioContext ac) {		
+		
+		
+		
 		 // load the source sample from a file
 	    Sample sourceSample = null;		
 	   // Sample sourceSample2 = null;
@@ -105,15 +111,22 @@ public class ViewPortDisplacementSound extends Thread{
 	    gsp.setGrainSize(new Static(ac, 100.0f));	    
 	    Gain g = new Gain(ac, 1, gainGlide);
   		gainGlide.addSegment(0f, (float) (clipDuration*0.1));
-	  	gainGlide.addSegment(3f, (float) (clipDuration*0.3));
-	  	gainGlide.addSegment(3f, (float) (clipDuration*0.3));
+	  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
+	  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
 	  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));  
-  g.addInput(gsp);
+	  	g.addInput(gsp);
 	    return g;
 	}
 	
 	public void updateDisplacementProgress() {
 		displacementInProgress = false;		
+	}
+	public void updateVelocity(double v) {
+		maxVolume = (float)v;
+		if (System.currentTimeMillis()-timeSinceLastUpdate > 100) {
+			maxVolume = 0f;
+		}
+		timeSinceLastUpdate = System.currentTimeMillis();
 	}
 	
 }

@@ -106,7 +106,7 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 			//maxVolume += 3;
 		}
 		
-		System.out.println("velocity "+velocity);
+	//	System.out.println("velocity "+velocity);
 		//System.out.println("maxVolume "+maxVolume);
 		//System.out.println("path angle "+pathAngle);
 	    // instantiate the AudioContext

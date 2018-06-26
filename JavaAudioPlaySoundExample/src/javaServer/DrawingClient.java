@@ -155,8 +155,8 @@ public DrawingClient(String [] args) {
         		 model.stopSoundGenerator();
         	 }        	          	          	 
         	 model.netTransaction = true;
-         	 model.notifySubscribers();
-         	 System.out.println(fullmsg);
+         	 //model.notifySubscribers();
+         	 //System.out.println(fullmsg);
      	 }
           }                    
 		} catch (IOException e) {

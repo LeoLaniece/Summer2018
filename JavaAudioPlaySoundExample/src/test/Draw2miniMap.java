@@ -169,10 +169,19 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	}
 	
 	public Coordinate calculateNetViewPortCenter() {		 
-		System.out.println("netMiniMap center "+(((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width);
-		//System.out.println("viewport relative width "+iModel.viewPortWidth);
-		return new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 
+		if (hasNetMiniMap) {
+			Coordinate p =new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 
 				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);
+		System.out.println("netMiniMap center "+p.x+" "+p.y);
+		//System.out.println("viewport relative width "+iModel.viewPortWidth);
+		return p;
+		}else {
+			Coordinate p = new Coordinate((((0+(iModel.viewPortWidth/2)))*7)/width, 
+					(((0+(iModel.viewPortHeight/2)))*7)/height);
+			System.out.println("netMiniMap center "+p.x+" "+p.y);
+			return p;
+		}
+
 	}
 	
 	/**

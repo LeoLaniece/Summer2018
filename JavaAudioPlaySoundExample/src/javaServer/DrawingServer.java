@@ -144,7 +144,9 @@ public void run() {
         		 System.out.println("stopped the sound generator!");
         	 }
         	 model.netTransaction = true;
-        	 model.notifySubscribers();
+        	 
+        	 //don't call model changed, draw the paths instead
+        	 //model.notifySubscribers();
         	
         	 }    
          }

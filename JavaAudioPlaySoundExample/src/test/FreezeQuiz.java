@@ -41,10 +41,18 @@ public class FreezeQuiz extends Stage{
 
     int PICKING = 1;
     int SELECTED = 2;
+    
+    /**
+     * 1 = top left
+     * 2 = bottom left
+     * 3 = top right
+     * 4 = bottom right
+     */
+    int selectedField = 0;
     int state = PICKING;
     String userInput;
 	
-	public FreezeQuiz(Draw2Controller con) {
+	public FreezeQuiz(Draw2Controller con, Coordinate viewPortCenter) {
         setTitle("Freeze Quiz");
         //set the size of the window here
         //make sure the height is 200 + what you want to accommodate the color picker and sample line
@@ -83,8 +91,9 @@ public class FreezeQuiz extends Stage{
 			@Override
 			public void handle(KeyEvent key) {
 				if (key.getCode().equals(KeyCode.ENTER)) {
-	                userInput = t4.getText();
+	                userInput = t4.getText();	                
 	                System.out.println(userInput);
+	                
 	                t4.clear();
 	                con.state = con.READY;
 					con.view.modelChanged();
@@ -141,22 +150,37 @@ public class FreezeQuiz extends Stage{
             		if (me.getY() >0 && me.getY() < c.getHeight()/2) {
             			//draw rectangle in region 1
             			gc.fillRect(0, 0, c.getWidth()/2, c.getHeight()/2);
+            			selectedField = 1;
             		}
             		if (me.getY() <c.getHeight() && me.getY() > c.getHeight()/2) {
             			//draw rectangle in region 2
             			gc.fillRect(0, c.getHeight()/2, c.getWidth()/2, c.getHeight()/2);
+            			selectedField = 2;
             		}
             	}            	
             	if (me.getX()< c.getWidth() && me.getX()> c.getWidth()/2) {
             		if (me.getY() >0 && me.getY() < c.getHeight()/2) {
             			//draw rectangle in region 3
             			gc.fillRect(c.getWidth()/2, 0, c.getWidth()/2, c.getHeight()/2);
+            			selectedField = 3;
             		}
             		if (me.getY() <c.getHeight() && me.getY() > c.getHeight()/2) {
             			//draw rectangle in region 4
             			gc.fillRect(c.getWidth()/2, c.getHeight()/2, c.getWidth()/2, c.getHeight()/2);
+            			selectedField = 4;
             		}
             	}
+            	
+                if (selectedField == determineViewPortRegion(viewPortCenter)) {
+                    t2.setFont(Font.font ("Verdana", 80));
+                    t2.setFill(Color.GREEN);
+                    t2.setText("CORRECT!");
+                }else{             
+                	t2.setFont(Font.font ("Verdana", 20));
+                    t2.setFill(Color.RED);
+                    t2.setText("INCORRECT!");
+                }
+            	
             }
         });        
         
@@ -180,11 +204,27 @@ public class FreezeQuiz extends Stage{
 						close();
 					}
 				}							    		
-     	});
-        
-        
-        
-        
+     	});                               
+	}
+	
+	public int determineViewPortRegion(Coordinate p) {
+		if (p.x > 0 && p.x < 0.5) {
+			if (p.y >0 && p.y < 0.5) {
+				return 1;
+			}
+			if (p.y <= 0.5&& p.y< 1.0) {
+				return 2;
+			}
+		}		
+		if (p.x < 1.0 && p.x > 0.5) {
+			if (p.y >0 && p.y < 0.5) {
+				return 3;
+			}
+			if (p.y <= 0.5&& p.y< 1.0) {
+				return 4;
+			}
+		}
+		return 0;
 	}
 	
 
