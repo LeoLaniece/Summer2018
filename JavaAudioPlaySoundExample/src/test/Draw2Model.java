@@ -1,6 +1,11 @@
 package test;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 
 
@@ -113,34 +118,64 @@ public class Draw2Model {
     
     public void setUpStrokeObjectButtons() {
     	btnPencil = new Button("Pencil");
+    	//add pencil picture
+        File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\pencil.png");        
+        Image image = new Image(pencil.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv1 = new ImageView();
+        iv1.setImage(image);
+        btnPencil.setGraphic(iv1);
     	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
             	setPencilTimbre();
+            	sampleLine.setStroke(Color.BLACK);  
+            	File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
+            	player.playFileClip(pencilTap);
             }
         });    	
     	btnMetal = new Button("Metal");
+    	//add metal picture    	
+    	File f2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\nail.png");        
+        Image nail = new Image(f2.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv3 = new ImageView();
+        iv3.setImage(nail);
+        btnMetal.setGraphic(iv3);
     	btnMetal.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {              	
             	setMetalTimbre();
+            	sampleLine.setStroke(Color.GREY);
+            	File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
+            	player.playFileClip(metalTap);
             }
         });    	
     	btnEraser = new Button("Eraser");
+    	//add eraser picture
+    	File f = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\eraser.png");        
+        Image eraser = new Image(f.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv2 = new ImageView();
+        iv2.setImage(eraser);
+        btnEraser.setGraphic(iv2);
     	btnEraser.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
             	setEraserTimbre();
+            	sampleLine.setStroke(Color.WHITE);
+            	File eraserTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserTap.WAV");
+            	player.playFileClip(eraserTap);
             }
         });    	
     }
     
     public void setTimbre(int t) {
     	if (t == PENCIL ) {
-    		setPencilTimbre();
+    		setPencilTimbre();    		
     	}
     	if (t == METAL) {
-    		setMetalTimbre();
+    		setMetalTimbre();    		
     	}
     	if (t == ERASER) {
-    		setEraserTimbre();
+    		setEraserTimbre();    		
     	}
     }
     
@@ -578,9 +613,13 @@ public class Draw2Model {
 	}
 	public void stopVPDS() {
 		VPDS.updateDisplacementProgress();
+		VPDS = null;
 	}
 	public void updateVPDSGeneratorVelocity(double velocity) {
 		VPDS.updateVelocity(velocity);
+	}
+	public void updateVPDSGeneratorLocation(Coordinate vp) {
+		VPDS.updateLocation(vp);
 	}
 	
 }

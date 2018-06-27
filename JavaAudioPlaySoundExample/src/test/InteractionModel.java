@@ -14,6 +14,7 @@ public class InteractionModel {
 	public double viewPortX, viewPortY, viewPortHeight, viewPortWidth;
 	public ArrayList<Coordinate> viewPortXYLocation;
 	public Draw2View view;
+	public boolean freezeTest = false;
 	//public double normalizedViewPortX, normalizedViewPortY;
 	
 	public InteractionModel(Draw2Model m, Draw2View view) {
@@ -31,13 +32,28 @@ public class InteractionModel {
 		
 		viewPortHeight = view.height/7;
 		viewPortWidth = view.width/7;
-	}
-	
+	}	
 	public double getNormalizedViewPortX() {
 		return viewPortX/view.radarView.width;
 	}
 	public double getNormalizedViewPortY() {
 		return viewPortY/view.radarView.height;
+	}
+	public Coordinate calculateViewPortCenter() {		 		
+	//	System.out.println("viewport X   Y "+(viewPortX+viewPortWidth)*7/view.radarView.width+" "
+	//+(viewPortY+viewPortHeight)*7/view.radarView.height);
+		Coordinate p =new Coordinate((viewPortX+viewPortWidth/2)*7/view.radarView.width, 
+				(viewPortY+viewPortHeight/2)*7/view.radarView.height);
+		//System.out.println("miniMap center "+p.x+" "+p.y);
+		//System.out.println("viewport relative width "+iModel.viewPortWidth);
+		return p;	
+	}
+	
+	public void freezeTestOn() {
+		freezeTest = true;
+	}
+	public void freezeTestOff() {
+		freezeTest = false;
 	}
 
 }

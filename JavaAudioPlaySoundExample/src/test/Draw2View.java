@@ -104,10 +104,6 @@ public class Draw2View extends Pane implements modelListener{
 		gc = c.getGraphicsContext2D();
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width,height);
-		gc.setFill(Color.RED);
-		gc.fillRect(375, 150, 50, 50);
-		
-		//topPane.getChildren().add(c);
 	}
 	
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
@@ -152,17 +148,11 @@ public class Draw2View extends Pane implements modelListener{
                     Tooltip.install(r, t);
                     r.setUserData(t.getText());
                     r.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
                         @Override
-
                         public void handle(MouseEvent me) {
-
                             model.sampleLine.setStroke(r.getFill());
-
                             model.colorLabel.setText("color: " + ((String) r.getUserData()));
-
                         }
-
                     });
                     flow.getChildren().add(r);
                 }catch (IllegalArgumentException e) {
@@ -209,8 +199,7 @@ public class Draw2View extends Pane implements modelListener{
 					}
 					
 					gc.stroke();
-				}
-					
+				}					
 				}
 
 
@@ -223,16 +212,17 @@ public class Draw2View extends Pane implements modelListener{
 	
 	
 	public void modelChanged() {
-		Platform.runLater(new Runnable() {
-		    @Override
-		        public void run() {		
+	//	Platform.runLater(new Runnable() {
+	//	    @Override
+	//	        public void run() {		
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
-		gc.setFill(Color.RED);
-		gc.fillRect(375, 150, 50, 50);
 		drawModelPaths();				
-		    }
-		});
+		if (iModel.freezeTest) {
+			paintOverPaths();
+		}
+	//	    }
+	//	});
 	}
 	public void startPath(double x, double y) {
 		//should take into account the size of the view

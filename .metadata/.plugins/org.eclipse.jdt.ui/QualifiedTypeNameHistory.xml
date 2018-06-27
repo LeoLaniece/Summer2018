@@ -13,7 +13,6 @@
 <fullyQualifiedTypeName name="java.awt.event.KeyListener"/>
 <fullyQualifiedTypeName name="javafx.scene.layout.Background"/>
 <fullyQualifiedTypeName name="javafx.scene.layout.BackgroundFill"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.FloatControl.Type"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.Mixer"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.DataLine.Info"/>
@@ -39,7 +38,6 @@
 <fullyQualifiedTypeName name="test.AnInteractiveStaggeredThread"/>
 <fullyQualifiedTypeName name="test.Grain2Files"/>
 <fullyQualifiedTypeName name="threadDemo.MouseTest"/>
-<fullyQualifiedTypeName name="java.net.URL"/>
 <fullyQualifiedTypeName name="test.Coordinate"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.Clip"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.AudioSystem"/>
@@ -51,4 +49,6 @@
 <fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="javaServer.ClientListener"/>
 <fullyQualifiedTypeName name="test.Draw2Model"/>
+<fullyQualifiedTypeName name="java.net.URL"/>
+<fullyQualifiedTypeName name="java.io.File"/>
 </qualifiedTypeNameHistroy>

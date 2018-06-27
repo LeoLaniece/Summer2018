@@ -26,13 +26,76 @@ public class ViewPortDisplacementSound extends Thread{
 	public boolean displacementInProgress;
 	AudioContext ac;
 	private double clipDuration;
-	float maxVolume = 3f;
+	float maxVolume = 0.5f;
 	long timeSinceLastUpdate = System.currentTimeMillis();
+	Envelope gainGlide;
+	Envelope wpPitch;
+	Envelope wp2Pitch;
+	Envelope panGlide;
 	
 	ViewPortDisplacementSound(){
 		this.displacementInProgress = true;
 		File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
 		clipDuration = fileLength(c)*1000;
+	}
+	
+	@Override
+	public void run() {						
+			ac = new AudioContext();
+			Panner g2 = setUpSampleWavePlayer(ac);					
+			ac.out.addInput(g2);
+			ac.start();	
+	}
+	
+	public Panner setUpSampleWavePlayer(AudioContext ac) {
+		  wpPitch = new Envelope(ac, 130);
+		  wp2Pitch = new Envelope(ac, 195);		
+		  WavePlayer wp = new WavePlayer(ac, wpPitch, Buffer.SINE);
+		  WavePlayer wp2 = new WavePlayer(ac, wp2Pitch, Buffer.SINE);
+		  gainGlide = new Envelope(ac, 0f);
+		  Gain g = new Gain(ac, 1, gainGlide);
+			  gainGlide.addSegment(0.5f, 500);//maxVolume, 500);				      
+			  g.addInput(wp);
+			  g.addInput(wp2);
+			  	panGlide = new Envelope(ac, -1f);
+			  	Panner pan = new Panner(ac, panGlide);
+			  	pan.addInput(g);
+			    return pan;			  			  
+	}	
+	
+	public void updateDisplacementProgress() {			
+		while (gainGlide.getValue() > 0) {
+			gainGlide.setValue(gainGlide.getValue() -0.05f);
+		}		
+		ac.stop();			
+	}
+	
+	public void updateVelocity(double v) {
+		maxVolume = (float)v;
+		if ((System.currentTimeMillis()-timeSinceLastUpdate)> 100) {
+			maxVolume = 0f;
+		}
+		if (maxVolume > 0.5) {
+			maxVolume = 0.5f;
+		}
+		gainGlide.setValue(maxVolume);		
+		timeSinceLastUpdate = System.currentTimeMillis();
+	}
+	
+	/** 
+	 * will adjust the pitch and the panning values of the wavePlayer based on viewport's
+	 * current location
+	 * @param viewPortCenter
+	 */
+	public void updateLocation(Coordinate viewPortCenter) {
+		//update pitch
+		float fundamental = (float) (200*(1-viewPortCenter.y));
+		wpPitch.setValue(fundamental*4);
+		wp2Pitch.setValue(fundamental*5);
+		
+		//update pan value
+		//0.5 is the center
+		panGlide.setValue((float) ((viewPortCenter.x-0.5)*10));		
 	}
 	
 	public float fileLength(File soundFile) {
@@ -54,10 +117,9 @@ public class ViewPortDisplacementSound extends Thread{
 			}	
 			return 0;		
 	}
-
-	@Override
-	 public void run() {
-		
+	
+	//for real pre-recorded sounds
+	 public void run1() {		
 		//progress
 		//not getting sustained sound.		
 		//change the sound if you want something different
@@ -74,20 +136,16 @@ public class ViewPortDisplacementSound extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		}
-		
+		}		
 	}
 	
-	public Gain setUpSamplePlayer(AudioContext ac) {		
-		
-		
-		
+	public Gain setUpSamplePlayer(AudioContext ac) {								
 		 // load the source sample from a file
 	    Sample sourceSample = null;		
 	   // Sample sourceSample2 = null;
 	    try
 	    {
-	      sourceSample = new Sample("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
+	      sourceSample = new Sample("C:\\Users\\HCILab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
 	     // sourceSample2 = new Sample(f2.toString());
 	    }
 	    catch(Exception e)
@@ -105,28 +163,17 @@ public class ViewPortDisplacementSound extends Thread{
 	      e.printStackTrace();
 	      System.exit(1);
 	    }
-	    Envelope gainGlide = new Envelope(ac, 1.0f);
+	    gainGlide = new Envelope(ac, 1.0f);
 	    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);			    
-  	    // set the grain size to a fixed 10ms
+ 	    // set the grain size to a fixed 10ms
 	    gsp.setGrainSize(new Static(ac, 100.0f));	    
 	    Gain g = new Gain(ac, 1, gainGlide);
-  		gainGlide.addSegment(0f, (float) (clipDuration*0.1));
+ 		gainGlide.addSegment(0f, (float) (clipDuration*0.1));
 	  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
 	  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
 	  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));  
-	  	g.addInput(gsp);
-	    return g;
-	}
-	
-	public void updateDisplacementProgress() {
-		displacementInProgress = false;		
-	}
-	public void updateVelocity(double v) {
-		maxVolume = (float)v;
-		if (System.currentTimeMillis()-timeSinceLastUpdate > 100) {
-			maxVolume = 0f;
-		}
-		timeSinceLastUpdate = System.currentTimeMillis();
+	  	g.addInput(gsp);	
+	  	return g;
 	}
 	
 }

@@ -78,6 +78,7 @@ public class Draw2Controller {
 						state = FREEZE;
 						view.paintOverPaths();
 						radarView.paintOverPaths();
+						iModel.freezeTestOn();
 						//launch a pop up window requesting for the location of the other user and his activity?
 						//need to pass in the location of other user's viewPort
 						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());											
@@ -217,7 +218,7 @@ public class Draw2Controller {
             		//move the viewPort within its bounds
             		//but only if it is a drag allowed in the view port 
             		if (iModel.viewPortX +dx >=0 &&
-            				iModel.viewPortY +dy >=0&&
+            				iModel.viewPortY +dy >=0 &&
             				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7 &&
             				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {
             		iModel.viewPortX += dx/7;
@@ -229,7 +230,8 @@ public class Draw2Controller {
             			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
             			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
             		}
-            		  model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		  model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
             		  model.notifySubscribers();    		
             		}            		
             	}

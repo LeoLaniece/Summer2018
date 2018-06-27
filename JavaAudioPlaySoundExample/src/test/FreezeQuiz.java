@@ -92,12 +92,13 @@ public class FreezeQuiz extends Stage{
 			public void handle(KeyEvent key) {
 				if (key.getCode().equals(KeyCode.ENTER)) {
 	                userInput = t4.getText();	                
-	                System.out.println(userInput);
-	                
+	                System.out.println(userInput);	                
 	                t4.clear();
 	                con.state = con.READY;
-					con.view.modelChanged();
+	                con.iModel.freezeTestOff();
+					con.view.modelChanged();					
 					con.radarView.modelChanged();
+					
 					close();	                
 	            }
 

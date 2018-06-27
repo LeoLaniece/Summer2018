@@ -40,8 +40,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public double netMiniMapX, netMiniMapY;
 	
 	
-	public Draw2miniMap(double w, double h, Draw2Model m) {
-		
+	public Draw2miniMap(double w, double h, Draw2Model m) {		
 		super(w,h,m);
 		
 		setCanvas(3,4);
@@ -150,24 +149,33 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	
 	@Override
 	public void modelChanged() {
-		Platform.runLater(new Runnable() {
-		    @Override
-		        public void run() {
+	//	Platform.runLater(new Runnable() {
+	//	    @Override
+	//	        public void run() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
-		drawViewPort();
-		drawModelPaths();	
+		drawModelPaths();
+		drawViewPort();			
 		if (hasNetMiniMap == true){
 			drawViewPortFromNet(netMiniMapX, netMiniMapY);
 		}
+		if (iModel.freezeTest) {
+			paintOverPaths();
+		}
 		
-		    }
-		});
+		
+	//	    }
+	//	});
 	}
 	
+	
+	/**
+	 * calculate relative coordinates for the center of the netWork viewport
+	 * @return coordinate
+	 */
 	public Coordinate calculateNetViewPortCenter() {		 
 		if (hasNetMiniMap) {
 			Coordinate p =new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 

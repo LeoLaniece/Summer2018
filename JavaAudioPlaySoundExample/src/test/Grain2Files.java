@@ -1578,6 +1578,30 @@ public class Grain2Files implements Runnable {
 		return durations;											
 	}
 	
+	/**
+	 * plays the given file clip
+	 * 
+	 */
+	public void playFileClip(File f) {               
+            try {
+            	AudioInputStream sound = AudioSystem.getAudioInputStream(f);
+         // load the sound into memory (a Clip)
+            Clip clip = AudioSystem.getClip();            
+				clip.open(sound);
+				clip.start();
+			} catch (LineUnavailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedAudioFileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        
+	}
+	
 	}
 	
 

@@ -84,14 +84,29 @@ public void run() {
         	 clientState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 
         	 if (clientState == controller.PAN_READY) {
+        		  //START the VPDS generator here
+        	     if (model.VPDS == null) {
+            		 model.beginViewPortMovementSound();
+            	 }else {
+            		 model.updateVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
+            	 }
         		 //draw a second viewport on the miniMap!!
         		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
              	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;           
             	 model.radarView.modelChanged();
             	 //want these values to be relative to the minimap logical size
-            	 model.radarView.drawViewPortFromNet(line[0], line[1]);           	         		         		     		        		 
+            	 model.radarView.drawViewPortFromNet(line[0], line[1]);            	            	 
+        	 }else {
+         		//stop the VPDS generator
+            	 if (model.VPDS != null) {
+            		 model.stopVPDS();
+            	 }
         	 }
         	 
+        	 //progress 
+        	 //can start and stop the generator but having difficulty interpreting when he mouse is released
+        	 
+
         	 if (clientState == controller.READY) {
              	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
              	 //draw path info
