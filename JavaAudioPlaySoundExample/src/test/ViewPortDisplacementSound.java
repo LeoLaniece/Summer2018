@@ -35,8 +35,10 @@ public class ViewPortDisplacementSound extends Thread{
 	
 	ViewPortDisplacementSound(){
 		this.displacementInProgress = true;
-		File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
-		clipDuration = fileLength(c)*1000;
+		//File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\drag.WAV");
+		//clipDuration = fileLength(c)*1000;
+		ac = new AudioContext();
+		setUpSampleWavePlayer(ac);
 	}
 	
 	@Override
@@ -67,7 +69,7 @@ public class ViewPortDisplacementSound extends Thread{
 		while (gainGlide.getValue() > 0) {
 			gainGlide.setValue(gainGlide.getValue() -0.05f);
 		}		
-		ac.stop();			
+		ac.stop();				
 	}
 	
 	public void updateVelocity(double v) {

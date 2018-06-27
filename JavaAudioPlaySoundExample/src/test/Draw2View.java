@@ -212,17 +212,17 @@ public class Draw2View extends Pane implements modelListener{
 	
 	
 	public void modelChanged() {
-	//	Platform.runLater(new Runnable() {
-	//	    @Override
-	//	        public void run() {		
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {		
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
 		drawModelPaths();				
 		if (iModel.freezeTest) {
 			paintOverPaths();
 		}
-	//	    }
-	//	});
+		    }
+		});
 	}
 	public void startPath(double x, double y) {
 		//should take into account the size of the view

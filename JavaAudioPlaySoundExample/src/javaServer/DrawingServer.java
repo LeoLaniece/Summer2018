@@ -102,10 +102,7 @@ public void run() {
             		 model.stopVPDS();
             	 }
         	 }
-        	 
-        	 //progress 
-        	 //can start and stop the generator but having difficulty interpreting when he mouse is released
-        	 
+
 
         	 if (clientState == controller.READY) {
              	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
@@ -188,12 +185,12 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-   /*   
+      
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";
    DrawingClient GC = new DrawingClient(arr);
-   GC.start();*/
+   GC.start();
 }
 
 

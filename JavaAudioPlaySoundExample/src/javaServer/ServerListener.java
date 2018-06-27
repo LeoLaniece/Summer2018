@@ -43,7 +43,6 @@ public class ServerListener extends ClientListener {
 			}		
 		
 		if (controller.state ==controller.READY) { 
-			//need to not send info too often?
 			//	out.writeUTF("Server model changed!");
 				msg.add("Server model changed!"+"\n");
 				//is the path Alive

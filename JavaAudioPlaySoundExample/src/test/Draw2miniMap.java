@@ -149,9 +149,9 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	
 	@Override
 	public void modelChanged() {
-	//	Platform.runLater(new Runnable() {
-	//	    @Override
-	//	        public void run() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
 		gc.setLineWidth(1);
@@ -167,8 +167,8 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		}
 		
 		
-	//	    }
-	//	});
+		    }
+		});
 	}
 	
 	

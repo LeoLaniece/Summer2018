@@ -93,12 +93,23 @@ public DrawingClient(String [] args) {
          	 //if server is panning move all paths by...
          	 //adjust the server's minimap location
          	 if (serverState == controller.PAN_READY) {
+       		  //START the VPDS generator here
+        	     if (model.VPDS == null) {
+            		 model.beginViewPortMovementSound();
+            	 }else {
+            		 model.updateVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
+            	 }         		 
          		 //draw a second viewport on the miniMap!
          		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
              	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;                     	              	 
              	 model.radarView.modelChanged();
              	 model.radarView.drawViewPortFromNet(line[0], line[1]);          	         		         		          		        		 
-         	 }
+         	 }else {
+         		//stop the VPDS generator
+            	 if (model.VPDS != null) {
+            		 model.stopVPDS();
+            	 }
+        	 }
         	  
          	 //if server is drawing a path, replicate path and produce sound
          	 if (serverState == controller.READY) {

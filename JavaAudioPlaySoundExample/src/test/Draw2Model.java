@@ -613,6 +613,9 @@ public class Draw2Model {
 	}
 	public void stopVPDS() {
 		VPDS.updateDisplacementProgress();
+		while (VPDS.ac.isRunning()) {
+			//wait
+		}
 		VPDS = null;
 	}
 	public void updateVPDSGeneratorVelocity(double velocity) {

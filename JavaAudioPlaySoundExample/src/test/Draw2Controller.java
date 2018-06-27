@@ -121,7 +121,7 @@ public class Draw2Controller {
         		state = PAN_READY;   
             	x = me.getX();
             	y = me.getY();
-            	model.beginViewPortMovementSound();
+            	//model.beginViewPortMovementSound();
         		
         	}else {
         		state = READY;
@@ -195,12 +195,12 @@ public class Draw2Controller {
             	}
             	
             	if (state == PAN_READY) {
-            		System.out.println("stop the VPDS");
-            		model.stopVPDS();
+            		//System.out.println("stop the VPDS");
+            		//model.stopVPDS();
             	}
                 state = NOTREADY;                
             }
-            	
+            	model.notifySubscribers();
             }
         });
 	
@@ -231,7 +231,7 @@ public class Draw2Controller {
             			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
             		}
             		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
-            		  model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
             		  model.notifySubscribers();    		
             		}            		
             	}
