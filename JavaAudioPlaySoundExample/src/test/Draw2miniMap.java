@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import javafx.application.Platform;
 
@@ -13,6 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -86,7 +88,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		c = new Canvas(width/scale,height/scale);
 		gc = c.getGraphicsContext2D();
 		this.getChildren().add(c);
-		
+        gc.drawImage(image, 0, 0, width/scale, height/scale);		
 	}
 	
 	
@@ -157,6 +159,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
+		gc.drawImage(image, 0, 0, width/scale, height/scale);
 		drawModelPaths();
 		drawViewPort();			
 		if (hasNetMiniMap == true){

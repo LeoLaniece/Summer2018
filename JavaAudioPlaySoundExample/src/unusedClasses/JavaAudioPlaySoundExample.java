@@ -1,4 +1,4 @@
-package test;
+package unusedClasses;
 import sun.audio.*;
 
 import java.io.*;

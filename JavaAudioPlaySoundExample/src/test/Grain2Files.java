@@ -19,6 +19,8 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import unusedClasses.FileAndDuration;
+
 /**
  * Takes two files as parameters
  * has a grain frequency count represented as a %% for each file

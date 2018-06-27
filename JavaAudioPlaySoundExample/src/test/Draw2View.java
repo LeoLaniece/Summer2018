@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import javafx.application.Platform;
 
@@ -14,6 +15,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -51,6 +53,8 @@ public class Draw2View extends Pane implements modelListener{
 	public Group lineGroup;
 	InteractionModel iModel;
 	public Draw2miniMap radarView;
+    File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\happyFlower.JPG");        
+    Image image = new Image(pencil.toURI().toString());
 	
 	//put in a logical size?
 	public Draw2View(double w, double h, Draw2Model m) {
@@ -73,8 +77,7 @@ public class Draw2View extends Pane implements modelListener{
 		VBox root = new VBox();
 		HBox underCanvas = new HBox();
 		this.getChildren().add(root);				
-		root.getChildren().add(c);
-		
+		root.getChildren().add(c);		
 		root.getChildren().add(underCanvas);
 		VBox UCLeft = new VBox();
 		UCLeft.setPrefWidth(height);
@@ -120,8 +123,8 @@ public class Draw2View extends Pane implements modelListener{
 		UCLeft.getChildren().add(model.btnClear);
 		UCLeft.getChildren().add(model.btnPencil);
 		UCLeft.getChildren().add(model.btnMetal);
-		UCLeft.getChildren().add(model.btnEraser);
-		
+		UCLeft.getChildren().add(model.btnChalk);
+		UCLeft.getChildren().add(model.btnEraser);		
 		UCRight.getChildren().add(model.colorLabel);
 	}
 	
@@ -217,6 +220,7 @@ public class Draw2View extends Pane implements modelListener{
 		        public void run() {		
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
+		gc.drawImage(image, -iModel.viewPortX*7, -iModel.viewPortY*7, radarView.width, radarView.height);
 		drawModelPaths();				
 		if (iModel.freezeTest) {
 			paintOverPaths();
@@ -247,6 +251,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	public void setModelRadarView(Draw2miniMap v) {
 		radarView = v;
+        gc.drawImage(image, 0, 0, radarView.width, radarView.height);
 	}
 
 }

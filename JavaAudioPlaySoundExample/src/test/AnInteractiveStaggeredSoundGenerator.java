@@ -25,11 +25,16 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	double velocity;
 	float panValue;
 	double clipDuration;
+	
+	//can eliminate this
 	double pathAngle;
+	
+	
 	public boolean mouseReleased = false;
 	double clipStaggerIncrement;
 	public long timeSinceLastUpdate =0;
 	File sustainFile; 
+	AudioContext ac = null;
 	
 	/**
 	 * takes the stroke velocity panValue and clip duration to produce a sound for you!
@@ -44,7 +49,11 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 		velocity =velocities;
 		this.panValue =panValue;
 		this.clipDuration = clipDuration;
+		
+		//eliminate this
 		this.pathAngle =180;
+		
+		
 		this.clipStaggerIncrement =clipStaggerIncrement;
 		this.sustainFile = sustainFile;			
 		try {
@@ -54,6 +63,15 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 			FloatControl gainControl = 
 				    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 				gainControl.setValue(6.0f); 		
+				//ALSO SET the pan value here
+				FloatControl panControl = 
+					    (FloatControl) clip.getControl(FloatControl.Type.PAN);
+				if (panValue > 0) {
+					panControl.setValue(1);
+				}
+				if (panValue <= 0) {
+					panControl.setValue(-1);
+				}										
 			clip.start();
 		} catch (LineUnavailableException e) {
 			// TODO Auto-generated catch block
@@ -71,15 +89,14 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	
 	@Override
 	 public void run() {
-		AudioContext ac = new AudioContext();
+		ac = new AudioContext();
 		Panner g;
 		while (!mouseReleased) {			
 			g = setUpSamplePlayer(ac);		  
 		    ac.out.addInput(g);
 		    ac.start();	
 		    try {
-				sleep( (long)(clipStaggerIncrement));								
-				
+				sleep( (long)(clipStaggerIncrement));											
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -91,34 +108,18 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 		mouseReleased = x;
 	}
 	
-	public Panner setUpSamplePlayer(AudioContext ac) {
-		//File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
-		//File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\1234.WAV");
-		
+	public Panner setUpSamplePlayer(AudioContext ac) {				
 		//will silence the sound generator when the user stops moving his mouse cursor, but does not release the press.
 		if (System.currentTimeMillis()-timeSinceLastUpdate > 100) {
 			velocity =0;
 		}
 		
-		float maxVolume = (float) ((velocity));	
-		if (pathAngle <= 90 && velocity!=0) {
-			//don't want the angle calculator
-			//maxVolume += 3;
-		}
-		
-	//	System.out.println("velocity "+velocity);
-		//System.out.println("maxVolume "+maxVolume);
-		//System.out.println("path angle "+pathAngle);
-	    // instantiate the AudioContext
-	    
-	    
+		float maxVolume = (float) ((velocity));					    	    
 	    // load the source sample from a file
 	    Sample sourceSample = null;		
-	   // Sample sourceSample2 = null;
 	    try
 	    {
 	      sourceSample = new Sample(sustainFile.toString());
-	     // sourceSample2 = new Sample(f2.toString());
 	    }
 	    catch(Exception e)
 	    {
@@ -128,38 +129,27 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 	       * or can't open it. Make sure it is in the
 	       * root folder of your project in Eclipse.
 	       * Also make sure that it is a 16-bit,
-	       * 44.1kHz audio file. These can be created
-	       * using Audacity.
+	       * 44.1kHz audio file.
 	       */
 	      System.out.println(e.getMessage());
 	      e.printStackTrace();
 	      System.exit(1);
-	    }	    	    
-	    //it seems that the - = right side and + = left side?
-	    //or they mixmatched the stickers on my headphones?
-	    
-	    Envelope panGlide = new Envelope(ac, panValue);
-	    		    
+	    }	    	    	    
+	    Envelope panGlide = new Envelope(ac, panValue);	    		    
 	    // create a Glide to control the gain - give it 5000ms ramp time
 	    Envelope gainGlide = new Envelope(ac, 1.0f);		    
 	    
 	    // instantiate a GranularSamplePlayer
 	    GranularSamplePlayer gsp = new GranularSamplePlayer(ac, sourceSample);			    
-	    //GranularSamplePlayer gsp2 = new GranularSamplePlayer(ac, sourceSample2);
 	    
 	    // set the grain size to a fixed 10ms
-	    gsp.setGrainSize(new Static(ac, 100.0f));
-	    //gsp2.setGrainSize(new Static(ac, 100.0f));
-	    
-	    Panner p = new Panner(ac, panGlide);			    
-	    
+	    gsp.setGrainSize(new Static(ac, 100.0f));	    
+	    Panner p = new Panner(ac, panGlide);		    	    
 		  Gain g = new Gain(ac, 1, gainGlide);
 		  		gainGlide.addSegment(0f, (float) (clipDuration*0.1));
 			  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
 			  	gainGlide.addSegment(maxVolume, (float) (clipDuration*0.3));
-			  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));
-		  
-
+			  	gainGlide.addSegment(0f, (float) ((clipDuration*0.3)));		  
 		  g.addInput(gsp);
 		  p.addInput(g);
 		  return p;
@@ -172,6 +162,13 @@ public class AnInteractiveStaggeredSoundGenerator extends Thread{
 		this.panValue = panValue;
 	}
 	public void setAngle(double pathAngle) {
-		this.pathAngle = pathAngle;
+		//this.pathAngle = pathAngle;
+	}
+	public void closeSoundGenerator() {
+		if (ac != null) {
+			ac.stop();
+			ac = null;
+		}
+		
 	}
 }

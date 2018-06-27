@@ -30,6 +30,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import unusedClasses.PlayPathSound;
 
 public class Draw2Model {
 	//the model listeners
@@ -46,7 +47,9 @@ public class Draw2Model {
     Button btnClear;
     Button btnPencil;
     Button btnMetal;
+    Button btnChalk;
     Button btnEraser;
+    
     
     public ViewPortDisplacementSound VPDS;
     public boolean netTransaction = true;
@@ -75,6 +78,7 @@ public class Draw2Model {
     public int PENCIL = 1;
     public int METAL = 2;
     public int ERASER = 3;
+    public int CHALK = 4;
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -129,6 +133,7 @@ public class Draw2Model {
             public void handle(ActionEvent event) {  
             	setPencilTimbre();
             	sampleLine.setStroke(Color.BLACK);  
+            	strokeSlider.setValue(3);
             	File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
             	player.playFileClip(pencilTap);
             }
@@ -145,8 +150,26 @@ public class Draw2Model {
             public void handle(ActionEvent event) {              	
             	setMetalTimbre();
             	sampleLine.setStroke(Color.GREY);
+            	strokeSlider.setValue(4);
             	File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
             	player.playFileClip(metalTap);
+            }
+        });    	
+    	btnChalk = new Button("Chalk");
+    	//add eraser picture
+    	File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\chalk.png");        
+        Image chalk = new Image(c.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv4 = new ImageView();
+        iv4.setImage(chalk);
+        btnChalk.setGraphic(iv4);
+    	btnChalk.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {  
+            	setChalkTimbre();
+            	sampleLine.setStroke(Color.ANTIQUEWHITE);
+            	strokeSlider.setValue(3);
+            	File chalkTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalkTap.WAV");
+            	player.playFileClip(chalkTap);
             }
         });    	
     	btnEraser = new Button("Eraser");
@@ -161,10 +184,11 @@ public class Draw2Model {
             public void handle(ActionEvent event) {  
             	setEraserTimbre();
             	sampleLine.setStroke(Color.WHITE);
+            	strokeSlider.setValue(30);
             	File eraserTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserTap.WAV");
             	player.playFileClip(eraserTap);
             }
-        });    	
+        });    	    	
     }
     
     public void setTimbre(int t) {
@@ -176,6 +200,9 @@ public class Draw2Model {
     	}
     	if (t == ERASER) {
     		setEraserTimbre();    		
+    	}
+    	if (t == CHALK) {
+    		setChalkTimbre();
     	}
     }
     
@@ -197,7 +224,12 @@ public class Draw2Model {
     	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
     	notifySubscribers();
     }
-    
+    public void setChalkTimbre() {
+    	currentTimbre =CHALK;
+    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalk.WAV");
+    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
+    	notifySubscribers();
+    }
     
     
     
@@ -382,6 +414,7 @@ public class Draw2Model {
 	
 	public void stopSoundGenerator() {
 		soundGenerator.setMouseReleased(true);		
+		stopDrawingSoundGenerator();
 	}
 	
 	public void updateSoundGeneratorPathAngle() {		
@@ -413,14 +446,14 @@ public class Draw2Model {
 	public void playStroke(long time, ArrayList<Double> velocities) {
 		File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
 		File f2 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
-		ArrayList<FileAndDuration> filesAndDurations = new ArrayList<>();		
-		filesAndDurations =player.determineStrokesAndSustain(f1, f2, time, velocities);
-		filesAndDurations.forEach(f ->{
-			//player.playFor(f.file, f.duration/1000);
-			System.out.println("file "+ f.file.getName());
-			System.out.println("duration "+f.duration);			
-		});
-		System.out.println("total time = "+time);
+	//	ArrayList<FileAndDuration> filesAndDurations = new ArrayList<>();		
+		//filesAndDurations =player.determineStrokesAndSustain(f1, f2, time, velocities);
+	//	filesAndDurations.forEach(f ->{
+		///	//player.playFor(f.file, f.duration/1000);
+		//	System.out.println("file "+ f.file.getName());
+		//	System.out.println("duration "+f.duration);			
+	//	});
+		//System.out.println("total time = "+time);
 	}
 
 	//do not erase
@@ -583,8 +616,6 @@ public class Draw2Model {
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
-
-	    //these are the values that are wrong?
 	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
 	    lineGroup.getChildren().add(netWorkPath);
@@ -613,9 +644,7 @@ public class Draw2Model {
 	}
 	public void stopVPDS() {
 		VPDS.updateDisplacementProgress();
-		while (VPDS.ac.isRunning()) {
-			//wait
-		}
+		System.out.println("set VPDS to null!");
 		VPDS = null;
 	}
 	public void updateVPDSGeneratorVelocity(double velocity) {
@@ -623,6 +652,9 @@ public class Draw2Model {
 	}
 	public void updateVPDSGeneratorLocation(Coordinate vp) {
 		VPDS.updateLocation(vp);
+	}
+	public void stopDrawingSoundGenerator() {
+		soundGenerator.closeSoundGenerator();		
 	}
 	
 }

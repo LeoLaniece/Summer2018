@@ -69,7 +69,8 @@ public class ViewPortDisplacementSound extends Thread{
 		while (gainGlide.getValue() > 0) {
 			gainGlide.setValue(gainGlide.getValue() -0.05f);
 		}		
-		ac.stop();				
+		ac.stop();
+		
 	}
 	
 	public void updateVelocity(double v) {

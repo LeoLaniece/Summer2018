@@ -200,6 +200,7 @@ public class Draw2Controller {
             	}
                 state = NOTREADY;                
             }
+            	System.out.println("mouseReleased");
             	model.notifySubscribers();
             }
         });

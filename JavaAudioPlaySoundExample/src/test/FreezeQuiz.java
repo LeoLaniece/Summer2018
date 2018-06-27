@@ -1,6 +1,9 @@
 package test;
 
 import javafx.application.Application;
+import javafx.scene.control.ToggleButton ;
+import javafx.scene.control.RadioButton ;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Font ;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -84,6 +87,29 @@ public class FreezeQuiz extends Stage{
         t3.setFont(Font.font ("Verdana", 20));
         t3.setFill(Color.BLACK);
         root.getChildren().add(t3);
+        
+        //was he drawing? was he displacing the minimap? was he just sitting still?
+        //want the list of questions, beside each i want a bullet button
+        HBox q1AndBullets = new HBox();
+        VBox bullets = new VBox();
+        VBox question1 = new VBox();
+        question1.setAlignment(Pos.CENTER_LEFT);
+        q1AndBullets.getChildren().add(question1);
+        q1AndBullets.getChildren().add(bullets);
+        root.getChildren().add(q1AndBullets);
+          
+        final ToggleGroup group = new ToggleGroup();
+
+        RadioButton rb1 = new RadioButton("Were they drawing?");
+        rb1.setToggleGroup(group);
+        rb1.setSelected(true);
+
+        RadioButton rb2 = new RadioButton("Were they panning the mini-map?");
+        rb2.setToggleGroup(group);
+         
+        RadioButton rb3 = new RadioButton("Were they sitting still?");
+        rb3.setToggleGroup(group);
+        question1.getChildren().addAll(rb1,rb2,rb3);
         
         TextField t4 = new TextField();
         root.getChildren().add(t4);
@@ -170,8 +196,8 @@ public class FreezeQuiz extends Stage{
             			gc.fillRect(c.getWidth()/2, c.getHeight()/2, c.getWidth()/2, c.getHeight()/2);
             			selectedField = 4;
             		}
-            	}
-            	
+            	}            	
+            	System.out.println("view port region = "+determineViewPortRegion(viewPortCenter));
                 if (selectedField == determineViewPortRegion(viewPortCenter)) {
                     t2.setFont(Font.font ("Verdana", 80));
                     t2.setFill(Color.GREEN);
@@ -209,11 +235,13 @@ public class FreezeQuiz extends Stage{
 	}
 	
 	public int determineViewPortRegion(Coordinate p) {
+		System.out.println("p.x = "+p.x);
+		System.out.println("p.y = "+p.y);
 		if (p.x > 0 && p.x < 0.5) {
 			if (p.y >0 && p.y < 0.5) {
 				return 1;
 			}
-			if (p.y <= 0.5&& p.y< 1.0) {
+			if (p.y >= 0.5&& p.y< 1.0) {
 				return 2;
 			}
 		}		
@@ -221,10 +249,10 @@ public class FreezeQuiz extends Stage{
 			if (p.y >0 && p.y < 0.5) {
 				return 3;
 			}
-			if (p.y <= 0.5&& p.y< 1.0) {
+			if (p.y >= 0.5&& p.y< 1.0) {
 				return 4;
 			}
-		}
+		}		
 		return 0;
 	}
 	

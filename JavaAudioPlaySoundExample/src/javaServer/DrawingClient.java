@@ -62,9 +62,7 @@ public DrawingClient(String [] args) {
     	  
     	  //initialize variables which will store information received from the drawing server
     	  DataInputStream objectIn;    	  
-		try {
-			
-			
+		try {						
 		  objectIn = new DataInputStream(client.getInputStream());			      	      	
           boolean isNetPathAlive = false;          
           String pathPaint = "";
@@ -107,6 +105,7 @@ public DrawingClient(String [] args) {
          	 }else {
          		//stop the VPDS generator
             	 if (model.VPDS != null) {
+            		 System.out.println("tried to stop VPDS");
             		 model.stopVPDS();
             	 }
         	 }
