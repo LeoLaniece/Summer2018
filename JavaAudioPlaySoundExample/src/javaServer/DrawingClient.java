@@ -127,7 +127,7 @@ public DrawingClient(String [] args) {
         	 line[4] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 line[5] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //angle
-        	 line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+        	// line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //clipDuration
         	 line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 //clipStaggerIncrement
@@ -164,9 +164,7 @@ public DrawingClient(String [] args) {
         		 model.netWorkPath = null;
         		 model.stopSoundGenerator();
         	 }        	          	          	 
-        	 model.netTransaction = true;
-         	 //model.notifySubscribers();
-         	 //System.out.println(fullmsg);
+        	
      	 }
           }                    
 		} catch (IOException e) {

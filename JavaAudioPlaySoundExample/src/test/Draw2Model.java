@@ -31,13 +31,13 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import unusedClasses.PlayPathSound;
+import unusedClasses.SoundThread;
 
 public class Draw2Model {
 	//the model listeners
-	ArrayList<modelListener> modelListeners;
-	Group lineGroup;
-	ClientListener pathActivityListener;
-	
+	ArrayList<modelListener> modelListeners;	
+	//ClientListener pathActivityListener;
+	public int count =0;
     public Path path;  
     public Path netWorkPath = null;
     public Coordinate currentPathCoordinate;
@@ -48,11 +48,9 @@ public class Draw2Model {
     Button btnPencil;
     Button btnMetal;
     Button btnChalk;
-    Button btnEraser;
-    
+    Button btnEraser;    
     
     public ViewPortDisplacementSound VPDS;
-    public boolean netTransaction = true;
     
     Slider strokeSlider;
     Label labelStroke;
@@ -62,16 +60,18 @@ public class Draw2Model {
     public ArrayList<Path> modelPaths;
     public ArrayList<Coordinate> modelPathsCoordinates;
     public ArrayList<Coordinate> modelPathsTranslateByCoordinates;
-    public InteractionModel iModel;
-    PlayPathSound p = null;
+    public InteractionModel iModel;    
     drawPath dP = null;
-    Coordinate[] pathAngleCalculationCoordinates = new Coordinate[3];
-    int pathAngleCalculationCoordinatesUpdateCount = 2;
-    public double currentPathAngle;
+    
+    //eliminate all of this
+  //  Coordinate[] pathAngleCalculationCoordinates = new Coordinate[3];
+   // int pathAngleCalculationCoordinatesUpdateCount = 2;
+  //  public double currentPathAngle;
+    
     public 	Draw2View view;
     public Draw2miniMap radarView;
     public AnInteractiveStaggeredSoundGenerator soundGenerator;
-    public int count =0;
+    
     public File selectedSoundFile;
     File selectedImpactFile;
     public int currentTimbre = 1;
@@ -86,7 +86,7 @@ public class Draw2Model {
     	modelPathsCoordinates = new ArrayList<>();
     	modelPathsTranslateByCoordinates = new ArrayList<>();
     	path = null;
-    	lineGroup = new Group();
+    	//lineGroup = new Group();
     	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
     	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
     	btnClear = new Button("Clear");
@@ -112,8 +112,7 @@ public class Draw2Model {
         //set up for sound things
         File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
         File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-        player = new Grain2Files(soundFile, soundFile2);
-        player.changeFrequency(0);        
+        player = new Grain2Files(soundFile, soundFile2);             
     }
     
     public synchronized ArrayList<Path> getModelPaths(){
@@ -229,28 +228,23 @@ public class Draw2Model {
     	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalk.WAV");
     	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
     	notifySubscribers();
-    }
-    
-    
+    }        
     
     public void addSubscriber(modelListener ml) {
     	modelListeners.add(ml);
     }
-    
-    public void setPathActivityListener(ClientListener c) {
-    	pathActivityListener = c;
-    }
-    
+        
     public void notifySubscribers() {
     	modelListeners.forEach(a->a.modelChanged());
+    	System.out.println("count! "+count);
+    	count++;
     }
+    
 	//this bit should call a method in the model, just pass in the coordinates.
 	public void startPath(double x1, double y1) {		
 		//relativize the coordinates for strorage
 		double x = x1/radarView.width;
 		double y = y1/radarView.height;	
-		//System.out.println("radarView width "+radarView.width);
-		//System.out.println("radarView h "+radarView.height);
 		if (path != null) {
 			pathToNull();
 		}				
@@ -264,9 +258,9 @@ public class Draw2Model {
     currentPathCoordinate = new Coordinate(x,y);
     iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
     iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
-    initializePathAngleCalculationCoordinates(x,y);
-    pathAngleCalculationCoordinatesUpdateCount =1;
-    lineGroup.getChildren().add(path);
+  //  initializePathAngleCalculationCoordinates(x,y);
+   // pathAngleCalculationCoordinatesUpdateCount =1;
+    //lineGroup.getChildren().add(path);
     getModelPaths().add(path);       
     //pathActivityListener.modelChanged();
 	}
@@ -275,18 +269,18 @@ public class Draw2Model {
 	 * initializes the pathAngleCalculationCoordinates
 	 * @param x
 	 * @param y
-	 */
+	 
 	public void initializePathAngleCalculationCoordinates(double x, double y) {
 		pathAngleCalculationCoordinates[0] = new Coordinate(x,y);
 		pathAngleCalculationCoordinates[1] = new Coordinate(0,0);
 		pathAngleCalculationCoordinates[2] = new Coordinate(0,0);
-	}
+	}*/
 	
 	/**
 	 * updates the pathAngleCalculationCoordinates
 	 * @param x
 	 * @param y
-	 */
+	 
 	public void updatePathAngleCalculationCoordinates(double x, double y) {
 		pathAngleCalculationCoordinates[2].x = pathAngleCalculationCoordinates[1].x;
 		pathAngleCalculationCoordinates[2].y = pathAngleCalculationCoordinates[1].y;
@@ -294,31 +288,38 @@ public class Draw2Model {
 		pathAngleCalculationCoordinates[1].y = pathAngleCalculationCoordinates[0].y;
 		pathAngleCalculationCoordinates[0] = new Coordinate(x,y);
 		pathAngleCalculationCoordinatesUpdateCount++;
-	}
+	}*/
 
 	
 	public void strokePath(double x, double y) {
 		//relativize the coordinates for strorage
 		x = x/radarView.width;
 		y = y/radarView.height;	
+		
+		//this could be the slow downer
 		dP = new drawPath(path, x,y);
+		
+		
 		currentPathCoordinate = new Coordinate(x,y);
-		updatePathAngleCalculationCoordinates(x,y);
+		//updatePathAngleCalculationCoordinates(x,y);
 		//record 3 previous coordinates of the current path elements
 		//need to initialize the array[3], in the startpath function
 		//need to update the array every time this function is called
 		//if there are at least 3 'new' coordinates, 		
-		if (pathAngleCalculationCoordinatesUpdateCount>2) {
-			currentPathAngle =calculatePathCornerStatus();
-		}				
+	//	if (pathAngleCalculationCoordinatesUpdateCount>2) {
+	//		currentPathAngle =calculatePathCornerStatus();
+	//	}				
 		//pathActivityListener.modelChanged();
+		
+		//make this addToPath
+		//so that there is less drawing to do?
 		notifySubscribers();
 	}
 	
 	/**
 	 * calculates if the current path has cut a corner based on its 3 previous coordinates
 	 * 
-	 */
+	 
 	public double calculatePathCornerStatus() {
 		//calculate the sides of the triangle
 		//calculate the angles of the triangle
@@ -348,9 +349,8 @@ public class Draw2Model {
 	
 	public double calculateDistance(double x, double y,double x2, double y2) {
 		double result = Math.sqrt((Math.pow(x2-x, 2)+Math.pow(y2-y, 2)));
-		return result;
-		
-	}
+		return result;		
+	}*/
 	
 	
 	public void pathToNull() {
@@ -361,8 +361,7 @@ public class Draw2Model {
 	}
 	
 	public void calculateStroke(double distanceTraveled, long startTime) {
-		//figure out how to calculate distance traveled.
-		
+		//figure out how to calculate distance traveled.		
 	long strokeTime = (System.currentTimeMillis() -startTime);
 	double strokeVelocity = ((distanceTraveled*1000)/strokeTime)/1000;
 	System.out.println("Stroke velocity "+strokeVelocity);
@@ -376,12 +375,12 @@ public class Draw2Model {
 	 * @param v
 	 * @param d
 	 * @param mouseCoordinates
-	 */
+	 
 	public void playPathSound(ArrayList<Coordinate> v, double d, ArrayList<Coordinate> mouseCoordinates) {
 		ArrayList<Float> panValues = calculateVolumeValues(v);		
-		SoundThread t = new SoundThread("sound",player,d,v,panValues);
-		t.start();
-	}
+		//SoundThread t = new SoundThread("sound",player,d,v,panValues);
+		//t.start();
+	}*/
 	
 	/**
 	 * play 
@@ -417,9 +416,9 @@ public class Draw2Model {
 		stopDrawingSoundGenerator();
 	}
 	
-	public void updateSoundGeneratorPathAngle() {		
-		soundGenerator.setAngle(currentPathAngle);
-	}
+	//public void updateSoundGeneratorPathAngle() {		
+	//	soundGenerator.setAngle(currentPathAngle);
+	//}
 	
 	public void updateSoundGeneratorPathAngleFromNet(double angle) {		
 		soundGenerator.setAngle(angle);
@@ -514,13 +513,13 @@ public class Draw2Model {
 		//if x >400 and <800 value should be between 0 and 1
 		//System.out.println("location x "+location.x);
 		location.x = location.x *1000;
-		//System.out.println("location x "+location.x);
+		//System.out.println("view width "+view.width);
 		float panValue = 0;
-			if (location.x < 400) {
-				panValue = (float) ((-1) + location.x/400f);
+			if (location.x < (view.width/2)) {
+				panValue = (float) ((-1) + location.x/(view.width/2));
 			}
-			if (location.x >=400 && location.x < 800) {
-				panValue = (float)(location.x -400)/400;
+			if (location.x >=(view.width/2) && location.x < (view.width)) {
+				panValue = (float) ((location.x -(view.width/2))/(view.width/2));
 			}
 			/*if (panValue > 0.3) {
 				panValue = 1.0f;
@@ -578,7 +577,7 @@ public class Draw2Model {
 	
 	/**
 	 * calculate masterVolume values
-	 */
+	 
 	public ArrayList<Float> calculateVolumeValues(ArrayList<Coordinate> velocities){
 		ArrayList<Float> panValues = new ArrayList<>();
 		//for each velocity
@@ -587,7 +586,7 @@ public class Draw2Model {
 		//else normal volume
 		//eventually try to make it quieter as it slows down.
 		velocities.forEach(a -> {
-			System.out.println("velocity = "+a.x+ " DURATION = "+a.y);			
+						
 			if (a.x == 0) {				
 				//normal increment is every 0.043 seconds so this/0.043
 				int batches = (int) (a.y/0.043);
@@ -605,7 +604,7 @@ public class Draw2Model {
 		//or change the way my player plays back sounds, the former sounds simpleler
 		//this was also why my thing wasn't working yesterday!.				
 		return panValues;
-	}
+	}*/
 	
 	public void createNewPathFromNetwork(double[] points, String pathPaint) {
 		netWorkPath = new Path();   
@@ -618,7 +617,7 @@ public class Draw2Model {
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
 	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
-	    lineGroup.getChildren().add(netWorkPath);
+	    
 	    getModelPaths().add(netWorkPath); 
 	    //notifySubscribers();
 	    view.modelChanged();
@@ -643,8 +642,7 @@ public class Draw2Model {
 		VPDS.start();
 	}
 	public void stopVPDS() {
-		VPDS.updateDisplacementProgress();
-		System.out.println("set VPDS to null!");
+		VPDS.updateDisplacementProgress();		
 		VPDS = null;
 	}
 	public void updateVPDSGeneratorVelocity(double velocity) {

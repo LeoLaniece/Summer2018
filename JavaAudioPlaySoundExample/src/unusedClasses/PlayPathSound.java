@@ -16,6 +16,9 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import test.Grain2Files;
+import test.drawPath;
+
 public class PlayPathSound extends Thread {
 	
 	Grain2Files player;

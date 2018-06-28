@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
 import sun.audio.*;
+import test.Coordinate;
+import test.Grain2Files;
 
 import java.io.*;
 

@@ -120,7 +120,7 @@ public void run() {
             	 line[4] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 line[5] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 //angle
-            	 line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	// line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 //clipDuration
             	 line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 //clipStaggerIncrement
@@ -152,14 +152,8 @@ public void run() {
         	 }        	 
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;        		 
-        		 model.stopSoundGenerator();
-        		 System.out.println("stopped the sound generator!");
-        	 }
-        	 model.netTransaction = true;
-        	 
-        	 //don't call model changed, draw the paths instead
-        	 //model.notifySubscribers();
-        	
+        		 model.stopSoundGenerator();        		 
+        	 }        	
         	 }    
          }
 		         

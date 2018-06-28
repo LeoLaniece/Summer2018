@@ -59,6 +59,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 //Leo's imports
 import sun.audio.*;
+import test.Grain2Files;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 

@@ -1,6 +1,7 @@
 package unusedClasses;
 
 import java.io.File;
+
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Buffer;
@@ -12,7 +13,9 @@ import net.beadsproject.beads.ugens.GranularSamplePlayer;
 import net.beadsproject.beads.ugens.Panner;
 import net.beadsproject.beads.ugens.Static;
 import net.beadsproject.beads.ugens.WavePlayer;
-import test.StaggeredSoundThread;
+import test.Coordinate;
+import test.Grain2Files;
+
 import net.beadsproject.beads.ugens.SamplePlayer;
 import java.io.IOException;
 import java.util.ArrayList;

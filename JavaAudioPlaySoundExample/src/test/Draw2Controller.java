@@ -1,9 +1,11 @@
 package test;
 
 import java.io.File;
+import javafx.scene.input.KeyCode;
 import java.util.ArrayList;
 
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 
 import javax.sound.sampled.LineUnavailableException;
 
@@ -29,16 +31,16 @@ public class Draw2Controller {
 	double dy = 0;
 	boolean xDirection = false;
 	boolean yDirection = false;
-	ArrayList<Double> timeOfChange;
+	//ArrayList<Double> timeOfChange;
 	/**
 	 * x = velocity in pixels per ms
 	 * y = duration of velocity
 	 */
-	ArrayList<Coordinate> velocities;
+	//ArrayList<Coordinate> velocities;
 	InteractionModel iModel;
 	public ArrayList<Coordinate> mouseCoordinates;
 	//velocityItems
-	Coordinate[] points;
+	//Coordinate[] points;
 	
 	//STATES
 	public int READY = 0;
@@ -51,20 +53,22 @@ public class Draw2Controller {
 	public double clipStaggerIncrement;
 	public double clipDuration;
 	public MouseTest soundVelocityThread;
+	public long startTime;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
 		view = v;
 		model = m;
 		radarView = r;
-		timeOfChange = new ArrayList<>();
-		points = new Coordinate[4];
+		//timeOfChange = new ArrayList<>();
+		//points = new Coordinate[4];
 		 mouseCoordinates=new ArrayList<Coordinate>();
 		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= model.player.fileLength(f1)*1000;
      	soundVelocityThread = new MouseTest();
      	soundVelocityThread.start();
+     	startTime = System.currentTimeMillis();
 		//setPoints();
      	
      	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -86,6 +90,53 @@ public class Draw2Controller {
 				}				
 			}     		
      	});
+     	
+     	//for flower test logging purposes
+     	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent key) {	
+				if (key.getCode()==KeyCode.SPACE) {
+					String hash = "Time for completion "+Long.toString(((System.currentTimeMillis() -startTime)/1000));
+					 CreateFile x = new	CreateFile(hash);														
+				}				
+			}     		
+     	});
+     	
+     	//to zoom in and out
+     /*	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent key) {	
+				if (key.getText().equals("+")) {
+					System.out.println("pressed +");
+				}				
+			}     		
+     	});
+     	
+     	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent key) {	
+				if (key.getText().equals("-")) {
+					System.out.println("pressed -");
+				}				
+			}     		
+     	});*/
+     	
+     	view.c.setOnScroll(new EventHandler<ScrollEvent>() {
+     		@Override
+     		public void handle(ScrollEvent scroll) {
+     			//deltaY will be 40.0 if i scroll up and -40.0 if i scroll down
+     			if (scroll.getDeltaY() == 40.0) {
+     				System.out.println("scrolled up");
+     				view.zoomIn();
+     			}
+     			if (scroll.getDeltaY() == -40.0) {
+     				System.out.println("scrolled down");
+     			}
+     			
+     		}
+     	});
+     	
+     	
 	
 	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
         @Override
@@ -109,11 +160,11 @@ public class Draw2Controller {
         	//CalculateVelocityThread thread = new CalculateVelocityThread("thread",me.getX(),me.getY(),view);
         	//thread.start();
         	
-        	setPoints(me.getX(),me.getY());
+        	//setPoints(me.getX(),me.getY());
         	
-        	if (model.p != null) {        		
-        		model.p.stop();
-        	}        	
+       // 	if (model.p != null) {        		
+      //  		model.p.stop();
+       // 	}        	
         	
         	if (me.isShiftDown()) {
         		//pan the canvas
@@ -134,7 +185,7 @@ public class Draw2Controller {
         	
         	//pat should be started in the model
         	model.startPath(me.getX(),me.getY());
-        	velocities = new ArrayList<>();
+        	//velocities = new ArrayList<>();
         	velocityTime = System.currentTimeMillis();
         	
         	//relativize the mouse coordinates, do same as for start path
@@ -175,13 +226,13 @@ public class Draw2Controller {
             		
             	//GOOD FOR CAPTURING EDGES OR SHARP STROKES
             	//implements playMixStreamsFor
-            		updatePoints(me.getX(),me.getY());            	
-                	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
-            	            	velocities.forEach(a ->{            	            		
-            	            		if (a.y > 0.044) {            	            		
-            	            			a.x = 0;
-            	            		}
-            	});	            		
+            		//updatePoints(me.getX(),me.getY());            	
+                //	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
+            	 //           	velocities.forEach(a ->{            	            		
+            	 //           		if (a.y > 0.044) {            	            		
+            	 //           			a.x = 0;
+            	 //           		}
+            	//});	            		
             //	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
             	
             //	model.playStaggeredSoundThreads(System.currentTimeMillis()-time, velocities, mouseCoordinates);
@@ -239,8 +290,8 @@ public class Draw2Controller {
             	
             	if (state ==READY) {
             		
-                	updatePoints(me.getX(),me.getY());            	
-                	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));                	
+                	//updatePoints(me.getX(),me.getY());            	
+                	//velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));                	
                 	velocityTime = System.currentTimeMillis();
             	//set up relativized view coordinates
             	double viewx = me.getX()/view.width;
@@ -270,7 +321,7 @@ public class Draw2Controller {
             		//timeOfChange.add((double)System.currentTimeMillis()-time);
             	}
             	if((y <= dy) != yDirection) {
-            		timeOfChange.add((double)System.currentTimeMillis()-time);
+            		//timeOfChange.add((double)System.currentTimeMillis()-time);
             	}            
             	if (x <= dx) {
             		xDirection = true;
@@ -303,11 +354,11 @@ public class Draw2Controller {
                 	//create new path in the controller
                 	
                 	model.strokePath(me.getX(), me.getY());                	
-            		if (model.pathAngleCalculationCoordinatesUpdateCount>2) {
-            			if (model.currentPathAngle < 90) {
-            				velocities.get(velocities.size()-1).x = 10;
-            			}
-            		}
+            //		if (model.pathAngleCalculationCoordinatesUpdateCount>2) {
+            //			if (model.currentPathAngle < 90) {
+            //				velocities.get(velocities.size()-1).x = 10;
+            //			}
+            	//	}
             		
             	//	model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
             	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
@@ -343,18 +394,18 @@ public class Draw2Controller {
 	 * initializes the points for velocity calculation of given stroke
 	 * x,y = mousePressed location
 	 * 
-	 */
+	 
 	public void setPoints(double x, double y) {
 		for (int i =0;i<4;i++) {
 			points[i] = new Coordinate(x,y);
 			points[i].time = System.currentTimeMillis();
 		}
-	}
+	}*/
 	/**
 	 * update the points to have the 4 previous mouse locations
 	 * @param x
 	 * @param y
-	 */
+	 
 	public void updatePoints(double x, double y) {
 
 		long startTime = System.currentTimeMillis();		
@@ -373,11 +424,8 @@ public class Draw2Controller {
 		}
 		points[0].x = x;
 		points[0].y = y;
-		points[0].time = System.currentTimeMillis();
-
-			
-
-	}
+		points[0].time = System.currentTimeMillis();			
+	}*/
 	/**
 	 * calculate given velocity between 2 coordinates
 	 * a should be earlier in time than b
@@ -385,18 +433,18 @@ public class Draw2Controller {
 	 * @param b
 	 * @param startTime
 	 * @return
-	 */
+	
 	public double calculateVelocity(Coordinate a, Coordinate b) {
 		double distanceTraveled = Math.abs(Math.sqrt(Math.pow((b.x-a.x), 2)+Math.pow((b.y-a.y), 2)));
 		return distanceTraveled/(a.time-b.time);
-	}
+	} */
 	//last 4 points, take the average of the 3 velocities
 	//functions: 	
 	//double (pixels per ms) calculatePointsAverageVelocity()
 	/**
 	 * will return the average velocity between the 4 previous mouse locations
 	 * @return 
-	 */
+	 
 	public double calculatePointsAverageVelocity() {	
 
 		double average =0;
@@ -405,7 +453,7 @@ public class Draw2Controller {
 		}
 		return average/3;
 		
-	}
+	}*/
 	public void setIModel(InteractionModel iM) {
 		iModel = iM;
 	}

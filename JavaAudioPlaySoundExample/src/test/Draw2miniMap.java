@@ -156,10 +156,10 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		        public void run() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
+		gc.drawImage(image, 0, 0, width/scale, height/scale);
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
-		gc.drawImage(image, 0, 0, width/scale, height/scale);
 		drawModelPaths();
 		drawViewPort();			
 		if (hasNetMiniMap == true){
@@ -182,9 +182,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public Coordinate calculateNetViewPortCenter() {		 
 		if (hasNetMiniMap) {
 			Coordinate p =new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 
-				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);
-		System.out.println("netMiniMap center "+p.x+" "+p.y);
-		//System.out.println("viewport relative width "+iModel.viewPortWidth);
+				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);				
 		return p;
 		}else {
 			Coordinate p = new Coordinate((((0+(iModel.viewPortWidth/2)))*7)/width, 

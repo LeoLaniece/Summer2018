@@ -36,9 +36,7 @@
 <fullyQualifiedTypeName name="javafx.scene.paint.Paint"/>
 <fullyQualifiedTypeName name="net.beadsproject.beads.ugens.Panner"/>
 <fullyQualifiedTypeName name="test.AnInteractiveStaggeredThread"/>
-<fullyQualifiedTypeName name="test.Grain2Files"/>
 <fullyQualifiedTypeName name="threadDemo.MouseTest"/>
-<fullyQualifiedTypeName name="test.Coordinate"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.Clip"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.AudioSystem"/>
 <fullyQualifiedTypeName name="javax.sound.sampled.FloatControl"/>
@@ -51,4 +49,12 @@
 <fullyQualifiedTypeName name="test.Draw2Model"/>
 <fullyQualifiedTypeName name="java.net.URL"/>
 <fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="test.StaggeredSoundThread"/>
+<fullyQualifiedTypeName name="unusedClasses.FileAndDuration"/>
+<fullyQualifiedTypeName name="unusedClasses.PlayPathSound"/>
+<fullyQualifiedTypeName name="unusedClasses.SoundThread"/>
+<fullyQualifiedTypeName name="test.Draw2View"/>
+<fullyQualifiedTypeName name="test.drawPath"/>
+<fullyQualifiedTypeName name="test.Grain2Files"/>
+<fullyQualifiedTypeName name="test.Coordinate"/>
 </qualifiedTypeNameHistroy>

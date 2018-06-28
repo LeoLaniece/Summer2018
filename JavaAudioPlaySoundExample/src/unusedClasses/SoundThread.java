@@ -10,6 +10,9 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import test.Coordinate;
+import test.Grain2Files;
+
 public class SoundThread extends Thread{
 	   private Thread t;
 	   private String threadName;

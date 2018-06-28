@@ -23,7 +23,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 
 public class LaunchServer extends Application{
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Drawing Tool Server");

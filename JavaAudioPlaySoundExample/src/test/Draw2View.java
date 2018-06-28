@@ -40,9 +40,10 @@ import javafx.scene.Scene;
 
 //take out the sample line and colour picker while you implement the pan-able minimap
 public class Draw2View extends Pane implements modelListener{
+	public float zoomScale =1;
 	Pane topPane;
 	Draw2Model model;
-	Canvas c;
+	public Canvas c;
 	GraphicsContext gc;
 	double pathStartx=0;
 	double pathStarty=0;
@@ -64,7 +65,7 @@ public class Draw2View extends Pane implements modelListener{
 		width = w;
 		logicalHeight = 1000;
 		logicalWidth =1000;
-		lineGroup = model.lineGroup;
+		//lineGroup = model.lineGroup;
 		
 		topPane = new Pane();
 		
@@ -93,7 +94,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	public void setLineGroup() {
 		StackPane group = new StackPane();
-		group.getChildren().add(lineGroup);
+		//group.getChildren().add(lineGroup);
 		group.setAlignment(Pos.TOP_LEFT);
 		group.setPrefHeight(height);
 		group.setPrefWidth(width);
@@ -211,16 +212,14 @@ public class Draw2View extends Pane implements modelListener{
 	public void paintOverPaths() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
-	}
-	
-	
+	}		
 	public void modelChanged() {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {		
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
-		gc.drawImage(image, -iModel.viewPortX*7, -iModel.viewPortY*7, radarView.width, radarView.height);
+		drawImage();
 		drawModelPaths();				
 		if (iModel.freezeTest) {
 			paintOverPaths();
@@ -228,6 +227,9 @@ public class Draw2View extends Pane implements modelListener{
 		    }
 		});
 	}
+	
+	
+	
 	public void startPath(double x, double y) {
 		//should take into account the size of the view
 		//need to relativize the coodinates
@@ -251,7 +253,19 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	public void setModelRadarView(Draw2miniMap v) {
 		radarView = v;
-        gc.drawImage(image, 0, 0, radarView.width, radarView.height);
+		gc.drawImage(image, 0, 0, radarView.width, radarView.height);
+	}
+	public void zoomIn() {
+		zoomScale += 0.2;
+		modelChanged();
+		//zoom the paths		
+	}
+
+	public void drawImage() {
+		double addToX = (radarView.width -radarView.width*zoomScale)/2;
+		double addToY = (radarView.height -radarView.height*zoomScale)/2;
+		gc.drawImage(image, -iModel.viewPortX*7+addToX, -iModel.viewPortY*7+addToY, 
+				radarView.width*zoomScale, radarView.height*zoomScale);
 	}
 
 }

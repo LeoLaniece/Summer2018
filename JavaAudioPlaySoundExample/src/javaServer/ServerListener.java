@@ -90,7 +90,7 @@ public class ServerListener extends ClientListener {
 				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y)+"\n");
 				//angle
 			//	out.writeUTF(Double.toString(model.currentPathAngle));
-				msg.add(Double.toString(model.currentPathAngle)+"\n");
+			//	msg.add(Double.toString(model.currentPathAngle)+"\n");
 				//clipDuration
 			//	out.writeUTF(Double.toString(controller.clipDuration));
 				msg.add(Double.toString(controller.clipDuration)+"\n");
@@ -107,7 +107,7 @@ public class ServerListener extends ClientListener {
 				}
 				out.writeUTF(fullmsg);
 				msgCount++;
-				System.out.println("msg count "+msgCount);
+				//System.out.println("msg count "+msgCount);
 		}
 		
 			} catch (IOException e) {

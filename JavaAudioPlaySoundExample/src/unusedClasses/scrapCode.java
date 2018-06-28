@@ -6,6 +6,21 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
+import test.Coordinate;
+
+
+////////////
+/*
+ * from model angle calculations!!
+ *     Coordinate[] pathAngleCalculationCoordinates = new Coordinate[3];
+    int pathAngleCalculationCoordinatesUpdateCount = 2;
+    public double currentPathAngle;
+    
+    
+    
+    
+ */
+
 /////////////////
 /*
  * from Grain2Files

@@ -13,6 +13,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import test.Coordinate;
+import test.Draw2View;
 
 public class CalculateVelocityThread extends Thread{
 	   private Thread t;
