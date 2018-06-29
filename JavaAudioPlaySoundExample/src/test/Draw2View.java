@@ -54,7 +54,7 @@ public class Draw2View extends Pane implements modelListener{
 	public Group lineGroup;
 	InteractionModel iModel;
 	public Draw2miniMap radarView;
-    File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\happyFlower.JPG");        
+    File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\randomScatteredShapes.JPG");        
     Image image = new Image(pencil.toURI().toString());
 	
 	//put in a logical size?

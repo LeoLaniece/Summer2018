@@ -1,12 +1,15 @@
 package test;
 
 import javafx.application.Application;
+//import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton ;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.RadioButton ;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.text.Font ;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
@@ -15,6 +18,8 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos ;
 import java.lang.reflect.Field;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.input.KeyCode ;
 import javafx.scene.shape.LineTo; 
 
@@ -54,6 +59,8 @@ public class FreezeQuiz extends Stage{
     int selectedField = 0;
     int state = PICKING;
     String userInput;
+    ToggleGroup toolGroup;
+    ToggleGroup shapeGroup;
 	
 	public FreezeQuiz(Draw2Controller con, Coordinate viewPortCenter) {
         setTitle("Freeze Quiz");
@@ -90,19 +97,22 @@ public class FreezeQuiz extends Stage{
         
         //was he drawing? was he displacing the minimap? was he just sitting still?
         //want the list of questions, beside each i want a bullet button
+        //was he tracing a triangle, was he tracing a square was he tracing a squiggle, was he filling in a circle
+        //was he using a pencil, nail, chalk, eraser
+        //was he panning the minimap
         HBox q1AndBullets = new HBox();
         VBox bullets = new VBox();
+        VBox moreBullets = new VBox();
         VBox question1 = new VBox();
         question1.setAlignment(Pos.CENTER_LEFT);
         q1AndBullets.getChildren().add(question1);
         q1AndBullets.getChildren().add(bullets);
+        q1AndBullets.getChildren().add(moreBullets);
         root.getChildren().add(q1AndBullets);
           
         final ToggleGroup group = new ToggleGroup();
-
         RadioButton rb1 = new RadioButton("Were they drawing?");
-        rb1.setToggleGroup(group);
-        rb1.setSelected(true);
+        rb1.setToggleGroup(group);        
 
         RadioButton rb2 = new RadioButton("Were they panning the mini-map?");
         rb2.setToggleGroup(group);
@@ -111,23 +121,89 @@ public class FreezeQuiz extends Stage{
         rb3.setToggleGroup(group);
         question1.getChildren().addAll(rb1,rb2,rb3);
         
+        //if the user selects was drawing, show multiple choices for shapes and for tool used
+        group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+			@Override
+			public void changed(ObservableValue<? extends Toggle> arg0, Toggle arg1, Toggle arg2) {				
+				RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
+				String toogleGroupValue = selectedRadioButton.getText();
+				if (rb1.getText().equals(toogleGroupValue)) {
+					//tool toggle group
+            		toolGroup = new ToggleGroup();
+                    RadioButton tgrb1 = new RadioButton("Drawing with a pencil");
+                    tgrb1.setToggleGroup(toolGroup);        
+
+                    RadioButton tgrb2 = new RadioButton("Drawing with a piece of metal");
+                    tgrb2.setToggleGroup(toolGroup);
+                     
+                    RadioButton tgrb3 = new RadioButton("Drawing with a piece of chalk");
+                    tgrb3.setToggleGroup(toolGroup);
+                    
+                    RadioButton tgrb4 = new RadioButton("Erasing");
+                    tgrb4.setToggleGroup(toolGroup);
+                    bullets.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4);
+                    
+                  //shape toggle group
+            		shapeGroup = new ToggleGroup();
+                    RadioButton sgrb1 = new RadioButton("Tracing the shape of a triangle");
+                    sgrb1.setToggleGroup(shapeGroup);        
+
+                    RadioButton sgrb2 = new RadioButton("Tracing the shape of a square");
+                    sgrb2.setToggleGroup(shapeGroup);
+                     
+                    RadioButton sgrb3 = new RadioButton("Tracing the shape of a squiggle");
+                    sgrb3.setToggleGroup(shapeGroup);
+                    
+                    RadioButton sgrb4 = new RadioButton("Filling in a circle");
+                    sgrb4.setToggleGroup(shapeGroup);
+                    
+                    RadioButton sgrb5 = new RadioButton("I do not know");
+                    sgrb5.setToggleGroup(shapeGroup);
+                    
+                    RadioButton sgrb6 = new RadioButton("None of the above");
+                    sgrb6.setToggleGroup(shapeGroup);
+                    moreBullets.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4,sgrb5,sgrb6);        
+				}else {
+					bullets.getChildren().clear();
+					moreBullets.getChildren().clear();
+				}
+			} 
+        });
+        
+       Button submit = new Button("SUBMIT");
+       submit.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) { 
+            	//needs to be the results of the radio button questions
+            	RadioButton groupResult = (RadioButton) group.getSelectedToggle();
+				String groupResultString = groupResult.getText();
+				userInput = "User selected the "+groupResultString+" radio button"+"\n";
+				if (groupResultString.equals(rb1.getText())) {
+				RadioButton toolGroupResult = (RadioButton) toolGroup.getSelectedToggle();
+				String toolGroupResultString = toolGroupResult.getText();
+				RadioButton shapeGroupResult = (RadioButton) shapeGroup.getSelectedToggle();
+				String shapeGroupResultString = shapeGroupResult.getText();				                                
+                	userInput += "User also selected the "+toolGroupResultString+" radio button"+"\n";
+                	userInput += "User also selected the "+shapeGroupResultString+" radio button"+"\n";
+                }
+				
+                System.out.println(userInput);	                               
+                con.state = con.READY;
+                con.iModel.freezeTestOff();
+				con.view.modelChanged();					
+				con.radarView.modelChanged();					
+				close();
+            }
+       });
+       root.getChildren().add(submit);
+        
         TextField t4 = new TextField();
-        root.getChildren().add(t4);
+        //root.getChildren().add(t4);
         t4.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent key) {
 				if (key.getCode().equals(KeyCode.ENTER)) {
-	                userInput = t4.getText();	                
-	                System.out.println(userInput);	                
-	                t4.clear();
-	                con.state = con.READY;
-	                con.iModel.freezeTestOff();
-					con.view.modelChanged();					
-					con.radarView.modelChanged();
-					
-					close();	                
+	                
 	            }
-
 			}
         });
         

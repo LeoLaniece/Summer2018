@@ -85,22 +85,19 @@ public class Draw2Controller {
 						iModel.freezeTestOn();
 						//launch a pop up window requesting for the location of the other user and his activity?
 						//need to pass in the location of other user's viewPort
-						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());											
+						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());
+						
 					}																	
-				}				
-			}     		
-     	});
-     	
-     	//for flower test logging purposes
-     	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent key) {	
+				}
+				//for logging purposes
 				if (key.getCode()==KeyCode.SPACE) {
 					String hash = "Time for completion "+Long.toString(((System.currentTimeMillis() -startTime)/1000));
 					 CreateFile x = new	CreateFile(hash);														
-				}				
+				}
 			}     		
      	});
+     	
+
      	
      	//to zoom in and out
      /*	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
