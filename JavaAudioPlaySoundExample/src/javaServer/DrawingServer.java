@@ -155,8 +155,7 @@ public void run() {
         		 model.stopSoundGenerator();        		 
         	 }        	
         	 }    
-         }
-		         
+         }		         
          server.close();
          
       } catch (SocketTimeoutException s) {

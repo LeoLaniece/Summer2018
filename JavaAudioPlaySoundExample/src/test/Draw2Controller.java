@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.paint.Color;
 
 import javax.sound.sampled.LineUnavailableException;
 
@@ -94,6 +95,10 @@ public class Draw2Controller {
 					String hash = "Time for completion "+Long.toString(((System.currentTimeMillis() -startTime)/1000));
 					 CreateFile x = new	CreateFile(hash);														
 				}
+				//for the read and observe task
+				if (key.getText().equals("r")) {
+					ReadAndObserveStage e = new ReadAndObserveStage();
+				}
 			}     		
      	});
      	
@@ -124,7 +129,7 @@ public class Draw2Controller {
      			//deltaY will be 40.0 if i scroll up and -40.0 if i scroll down
      			if (scroll.getDeltaY() == 40.0) {
      				System.out.println("scrolled up");
-     				view.zoomIn();
+     				//view.zoomIn();
      			}
      			if (scroll.getDeltaY() == -40.0) {
      				System.out.println("scrolled down");
@@ -132,6 +137,13 @@ public class Draw2Controller {
      			
      		}
      	});
+     	
+   //     view.setOnMouseMoved(new EventHandler<MouseEvent>()  {        	
+ //       @Override
+  //      public void handle(MouseEvent me) {
+ //       	view.drawMouseCursor(me.getX(),me.getY());        	
+ //       }
+ //       });
      	
      	
 	
@@ -177,14 +189,11 @@ public class Draw2Controller {
         	if (state ==READY) {
         	//will be useful in mouseDragged for velocity
         	x = me.getX();
-        	y = me.getY();
-        	time = System.currentTimeMillis();  
+        	y = me.getY();        	 
         	
-        	//pat should be started in the model
+        	//path should be started in the model
         	model.startPath(me.getX(),me.getY());
-        	//velocities = new ArrayList<>();
-        	velocityTime = System.currentTimeMillis();
-        	
+        	//velocities = new ArrayList<>();        	        	
         	//relativize the mouse coordinates, do same as for start path
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
 
@@ -242,13 +251,8 @@ public class Draw2Controller {
             	mouseCoordinates=new ArrayList<Coordinate>();
             	}
             	
-            	if (state == PAN_READY) {
-            		//System.out.println("stop the VPDS");
-            		//model.stopVPDS();
-            	}
                 state = NOTREADY;                
-            }
-            	System.out.println("mouseReleased");
+            }            	
             	model.notifySubscribers();
             }
         });
@@ -289,7 +293,7 @@ public class Draw2Controller {
             		
                 	//updatePoints(me.getX(),me.getY());            	
                 	//velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));                	
-                	velocityTime = System.currentTimeMillis();
+                	
             	//set up relativized view coordinates
             	double viewx = me.getX()/view.width;
             	double viewy = me.getY()/view.height;            	
@@ -307,34 +311,8 @@ public class Draw2Controller {
             	//use microseconds
         		dx = me.getX();
         		dy = me.getY();
-            	distanceTraveled += Math.abs(Math.sqrt(Math.pow((dx-x), 2)+Math.pow((dy-y), 2)));
             	
-            	//calculate stroke direction
-            	//set the direction travelled, calculate if there is a change in direction, set the new direction travelled
-            	//the function works, but it is very sensitive
-            	//calculate change in direction 
-            	//if xDirection is different by at least 10 pixels than current direction, mark the time.
-            	if ((x <= dx) != xDirection) {
-            		//timeOfChange.add((double)System.currentTimeMillis()-time);
-            	}
-            	if((y <= dy) != yDirection) {
-            		//timeOfChange.add((double)System.currentTimeMillis()-time);
-            	}            
-            	if (x <= dx) {
-            		xDirection = true;
-            	}else {
-            		xDirection = false;
-            	}
             	
-            	//for some reason, when i move the cursor to from right to left
-            	//there are more changes in direction than left to right
-            	//try calculating direction when the mouse acceleration changes
-            	
-            	if(y < dy) {
-            		yDirection = true;
-            	}else if (y>dy){
-            		yDirection = false;
-            	}
             	//use the events in timeOfChange to generate swipe sounds at those times in the actual sound recording.
             	//could do this by running a thread at the same time as the strokePlayback 
             	//Objective: produce a sound recording which produces swipes at the given times in a sound recording.
@@ -361,14 +339,14 @@ public class Draw2Controller {
             	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
             	//	model.updateSoundGeneratorPathAngle();
             	//	time = System.currentTimeMillis();
-            		if (System.currentTimeMillis()-time > clipStaggerIncrement) {
+            		
             			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x
             			//		mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
             			///		clipDuration);
             			
             			//System.out.println("velocity "+soundVelocityThread.getVelocity());            					
             			
-            		}
+            		
             		
                 	//view.strokePath(viewx, viewy); 
                 	//view.startPath(viewx, viewy);

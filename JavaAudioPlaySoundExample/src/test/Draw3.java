@@ -31,6 +31,7 @@ public class Draw3 extends Application{
 	        view.setIModel(iModel);
 	        radarView.setIModel(iModel);
 	        radarView.drawViewPort();
+	        
 
 	        StackPane.setAlignment(view, Pos.TOP_LEFT);
 	        StackPane.setAlignment(radarView, Pos.TOP_LEFT);
@@ -45,14 +46,13 @@ public class Draw3 extends Application{
 	        model.setModelView(view);
 	        model.setModelRadarView(radarView);
 	        view.setModelRadarView(radarView);
+	        view.setController(controller);
+	        radarView.setController(controller);
 
 	        primaryStage.setScene(scene);
 	        primaryStage.setX(0);
 	        primaryStage.setY(0);
-	        primaryStage.show();
-	        
-	
-
+	        primaryStage.show();	        	
 }
 	 public static void main(String[] args) {
 

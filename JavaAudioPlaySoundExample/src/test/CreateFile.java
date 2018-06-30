@@ -38,7 +38,7 @@ public class CreateFile {
 	}
 	
 	public File createNewFile(File parentDir, String hash) {
-		String fileName = hash+fileCount+".txt";
+		String fileName = hash+fileCount+".rtf";
 		File file = new File(parentDir, fileName);	 
 		return file;
 	}

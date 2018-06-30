@@ -111,13 +111,13 @@ public class FreezeQuiz extends Stage{
         root.getChildren().add(q1AndBullets);
           
         final ToggleGroup group = new ToggleGroup();
-        RadioButton rb1 = new RadioButton("Were they drawing?");
+        RadioButton rb1 = new RadioButton("they are drawing");
         rb1.setToggleGroup(group);        
 
-        RadioButton rb2 = new RadioButton("Were they panning the mini-map?");
+        RadioButton rb2 = new RadioButton("they are panning the mini-map");
         rb2.setToggleGroup(group);
          
-        RadioButton rb3 = new RadioButton("Were they sitting still?");
+        RadioButton rb3 = new RadioButton("they are sitting still");
         rb3.setToggleGroup(group);
         question1.getChildren().addAll(rb1,rb2,rb3);
         
@@ -173,19 +173,24 @@ public class FreezeQuiz extends Stage{
        Button submit = new Button("SUBMIT");
        submit.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) { 
+            	userInput = "User selected region "+selectedField+"\n"+
+            "The user was "+t2.getText()+" in his selection \n";
+            	
             	//needs to be the results of the radio button questions
             	RadioButton groupResult = (RadioButton) group.getSelectedToggle();
 				String groupResultString = groupResult.getText();
-				userInput = "User selected the "+groupResultString+" radio button"+"\n";
+				userInput += "User claims that "+groupResultString+"\n";
 				if (groupResultString.equals(rb1.getText())) {
 				RadioButton toolGroupResult = (RadioButton) toolGroup.getSelectedToggle();
 				String toolGroupResultString = toolGroupResult.getText();
 				RadioButton shapeGroupResult = (RadioButton) shapeGroup.getSelectedToggle();
 				String shapeGroupResultString = shapeGroupResult.getText();				                                
-                	userInput += "User also selected the "+toolGroupResultString+" radio button"+"\n";
-                	userInput += "User also selected the "+shapeGroupResultString+" radio button"+"\n";
+                	userInput += "User claims that their partner is "+toolGroupResultString+"\n";
+                	userInput += "User claims that their partner is "+shapeGroupResultString+"\n";
                 }
 				
+				//send userInput to controller
+				CreateFile log = new CreateFile(userInput);
                 System.out.println(userInput);	                               
                 con.state = con.READY;
                 con.iModel.freezeTestOff();

@@ -1,9 +1,10 @@
 package test;
 
 import java.io.File;
+import javafx.scene.shape.Path;
 import java.lang.reflect.Field;
 import javafx.application.Platform;
-
+import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.LineTo; 
 
 import java.lang.reflect.Modifier;
@@ -40,11 +41,12 @@ import javafx.scene.Scene;
 
 //take out the sample line and colour picker while you implement the pan-able minimap
 public class Draw2View extends Pane implements modelListener{
+	public Draw2Controller controller;
 	public float zoomScale =1;
 	Pane topPane;
 	Draw2Model model;
 	public Canvas c;
-	GraphicsContext gc;
+	public GraphicsContext gc;
 	double pathStartx=0;
 	double pathStarty=0;
 	public double height;
@@ -189,24 +191,11 @@ public class Draw2View extends Pane implements modelListener{
 									((LineTo) model.getModelPaths().get(i).getElements().get(a)).getY()*radarView.height
 									+translateY);	
 							}
-						}
-						
-					/*	model.getModelPaths().get(i).getElements().
-						forEach(a -> {				
-						if (a instanceof LineTo) {
-						//your code
-						gc.lineTo(((LineTo) a).getX()*radarView.width +translateX, 
-								((LineTo) a).getY()*radarView.height+translateY);							
-						}			
-					});*/
-						
-					}
-					
+						}																	
+					}					
 					gc.stroke();
 				}					
 				}
-
-
 	}
 	
 	public void paintOverPaths() {
@@ -217,17 +206,22 @@ public class Draw2View extends Pane implements modelListener{
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {		
-		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, width, height);
-		drawImage();
-		drawModelPaths();				
+
+		if (controller.state == controller.PAN_READY) {
+				gc.setFill(Color.WHITE);
+				gc.fillRect(0, 0, width, height);
+			//drawImage();					
+			drawModelPaths();			
+		}else {
+			drawPath();
+		}
+					
 		if (iModel.freezeTest) {
 			paintOverPaths();
 		}
 		    }
 		});
-	}
-	
+	}	
 	
 	
 	public void startPath(double x, double y) {
@@ -263,9 +257,76 @@ public class Draw2View extends Pane implements modelListener{
 
 	public void drawImage() {
 		double addToX = (radarView.width -radarView.width*zoomScale)/2;
-		double addToY = (radarView.height -radarView.height*zoomScale)/2;
+		double addToY = (radarView.height -radarView.height*zoomScale)/2;		
 		gc.drawImage(image, -iModel.viewPortX*7+addToX, -iModel.viewPortY*7+addToY, 
 				radarView.width*zoomScale, radarView.height*zoomScale);
+		
+	}
+	
+	public void addToPath() {
+		//try 
+		
+		
+		gc.beginPath();
+		synchronized (model.getModelPaths()) {						
+		Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (currentPath.getElements().size() > 2) {					
+		//move to the second last coordinate on the elements list
+		gc.moveTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getX())
+				*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
+				(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getY())
+				*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));	
+		gc.setStroke(currentPath.getStroke());
+		gc.setLineWidth(currentPath.getStrokeWidth());
+		
+		//draw a LineTo to the last element in the path
+		gc.lineTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getX())
+				*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
+				(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getY())
+				*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));		
+		//stroke the bit
+		gc.stroke();
+		}
+		}
+	}
+	
+	public void drawPath() {
+		synchronized (model.getModelPaths()) {
+		if (model.getModelPaths().size()>0) {		
+		Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (currentPath.getElements().size() > 2) {
+			addToPath();
+		}else if (currentPath.getElements().size() ==2){
+			gc.beginPath();
+			gc.moveTo((((MoveTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getX())
+					*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
+					(((MoveTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getY())
+					*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));	
+			gc.setStroke(currentPath.getStroke());
+			gc.setLineWidth(currentPath.getStrokeWidth());			
+			//draw a LineTo to the last element in the path
+			gc.lineTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getX())
+					*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
+					(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getY())
+					*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));		
+			//stroke the bit
+			gc.stroke();
+		}
+		}	
+		}
+	}
+	
+	public void setController(Draw2Controller c) {
+		controller = c;
+	}
+	
+	public File mouseCursor = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\mouseCursor.png");        
+    public Image mouseImage = new Image(mouseCursor.toURI().toString());
+    
+	public void drawMouseCursor(double x, double y) {
+		drawImage();
+    	gc.drawImage(mouseImage, x-10,
+    			y-7,30,30);
 	}
 
 }

@@ -38,6 +38,7 @@ public class ClientDrawingStage extends Stage {
         model.setModelView(view);
         view.setModelRadarView(radarView);
         model.setModelRadarView(radarView);
+        
 
         StackPane.setAlignment(view, Pos.TOP_LEFT);
         StackPane.setAlignment(radarView, Pos.TOP_LEFT);
@@ -52,6 +53,8 @@ public class ClientDrawingStage extends Stage {
         model.addSubscriber(view);
         model.addSubscriber(radarView);
         c.setIModel(iModel);
+        view.setController(c);
+        radarView.setController(c);
 
         setScene(scene);
         setX(800);

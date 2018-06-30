@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -258,11 +259,7 @@ public class Draw2Model {
     currentPathCoordinate = new Coordinate(x,y);
     iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
     iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
-  //  initializePathAngleCalculationCoordinates(x,y);
-   // pathAngleCalculationCoordinatesUpdateCount =1;
-    //lineGroup.getChildren().add(path);
     getModelPaths().add(path);       
-    //pathActivityListener.modelChanged();
 	}
 	
 	/**
@@ -294,12 +291,10 @@ public class Draw2Model {
 	public void strokePath(double x, double y) {
 		//relativize the coordinates for strorage
 		x = x/radarView.width;
-		y = y/radarView.height;	
-		
+		y = y/radarView.height;			
 		//this could be the slow downer
-		dP = new drawPath(path, x,y);
-		
-		
+		//dP = new drawPath(path, x,y);
+		path.getElements().add(new LineTo(x,y));
 		currentPathCoordinate = new Coordinate(x,y);
 		//updatePathAngleCalculationCoordinates(x,y);
 		//record 3 previous coordinates of the current path elements
@@ -314,6 +309,7 @@ public class Draw2Model {
 		//make this addToPath
 		//so that there is less drawing to do?
 		notifySubscribers();
+		//view.addToPath();
 	}
 	
 	/**

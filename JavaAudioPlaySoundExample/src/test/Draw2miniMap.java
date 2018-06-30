@@ -24,6 +24,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
 import javafx.scene.canvas.Canvas;
@@ -59,6 +61,9 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	}
 	
 	public void drawViewPortFromNet(double x, double y) {
+		gc.drawImage(image, 0, 0, width/scale, height/scale);
+		drawModelPaths();
+		drawViewPort();	
 		hasNetMiniMap = true;
 		gc.setLineWidth(1);
 		gc.setStroke(Color.YELLOW);
@@ -154,21 +159,25 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {
-		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
-		gc.drawImage(image, 0, 0, width/scale, height/scale);
+		
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
-		drawModelPaths();
-		drawViewPort();			
+		if (controller.state == controller.PAN_READY) {
+		//	gc.drawImage(image, 0, 0, width/scale, height/scale);
+			drawModelPaths();
+		drawViewPort();	
 		if (hasNetMiniMap == true){
 			drawViewPortFromNet(netMiniMapX, netMiniMapY);
 		}
+		
+		}else {
+			drawPath();
+		}				
+
 		if (iModel.freezeTest) {
 			paintOverPaths();
-		}
-		
+		}		
 		
 		    }
 		});
@@ -210,6 +219,53 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 			yDist = iModel.viewPortHeight - netViewPortCenter.y;
 		}		
 		return new Coordinate(xDist,yDist);
+	}
+	
+	@Override
+	public void addToPath() {
+		gc.beginPath();
+		Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (currentPath.getElements().size() > 2) {					
+		//move to the second last coordinate on the elements list
+		gc.moveTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getX())
+				*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
+				(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getY())
+				*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);	
+		gc.setStroke(currentPath.getStroke());
+		gc.setLineWidth(currentPath.getStrokeWidth()/scale);
+		
+		//draw a LineTo to the last element in the path
+		gc.lineTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getX())
+				*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
+				(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getY())
+				*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);		
+		//stroke the bit
+		gc.stroke();
+		}
+	}
+	@Override
+	public void drawPath() {
+		if (model.getModelPaths().size()>0) {		
+		Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (currentPath.getElements().size() > 2) {
+			addToPath();
+		}else if (currentPath.getElements().size() ==2){
+			gc.beginPath();
+			gc.moveTo((((MoveTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getX())
+					*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
+					(((MoveTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getY())
+					*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);	
+			gc.setStroke(currentPath.getStroke());
+			gc.setLineWidth(currentPath.getStrokeWidth()/scale);			
+			//draw a LineTo to the last element in the path
+			gc.lineTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getX())
+					*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
+					(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getY())
+					*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);
+			//stroke the bit
+			gc.stroke();
+		}
+		}		
 	}
 
 }

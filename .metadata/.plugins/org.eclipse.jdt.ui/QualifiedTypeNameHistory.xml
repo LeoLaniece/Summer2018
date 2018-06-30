@@ -48,7 +48,6 @@
 <fullyQualifiedTypeName name="javaServer.ClientListener"/>
 <fullyQualifiedTypeName name="test.Draw2Model"/>
 <fullyQualifiedTypeName name="java.net.URL"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="test.StaggeredSoundThread"/>
 <fullyQualifiedTypeName name="unusedClasses.FileAndDuration"/>
 <fullyQualifiedTypeName name="unusedClasses.PlayPathSound"/>
@@ -57,4 +56,8 @@
 <fullyQualifiedTypeName name="test.drawPath"/>
 <fullyQualifiedTypeName name="test.Grain2Files"/>
 <fullyQualifiedTypeName name="test.Coordinate"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.io.FileWriter"/>
+<fullyQualifiedTypeName name="javax.swing.event.ChangeListener"/>
+<fullyQualifiedTypeName name="javafx.beans.value.ChangeListener"/>
 </qualifiedTypeNameHistroy>
