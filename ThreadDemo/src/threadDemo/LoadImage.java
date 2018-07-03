@@ -1,6 +1,45 @@
 package threadDemo;
 
 import java.io.File;
+import javafx.scene.text.Font ;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Pos ;
+import java.lang.reflect.Field;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.input.KeyCode ;
+import javafx.scene.shape.LineTo; 
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Pane;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Scene;
+import javafx.scene.control.TextField ;
 import java.lang.reflect.Field;
 import javafx.application.Platform;
 
@@ -73,6 +112,13 @@ public class LoadImage extends Application {
       //  ImageView imgView = new ImageView(img);
        // sp.setBackground(background);
         sp.getChildren().add(c);
+        long startTime = System.currentTimeMillis();
+        Text timer = new Text("0:00");
+        timer.setFont(Font.font ("Verdana", 14));
+        timer.setFill(Color.BLACK); 
+        sp.getChildren().add(timer);
+        UpdateTimer z = new UpdateTimer(startTime, timer);
+        z.start();
         
         //Adding HBox to the scene
         Scene scene = new Scene(sp);

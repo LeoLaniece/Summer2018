@@ -40,6 +40,7 @@ public class Draw2Controller {
 	//ArrayList<Coordinate> velocities;
 	InteractionModel iModel;
 	public ArrayList<Coordinate> mouseCoordinates;
+	public ArrayList<Long> activeTimes;
 	//velocityItems
 	//Coordinate[] points;
 	
@@ -48,6 +49,7 @@ public class Draw2Controller {
 	public int PAN_READY = 1;
 	public int NOTREADY =-1;
 	public int FREEZE = 2;
+	public int READ_AND_OBSERVE = 3;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
@@ -55,6 +57,7 @@ public class Draw2Controller {
 	public double clipDuration;
 	public MouseTest soundVelocityThread;
 	public long startTime;
+	public ReadAndObserveStage readAndObserveTrial =null;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
@@ -71,6 +74,7 @@ public class Draw2Controller {
      	soundVelocityThread.start();
      	startTime = System.currentTimeMillis();
 		//setPoints();
+     	 activeTimes = new ArrayList<>();
      	
      	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -96,8 +100,10 @@ public class Draw2Controller {
 					 CreateFile x = new	CreateFile(hash);														
 				}
 				//for the read and observe task
-				if (key.getText().equals("r")) {
-					ReadAndObserveStage e = new ReadAndObserveStage();
+				if (key.getText().equals("r")) {					
+					state = READ_AND_OBSERVE;
+					model.notifySubscribers();
+					readAndObserveTrial = new ReadAndObserveStage(me);					
 				}
 			}     		
      	});
@@ -289,7 +295,7 @@ public class Draw2Controller {
             		}            		
             	}
             	
-            	if (state ==READY) {
+            	if (state ==READY) {            		
             		
                 	//updatePoints(me.getX(),me.getY());            	
                 	//velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));                	

@@ -19,6 +19,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 
 import javaServer.ClientListener;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -649,6 +650,28 @@ public class Draw2Model {
 	}
 	public void stopDrawingSoundGenerator() {
 		soundGenerator.closeSoundGenerator();		
+	}
+	public ReadAndObserveInstructionStage instructions =null;
+	
+	public void launchReadAndObserverInstructionsStage() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		    	if (instructions == null) {
+		    				instructions = new ReadAndObserveInstructionStage();	
+		    	}		
+		    }
+		});
+	}
+	
+	public void closeInstructions() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+				instructions.close();
+				instructions = null;
+		    }
+		});
 	}
 	
 }

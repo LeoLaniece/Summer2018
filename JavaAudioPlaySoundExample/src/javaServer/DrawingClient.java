@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -88,6 +89,19 @@ public DrawingClient(String [] args) {
         		int netInfoIndex = 0;        	  
          	 serverState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
          	 
+         	 //if the read and obserrve test is happening
+     		if (serverState == controller.READ_AND_OBSERVE) {
+     			System.out.println("state is read and observe");
+     			model.launchReadAndObserverInstructionsStage();
+     		}
+     		
+     		if (serverState == controller.NOTREADY) {
+        		 //close instruction window if it is still there
+        		 if (model.instructions != null) {
+        			 model.closeInstructions();
+        		 }
+     		}
+         	 
          	 //if server is panning move all paths by...
          	 //adjust the server's minimap location
          	 if (serverState == controller.PAN_READY) {
@@ -111,7 +125,7 @@ public DrawingClient(String [] args) {
         	 }
         	  
          	 //if server is drawing a path, replicate path and produce sound
-         	 if (serverState == controller.READY) {
+         	 if (serverState == controller.READY) {         		          		 
          	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
          	 //draw path info
          	 isNetPathAlive = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
@@ -144,8 +158,12 @@ public DrawingClient(String [] args) {
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
         		 //set timbre
-        		 model.setTimbre(netTimbre);
+        		 model.setTimbre(netTimbre);        		
         		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);        		 
+        		 //log user1 activity here 
+        		 if (controller.readAndObserveTrial != null) {
+        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 }
         	 }else
         		 //add on to current path
         	 if (model.netWorkPath!=null) {
@@ -163,6 +181,10 @@ public DrawingClient(String [] args) {
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;
         		 model.stopSoundGenerator();
+        		 //log user 1 activity here
+        		 if (controller.readAndObserveTrial != null) {
+        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 }
         	 }        	          	          	 
         	
      	 }

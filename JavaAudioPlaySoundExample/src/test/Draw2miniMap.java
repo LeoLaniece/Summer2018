@@ -61,7 +61,10 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	}
 	
 	public void drawViewPortFromNet(double x, double y) {
-		gc.drawImage(image, 0, 0, width/scale, height/scale);
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		gc.drawImage(getImage(), 0, 0, width/scale, height/scale);		
 		drawModelPaths();
 		drawViewPort();	
 		hasNetMiniMap = true;
@@ -70,6 +73,8 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		gc.strokeRect(x, y, iModel.viewPortWidth, iModel.viewPortHeight);
 		netMiniMapX =x;
 		netMiniMapY =y;
+	}
+		});
 	}
 	
 	@Override
@@ -109,6 +114,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 				//for that path, always draw it with the X and Y offset.
 				double viewHeight = model.view.height;
 				double viewWidth = model.view.width;
+				synchronized (model.getModelPaths()) {
 						for (int i=0; i<model.getModelPaths().size();i++) {	
 							gc.beginPath();
 							gc.moveTo(model.modelPathsCoordinates.get(i).x*width/scale + iModel.viewPortXYLocation.get(i).x,
@@ -118,7 +124,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 							if (model.getModelPaths().get(i).getElements().size()>0) {
 							final double viewPortOffSetX = iModel.viewPortXYLocation.get(i).x;
 							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;
-							synchronized (this) {
+							
 							for (int a = 0; a<model.getModelPaths().get(i).getElements().size(); a++) {
 								if (model.getModelPaths().get(i).getElements().get(a) instanceof LineTo) {
 								gc.lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()
@@ -126,21 +132,11 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 										((LineTo) model.getModelPaths().get(i).getElements().get(a)).getY()
 										*height/scale +viewPortOffSetY);	
 								}
+							}															
 							}
-								
-							/*	
-							model.getModelPaths().get(i).getElements().
-							forEach(a -> {				
-								if (a instanceof LineTo) {
-								//your code
-								gc.lineTo(((LineTo) a).getX()*width/scale +viewPortOffSetX ,
-										((LineTo) a).getY()*height/scale +viewPortOffSetY);	
-								
-								}			
-							});*/
-							}
+							
 							gc.stroke();
-						}					
+							}				
 						}		
 	}
 	
@@ -158,19 +154,17 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public void modelChanged() {
 		Platform.runLater(new Runnable() {
 		    @Override
-		        public void run() {
-		
+		        public void run() {		
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 		if (controller.state == controller.PAN_READY) {
-		//	gc.drawImage(image, 0, 0, width/scale, height/scale);
+			gc.drawImage(getImage(), 0, 0, width/scale, height/scale);
 			drawModelPaths();
 		drawViewPort();	
 		if (hasNetMiniMap == true){
 			drawViewPortFromNet(netMiniMapX, netMiniMapY);
-		}
-		
+		}		
 		}else {
 			drawPath();
 		}				
@@ -224,48 +218,52 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	@Override
 	public void addToPath() {
 		gc.beginPath();
-		Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
-		if (currentPath.getElements().size() > 2) {					
+		synchronized (model.getModelPaths()) {
+		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {					
 		//move to the second last coordinate on the elements list
-		gc.moveTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getX())
+		gc.moveTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
 				*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
-				(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getY())
+				(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getY())
 				*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);	
-		gc.setStroke(currentPath.getStroke());
-		gc.setLineWidth(currentPath.getStrokeWidth()/scale);
+		gc.setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
+		gc.setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth()/scale);
 		
 		//draw a LineTo to the last element in the path
-		gc.lineTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getX())
+		gc.lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
 				*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
-				(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getY())
+				(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getY())
 				*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);		
 		//stroke the bit
 		gc.stroke();
 		}
+		}
 	}
 	@Override
 	public void drawPath() {
+		synchronized (model.getModelPaths()) {		
 		if (model.getModelPaths().size()>0) {		
-		Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
-		if (currentPath.getElements().size() > 2) {
+		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {
 			addToPath();
-		}else if (currentPath.getElements().size() ==2){
+		}else if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() ==2){
 			gc.beginPath();
-			gc.moveTo((((MoveTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getX())
+			gc.moveTo((((MoveTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
 					*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
-					(((MoveTo) currentPath.getElements().get(currentPath.getElements().size()-2)).getY())
+					(((MoveTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getY())
 					*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);	
-			gc.setStroke(currentPath.getStroke());
-			gc.setLineWidth(currentPath.getStrokeWidth()/scale);			
+			gc.setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
+			gc.setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth()/scale);			
 			//draw a LineTo to the last element in the path
-			gc.lineTo((((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getX())
+			gc.lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
 					*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
-					(((LineTo) currentPath.getElements().get(currentPath.getElements().size()-1)).getY())
+					(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getY())
 					*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);
 			//stroke the bit
 			gc.stroke();
 		}
-		}		
+		}	
+		}
 	}
 
 }

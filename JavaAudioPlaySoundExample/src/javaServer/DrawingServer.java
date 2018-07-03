@@ -83,6 +83,20 @@ public void run() {
         	 
         	 clientState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 
+         	 //if the read and obserrve test is happening
+        	 //open instructions
+     		if (clientState == controller.READ_AND_OBSERVE) {
+     			System.out.println("state is read and observe");
+     			model.launchReadAndObserverInstructionsStage();
+     		}
+     		//close instructions
+     		if (clientState == controller.NOTREADY) {
+       		 //close instruction window if it is still there
+       		 if (model.instructions != null) {
+       			 model.closeInstructions();
+       		 }
+    		}
+        	 
         	 if (clientState == controller.PAN_READY) {
         		  //START the VPDS generator here
         	     if (model.VPDS == null) {
@@ -137,7 +151,11 @@ public void run() {
         		 model.setTimbre(netTimbre);
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
-        		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);        		 
+        		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);     
+        		 //log user1 activity here 
+        		 if (controller.readAndObserveTrial != null) {
+        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 }
         	 }else
         	 if (model.netWorkPath!=null) {
         		 //calculate coordinate offsets
@@ -149,10 +167,15 @@ public void run() {
          		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
          		model.updateSoundGeneratorPanValue(mouseCoordinate);
          		model.updateSoundGeneratorPathAngleFromNet(line[6]);        		 
+         		
         	 }        	 
         	 if (isNetPathAlive == false) {
         		 model.netWorkPath = null;        		 
-        		 model.stopSoundGenerator();        		 
+        		 model.stopSoundGenerator();  
+        		 //log user 1 activity here
+        		 if (controller.readAndObserveTrial != null) {
+        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 }
         	 }        	
         	 }    
          }		         
