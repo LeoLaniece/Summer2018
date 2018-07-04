@@ -35,11 +35,27 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(fullmsg);
 			}
 			
+			if (controller.state == controller.FREEZE_TEST_TASK) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
 			if (controller.state == controller.NOTREADY) {
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
 				}
+				out.writeUTF(fullmsg);
+			}
+			
+			if (controller.state == controller.CLOSE_INSTRUCTIONS) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
 				out.writeUTF(fullmsg);
 			}
 			

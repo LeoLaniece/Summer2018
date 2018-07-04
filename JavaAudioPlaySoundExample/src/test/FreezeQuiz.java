@@ -290,13 +290,10 @@ public class FreezeQuiz extends Stage{
                 }
             	
             }
-        });        
-        
-        
-        
+        });                                
         root.requestFocus();
         setScene(scene);
-        setX(800);
+        setX(0);
         setY(0);
         show();  
         

@@ -32,7 +32,7 @@ public class UpdateTimer extends Thread{
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 5001) {
+		while ((System.currentTimeMillis() - startTime) < 30001) {
 			timer.setText(Long.toString((System.currentTimeMillis()-startTime)/1000));
 		}
 	      timer.setFont(Font.font ("Verdana", 0));

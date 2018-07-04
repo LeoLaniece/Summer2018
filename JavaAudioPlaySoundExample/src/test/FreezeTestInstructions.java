@@ -98,6 +98,8 @@ public class FreezeTestInstructions extends Stage{
 		    @Override
 		        public void run() {	
 		close();		
+		controller.state = controller.CLOSE_INSTRUCTIONS;
+		controller.model.notifySubscribers();
 		controller.model.showTaskStage();
 		    }
 		});

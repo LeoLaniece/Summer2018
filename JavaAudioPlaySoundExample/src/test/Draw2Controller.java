@@ -50,6 +50,8 @@ public class Draw2Controller {
 	public int NOTREADY =-1;
 	public int FREEZE = 2;
 	public int READ_AND_OBSERVE = 3;
+	public int CLOSE_INSTRUCTIONS = 4;
+	public int FREEZE_TEST_TASK =5;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
@@ -449,11 +451,13 @@ public class Draw2Controller {
 	   public void startTask3() {
 			state = READ_AND_OBSERVE;
 			model.notifySubscribers();
-			readAndObserveTrial = new ReadAndObserveStage(me);
-			
+			readAndObserveTrial = new ReadAndObserveStage(me);			
 	   }
 	   
 	   public void startTask2() {		   		   
+			state = FREEZE_TEST_TASK;
+			model.notifySubscribers();
+			
 		   model.launchFreezeTestIntructions(me);
 		  // FreezeQuiz fr = null;
 		  // state = FREEZE;

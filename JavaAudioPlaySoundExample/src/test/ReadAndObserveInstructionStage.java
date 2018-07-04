@@ -56,8 +56,8 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      VBox root = new VBox();	        
 	      Scene scene = new Scene(root);
 	      
-	      Text instructions = new Text("Read and Observe task is about to start"+"\n"+
-	      "Until promted to stop, please trace the all the shapes you can find in the workspace"+"\n"+
+	      Text instructions = new Text("A task is about to start"+"\n"+
+	      "Until this pop-up window closes, please trace the all the shapes you can find in the workspace"+"\n"+
 	    		  "please begin as soon as possible");
 	      instructions.setFont(Font.font ("Verdana", 40));
 	      instructions.setFill(Color.BLACK); 

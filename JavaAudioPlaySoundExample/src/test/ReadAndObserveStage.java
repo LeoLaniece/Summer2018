@@ -75,7 +75,7 @@ public class ReadAndObserveStage extends Stage{
       //still need the window to close on its own automatically after a certain time
       //need to store user1's activity!
       
-      Text t = new Text("Please read the article provided on your desk."+"\n"+
+      Text t = new Text("Please read the article provided in the workspace."+"\n"+
       " While reading, whenever you notice that the other user is drawing, please press and hold the big button."+"\n"+
     		  " When the other user ceases to draw, release the big button."+"\n"+
       "After one minute we will ask you to answer a question pertaining to the information in the article"+"\n"+
@@ -141,7 +141,7 @@ public class ReadAndObserveStage extends Stage{
       
       root.requestFocus();
       setScene(scene);
-      setX(0);
+      setX(800);
       setY(0);
       show();  
       
@@ -240,7 +240,7 @@ public class ReadAndObserveStage extends Stage{
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {	
-		    	controller.state = controller.NOTREADY;
+		    	controller.state = controller.CLOSE_INSTRUCTIONS;
 		    	controller.model.showTaskStage();
 		    	controller.model.notifySubscribers();
 		close();

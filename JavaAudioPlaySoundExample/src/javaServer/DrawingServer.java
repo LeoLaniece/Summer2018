@@ -85,13 +85,11 @@ public void run() {
         	 
          	 //if the read and obserrve test is happening
         	 //open instructions
-     		if (clientState == controller.READ_AND_OBSERVE) {     			
+     		if (clientState == controller.READ_AND_OBSERVE|| clientState == controller.FREEZE_TEST_TASK) {     			
      			model.launchReadAndObserverInstructionsStage();
-     		}
-     		
-     		
+     		}     		     		
      		//close instructions
-     		if (clientState == controller.NOTREADY) {
+     		if (clientState == controller.CLOSE_INSTRUCTIONS) {
        		 //close instruction window if it is still there
        		 if (model.instructions != null) {
        			 model.closeInstructions();
@@ -202,7 +200,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-  //  /*  
+   // /*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

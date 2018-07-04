@@ -90,12 +90,12 @@ public DrawingClient(String [] args) {
          	 serverState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
          	 
          	 //if the read and obserrve test is happening
-     		if (serverState == controller.READ_AND_OBSERVE) {
-     			System.out.println("state is read and observe");
+     		if (serverState == controller.READ_AND_OBSERVE || serverState == controller.FREEZE_TEST_TASK) {
+     			//System.out.println("state is read and observe");
      			model.launchReadAndObserverInstructionsStage();
      		}
      		
-     		if (serverState == controller.NOTREADY) {
+     		if (serverState == controller.CLOSE_INSTRUCTIONS) {
         		 //close instruction window if it is still there
         		 if (model.instructions != null) {
         			 model.closeInstructions();

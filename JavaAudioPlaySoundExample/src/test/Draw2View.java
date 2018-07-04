@@ -224,11 +224,17 @@ public class Draw2View extends Pane implements modelListener{
 			drawImage();					
 			drawModelPaths();
 		}
-/*		if (controller.state ==controller.READ_AND_OBSERVE) {
+		if (controller.state ==controller.READ_AND_OBSERVE) {
 			setImageForReadAndObserve();
 			drawImage();					
-			drawModelPaths();
-		}*/
+			//drawModelPaths();
+		}
+		if (controller.state ==controller.FREEZE_TEST_TASK) {
+			setImageForFreezeTest();
+			drawImage();					
+			//drawModelPaths();
+		}
+		
 		    }
 		});
 	}	
@@ -354,6 +360,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	
 	public void drawNetPath() {
+		if (controller.state != controller.READ_AND_OBSERVE) {
 		synchronized (model.getNetWorkPath()) {
 		if (model.getNetWorkPath()!=null) {		
 		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
@@ -376,6 +383,7 @@ public class Draw2View extends Pane implements modelListener{
 			gc.stroke();
 		}
 		}	
+		}
 		}
 	}
 	
