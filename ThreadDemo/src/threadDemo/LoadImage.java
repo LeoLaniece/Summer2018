@@ -82,6 +82,7 @@ public class LoadImage extends Application {
     public static void main(String[] args) {
         Application.launch(args);
     }
+    
 
     @Override
     public void start(Stage primaryStage) {
@@ -117,8 +118,14 @@ public class LoadImage extends Application {
         timer.setFont(Font.font ("Verdana", 14));
         timer.setFill(Color.BLACK); 
         sp.getChildren().add(timer);
-        UpdateTimer z = new UpdateTimer(startTime, timer);
-        z.start();
+        
+	      Button task2 = new Button("FreezeTest study task");
+	      task2.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {        	  	             	               
+	              primaryStage.close();	               
+	           }
+	      });
+	      sp.getChildren().add(task2);
         
         //Adding HBox to the scene
         Scene scene = new Scene(sp);

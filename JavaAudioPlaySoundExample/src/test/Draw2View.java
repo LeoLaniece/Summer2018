@@ -211,8 +211,6 @@ public class Draw2View extends Pane implements modelListener{
 		    @Override
 		        public void run() {		
 		if (controller.state == controller.PAN_READY) {
-				gc.setFill(Color.WHITE);
-				gc.fillRect(0, 0, width, height);
 			drawImage();					
 			drawModelPaths();			
 		}else {
@@ -221,6 +219,16 @@ public class Draw2View extends Pane implements modelListener{
 		if (iModel.freezeTest) {
 			paintOverPaths();
 		}
+		if (model.getModelPaths().size()==0) {
+			//probably means that i have hit the clear button
+			drawImage();					
+			drawModelPaths();
+		}
+/*		if (controller.state ==controller.READ_AND_OBSERVE) {
+			setImageForReadAndObserve();
+			drawImage();					
+			drawModelPaths();
+		}*/
 		    }
 		});
 	}	
@@ -258,11 +266,12 @@ public class Draw2View extends Pane implements modelListener{
 	}
 
 	public void drawImage() {
-		double addToX = (radarView.width -radarView.width*zoomScale)/2;
-		double addToY = (radarView.height -radarView.height*zoomScale)/2;		
+		double addToX = 0;
+		double addToY = 0;		
+		System.out.println("radr view width!"+radarView.width);
 		synchronized (getImage()) {
 		gc.drawImage(getImage(), -iModel.viewPortX*7+addToX, -iModel.viewPortY*7+addToY, 
-				radarView.width*zoomScale, radarView.height*zoomScale);
+				radarView.width, radarView.height);
 		}
 		
 	}
@@ -318,6 +327,61 @@ public class Draw2View extends Pane implements modelListener{
 		}
 	}
 	
+	//all for net path
+	public void addToNetPath() {
+		//try 				
+		gc.beginPath();
+		synchronized (model.getNetWorkPath()) {						
+		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (model.getNetWorkPath().getElements().size() > 2) {					
+		//move to the second last coordinate on the elements list
+		gc.moveTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
+				*radarView.width +(model.netPathTranslateByCoordinate.x), 
+				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
+				*radarView.height +(model.netPathTranslateByCoordinate.y));	
+		gc.setStroke(model.getNetWorkPath().getStroke());
+		gc.setLineWidth(model.getNetWorkPath().getStrokeWidth());
+		
+		//draw a LineTo to the last element in the path
+		gc.lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+				*radarView.width +(model.netPathTranslateByCoordinate.x), 
+				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
+				*radarView.height +(model.netPathTranslateByCoordinate.y));		
+		//stroke the bit
+		gc.stroke();
+		}
+		}
+	}
+	
+	public void drawNetPath() {
+		synchronized (model.getNetWorkPath()) {
+		if (model.getNetWorkPath()!=null) {		
+		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (model.getNetWorkPath().getElements().size() > 2) {
+			addToNetPath();
+		}else if (model.getNetWorkPath().getElements().size() ==2){
+			gc.beginPath();
+			gc.moveTo((((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
+					*radarView.width +(model.netPathTranslateByCoordinate.x), 
+					(((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
+					*radarView.height +(model.netPathTranslateByCoordinate.y));	
+			gc.setStroke(model.getNetWorkPath().getStroke());
+			gc.setLineWidth(model.getNetWorkPath().getStrokeWidth());			
+			//draw a LineTo to the last element in the path
+			gc.lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+					*radarView.width +(model.netPathTranslateByCoordinate.x), 
+					(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
+					*radarView.height +(model.netPathTranslateByCoordinate.y));		
+			//stroke the bit
+			gc.stroke();
+		}
+		}	
+		}
+	}
+	
+	
+	
+	
 	public void setController(Draw2Controller c) {
 		controller = c;
 	}
@@ -330,5 +394,18 @@ public class Draw2View extends Pane implements modelListener{
     	gc.drawImage(mouseImage, x-10,
     			y-7,30,30);
 	}
-
+	
+	public void setImageForFreezeTest() {
+		File randomShapes = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\randomScatteredShapes.JPG");        
+	    image = new Image(randomShapes.toURI().toString());
+		drawImage();					
+		drawModelPaths();
+	}
+	
+	public void setImageForReadAndObserve() {
+		File camelFacts = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\camelFacts.JPG");        
+	    image = new Image(camelFacts.toURI().toString());
+		drawImage();					
+		drawModelPaths();
+	}
 }

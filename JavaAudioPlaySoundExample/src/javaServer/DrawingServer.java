@@ -85,10 +85,11 @@ public void run() {
         	 
          	 //if the read and obserrve test is happening
         	 //open instructions
-     		if (clientState == controller.READ_AND_OBSERVE) {
-     			System.out.println("state is read and observe");
+     		if (clientState == controller.READ_AND_OBSERVE) {     			
      			model.launchReadAndObserverInstructionsStage();
      		}
+     		
+     		
      		//close instructions
      		if (clientState == controller.NOTREADY) {
        		 //close instruction window if it is still there
@@ -201,12 +202,13 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-      
+  //  /*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";
    DrawingClient GC = new DrawingClient(arr);
    GC.start();
+  // */
 }
 
 

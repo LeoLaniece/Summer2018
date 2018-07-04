@@ -171,7 +171,15 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 
 		if (iModel.freezeTest) {
 			paintOverPaths();
-		}		
+		}
+		if (model.getModelPaths().size()==0) {
+			//probably means that i have hit the clear button
+			drawImage();					
+			drawModelPaths();
+		}
+	/*	if (controller.state ==controller.READ_AND_OBSERVE) {
+			setImageForReadAndObserve();
+		}*/
 		
 		    }
 		});
@@ -259,6 +267,58 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 					*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
 					(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getY())
 					*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);
+			//stroke the bit
+			gc.stroke();
+		}
+		}	
+		}
+	}
+	
+	//for drawing the netPath
+	@Override
+	public void addToNetPath() {
+		gc.beginPath();
+		synchronized (model.getNetWorkPath()) {
+		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (model.getNetWorkPath().getElements().size() > 2) {					
+		//move to the second last coordinate on the elements list
+		gc.moveTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
+				*width/scale+model.netPathViewPortXYLocation.x, 
+				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
+				*height/scale+ model.netPathViewPortXYLocation.y);	
+		gc.setStroke(model.getNetWorkPath().getStroke());
+		gc.setLineWidth(model.getNetWorkPath().getStrokeWidth()/scale);
+		
+		//draw a LineTo to the last element in the path
+		gc.lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+				*width/scale+model.netPathViewPortXYLocation.x, 
+				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
+				*height/scale+ model.netPathViewPortXYLocation.y);		
+		//stroke the bit
+		gc.stroke();
+		}
+		}
+	}
+	@Override
+	public void drawNetPath() {
+		synchronized (model.getNetWorkPath()) {		
+		if (model.getNetWorkPath()!=null) {		
+		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		if (model.getNetWorkPath().getElements().size() > 2) {
+			addToNetPath();
+		}else if (model.getNetWorkPath().getElements().size() ==2){
+			gc.beginPath();
+			gc.moveTo((((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
+					*width/scale+model.netPathViewPortXYLocation.x, 
+					(((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
+					*height/scale+ model.netPathViewPortXYLocation.y);	
+			gc.setStroke(model.getNetWorkPath().getStroke());
+			gc.setLineWidth(model.getNetWorkPath().getStrokeWidth()/scale);			
+			//draw a LineTo to the last element in the path
+			gc.lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+					*width/scale+model.netPathViewPortXYLocation.x, 
+					(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
+					*height/scale+ model.netPathViewPortXYLocation.y);
 			//stroke the bit
 			gc.stroke();
 		}

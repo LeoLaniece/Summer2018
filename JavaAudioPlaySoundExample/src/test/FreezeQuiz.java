@@ -192,10 +192,10 @@ public class FreezeQuiz extends Stage{
 				//send userInput to controller
 				CreateFile log = new CreateFile(userInput);
                 System.out.println(userInput);	                               
-                con.state = con.READY;
+                con.state = con.PAN_READY;
                 con.iModel.freezeTestOff();
-				con.view.modelChanged();					
-				con.radarView.modelChanged();					
+				con.model.notifySubscribers();					
+				//con.model.showTaskStage();									
 				close();
             }
        });

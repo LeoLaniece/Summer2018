@@ -75,12 +75,12 @@ public class Draw2Controller {
      	startTime = System.currentTimeMillis();
 		//setPoints();
      	 activeTimes = new ArrayList<>();
+     	 model.startTaskStage(me);
      	
      	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent key) {	
-				FreezeQuiz fr = null;
-				System.out.println(key.getText());
+				FreezeQuiz fr = null;				
 				if (key.getText().equals("f")) {
 					if (state != FREEZE) {
 						System.out.println(key.getText());
@@ -90,8 +90,7 @@ public class Draw2Controller {
 						iModel.freezeTestOn();
 						//launch a pop up window requesting for the location of the other user and his activity?
 						//need to pass in the location of other user's viewPort
-						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());
-						
+						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());						
 					}																	
 				}
 				//for logging purposes
@@ -445,5 +444,24 @@ public class Draw2Controller {
 		   double clipDuration = model.player.fileLength(f)*1000;
 			double clipOverlapDuration = 0.8;//0.865;
 			return (clipDuration)-(clipDuration*clipOverlapDuration);			
+	   }
+	   
+	   public void startTask3() {
+			state = READ_AND_OBSERVE;
+			model.notifySubscribers();
+			readAndObserveTrial = new ReadAndObserveStage(me);
+			
+	   }
+	   
+	   public void startTask2() {		   		   
+		   model.launchFreezeTestIntructions(me);
+		  // FreezeQuiz fr = null;
+		  // state = FREEZE;
+			//view.paintOverPaths();
+		//	radarView.paintOverPaths();
+			//iModel.freezeTestOn();
+			//launch a pop up window requesting for the location of the other user and his activity?
+			//need to pass in the location of other user's viewPort
+			//fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());	
 	   }
 }

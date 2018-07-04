@@ -74,9 +74,7 @@ public class LaunchServer extends Application{
 		DrawingServer.main(args, model, controller);
 		
 		//to fix bugs, restore the Clientlistener as a model listerner
-		//trying to reduce the amount of msgs sent.
-		
-		
+		//trying to reduce the amount of msgs sent.				
 	}	
 	
 	 public static void main(String[] args) {

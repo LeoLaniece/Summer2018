@@ -97,7 +97,7 @@ public class Draw2Model {
             	modelPathsCoordinates = new ArrayList<>();  
                 iModel.modelPathsTranslateByCoordinates =new ArrayList<>(); 
                 iModel.viewPortXYLocation =new ArrayList<>();                
-                modelPaths =new ArrayList<>();         
+                modelPaths =new ArrayList<>();                         
                 notifySubscribers();
             }
         });    	
@@ -602,6 +602,9 @@ public class Draw2Model {
 		//this was also why my thing wasn't working yesterday!.				
 		return panValues;
 	}*/
+	public Coordinate netPathCoordinate;
+	public Coordinate netPathTranslateByCoordinate;
+	public Coordinate netPathViewPortXYLocation;
 	
 	public void createNewPathFromNetwork(double[] points, String pathPaint) {
 		netWorkPath = new Path();   
@@ -612,19 +615,28 @@ public class Draw2Model {
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
 	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
-	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));    
+	    netPathCoordinate = modelPathsCoordinates.get(modelPathsCoordinates.size()-1);
+	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));  
+	    netPathTranslateByCoordinate = iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1);
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
+	    netPathViewPortXYLocation = iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1);	    
 	    
 	    getModelPaths().add(netWorkPath); 
 	    //notifySubscribers();
-	    view.modelChanged();
+	    //replace with drawNetPath!
+	    view.drawNetPath();
 	    radarView.modelChanged();
 	}
 	
 	public void updateNewPathFromNetwork(double[] points) {
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));	
-	    view.modelChanged();
+		//replace with drawNetPath!
+	    view.drawNetPath();
 	    radarView.modelChanged();
+	}
+	
+	public synchronized Path getNetWorkPath() {
+		return netWorkPath;
 	}
 	
 	public void setModelView(Draw2View v) {
@@ -672,6 +684,33 @@ public class Draw2Model {
 				instructions = null;
 		    }
 		});
+	}
+	
+	
+	public TaskSelectionStage menu = null; 
+	
+	public void startTaskStage(Draw2Controller c){
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		    	menu = new TaskSelectionStage(c);
+		    }
+		});
+	}
+	
+	public void showTaskStage() {
+		menu.show();
+	}
+	
+	public void launchFreezeTestIntructions(Draw2Controller c) {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		FreezeTestInstructions s = new FreezeTestInstructions(c);
+		s.show();
+		    }
+		});
+		
 	}
 	
 }

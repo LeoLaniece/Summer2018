@@ -1,7 +1,6 @@
 package test;
 
 import javafx.application.Application;
-
 //import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton ;
 import javafx.scene.control.Toggle;
@@ -162,18 +161,18 @@ public class ReadAndObserveStage extends Stage{
 		System.out.println("User 2 activity");
 		for (int i = 0; i < User2ActiveTimes.size();i++) {
 			if (i%2 == 0) {
-				//System.out.println("activity start"+User2ActiveTimes.get(i));
+				System.out.println("activity start"+User2ActiveTimes.get(i));
 			}else {
-				//System.out.println("activity end"+User2ActiveTimes.get(i));
+				System.out.println("activity end"+User2ActiveTimes.get(i));
 			}			
 		}
 		
 		System.out.println("User 1 activity");
 		for (int i = 0; i < User1ActiveTimes.size();i++) {
 			if (i%2 == 0) {
-				//System.out.println("activity start"+User1ActiveTimes.get(i));
+				System.out.println("activity start"+User1ActiveTimes.get(i));
 			}else {
-				//System.out.println("activity end"+User1ActiveTimes.get(i));
+				System.out.println("activity end"+User1ActiveTimes.get(i));
 			}			
 		}
 		
@@ -242,6 +241,7 @@ public class ReadAndObserveStage extends Stage{
 		    @Override
 		        public void run() {	
 		    	controller.state = controller.NOTREADY;
+		    	controller.model.showTaskStage();
 		    	controller.model.notifySubscribers();
 		close();
 		    }
