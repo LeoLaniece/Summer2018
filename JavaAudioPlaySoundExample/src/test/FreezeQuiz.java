@@ -1,6 +1,7 @@
 package test;
 
 import javafx.application.Application;
+
 //import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton ;
 import javafx.scene.control.Toggle;
@@ -190,7 +191,7 @@ public class FreezeQuiz extends Stage{
                 }
 				
 				//send userInput to controller
-				CreateFile log = new CreateFile(userInput);
+				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
                 System.out.println(userInput);	                               
                 con.state = con.PAN_READY;
                 con.iModel.freezeTestOff();

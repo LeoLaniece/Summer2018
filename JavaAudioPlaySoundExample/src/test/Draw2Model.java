@@ -51,6 +51,7 @@ public class Draw2Model {
     Button btnMetal;
     Button btnChalk;
     Button btnEraser;    
+    public String user1FreezeQuestionResult = "";
     
     public ViewPortDisplacementSound VPDS;
     
@@ -686,6 +687,17 @@ public class Draw2Model {
 		});
 	}
 	
+	//should happen when user2 is promted for a freeze test questionaire
+	public void updateInstructionsStage() {
+		//get bullet questionaire to query about which shape was drawn
+		instructions.showShapeQuestions(this);
+	}
+	
+	public void createFileForFreezeTest() {
+		CreateFile x = new CreateFile(user1FreezeQuestionResult, "FreezeTest User 1 shape log");
+		user1FreezeQuestionResult = "";
+	}
+	
 	
 	public TaskSelectionStage menu = null; 
 	
@@ -701,6 +713,8 @@ public class Draw2Model {
 	public void showTaskStage() {
 		menu.show();
 	}
+	
+	
 	
 	public void launchFreezeTestIntructions(Draw2Controller c) {
 		Platform.runLater(new Runnable() {

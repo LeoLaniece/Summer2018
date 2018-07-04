@@ -99,7 +99,13 @@ public DrawingClient(String [] args) {
         		 //close instruction window if it is still there
         		 if (model.instructions != null) {
         			 model.closeInstructions();
+        			 model.createFileForFreezeTest();
         		 }
+     		}
+     		     		
+     		if (serverState == controller.PROMPT_FOR_SHAPE) {
+     			System.out.println("got prompted to shape !");
+        		 model.updateInstructionsStage();     			
      		}
          	 
          	 //if server is panning move all paths by...

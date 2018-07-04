@@ -178,7 +178,7 @@ public class ReadAndObserveStage extends Stage{
 		
 		System.out.println("user2 awareness was only off by "+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds");		
 		CreateFile x = new CreateFile("user2 awareness was only off by "
-		+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds");
+		+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds", "Read And Observe results");
 	}
 	
 	public double calculateUser2Awareness(ArrayList<Long> User1, ArrayList<Long> User2) {

@@ -25,7 +25,7 @@ public class ServerListener extends ClientListener {
 			ArrayList<String> msg = new ArrayList<String>();														
 			//send the controller state over
 			//out.writeUTF(Integer.toString(controller.state));
-			msg.add(Integer.toString(controller.state)+"\n");
+			msg.add(Integer.toString(controller.state)+"\n");			
 			
 			if (controller.state == controller.READ_AND_OBSERVE) {				
 				String fullmsg = "";
@@ -43,11 +43,11 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(fullmsg);
 			}
 			
-			if (controller.state == controller.NOTREADY) {
+			if (controller.state == controller.NOTREADY) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
-				}
+				}				
 				out.writeUTF(fullmsg);
 			}
 			
@@ -58,6 +58,16 @@ public class ServerListener extends ClientListener {
 				}				
 				out.writeUTF(fullmsg);
 			}
+			
+			if (controller.state == controller.PROMPT_FOR_SHAPE) {			
+				System.out.println("sending prompt shape");
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
 			
 			if (controller.state == controller.PAN_READY) {
 				//out.writeUTF(Double.toString(model.iModel.viewPortX));

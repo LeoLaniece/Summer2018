@@ -52,6 +52,7 @@ public class Draw2Controller {
 	public int READ_AND_OBSERVE = 3;
 	public int CLOSE_INSTRUCTIONS = 4;
 	public int FREEZE_TEST_TASK =5;
+	public int PROMPT_FOR_SHAPE = 6;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
@@ -98,7 +99,7 @@ public class Draw2Controller {
 				//for logging purposes
 				if (key.getCode()==KeyCode.SPACE) {
 					String hash = "Time for completion "+Long.toString(((System.currentTimeMillis() -startTime)/1000));
-					 CreateFile x = new	CreateFile(hash);														
+					// CreateFile x = new	CreateFile(hash);														
 				}
 				//for the read and observe task
 				if (key.getText().equals("r")) {					

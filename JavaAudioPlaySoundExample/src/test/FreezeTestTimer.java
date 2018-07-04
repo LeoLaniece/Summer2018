@@ -28,10 +28,10 @@ public class FreezeTestTimer extends Thread{
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 10001) {
+		while ((System.currentTimeMillis() - startTime) < 40001) {
 			timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
-			if ((System.currentTimeMillis() - startTime)%5000 == 0 ) {
-				System.out.println("modulus 10000!!");
+			if ((System.currentTimeMillis() - startTime)%1000 == 0 ) {
+				//System.out.println("modulus 10000!!");
 				startTime-=10;
 				//   controller.state = controller.FREEZE;
 				//   controller.view.paintOverPaths();
@@ -45,7 +45,10 @@ public class FreezeTestTimer extends Thread{
 					    FreezeQuiz fr ;	
 					fr = new FreezeQuiz(controller, controller.radarView.calculateNetViewPortCenter());					    	
 					    }
-					});					
+					});
+					controller.state = controller.PROMPT_FOR_SHAPE;
+					System.out.println("state = "+controller.state);
+					controller.model.notifySubscribers();
 			}
 		}
 	      timer.setFont(Font.font ("Verdana", 20));

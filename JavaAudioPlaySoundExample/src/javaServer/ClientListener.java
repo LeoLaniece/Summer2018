@@ -33,7 +33,7 @@ public class ClientListener implements modelListener{
 			//send the controller state over
 			//out.writeUTF(Integer.toString(controller.state));
 			msg.add(Integer.toString(controller.state)+"\n");
-			
+
 			if (controller.state == controller.READ_AND_OBSERVE) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
@@ -50,6 +50,14 @@ public class ClientListener implements modelListener{
 				out.writeUTF(fullmsg);
 			}
 			
+			if (controller.state == controller.NOTREADY) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
 			if (controller.state == controller.CLOSE_INSTRUCTIONS) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
@@ -58,11 +66,11 @@ public class ClientListener implements modelListener{
 				out.writeUTF(fullmsg);
 			}
 			
-			if (controller.state == controller.NOTREADY) {
+			if (controller.state == controller.PROMPT_FOR_SHAPE) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
-				}
+				}				
 				out.writeUTF(fullmsg);
 			}
 			
