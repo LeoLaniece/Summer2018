@@ -65,11 +65,13 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
 	      root = new VBox();	        
-	      Scene scene = new Scene(root,600,300);
+	        int SceneWidth = javaServer.LaunchServer.SceneWidth; 
+	        int SceneHeight = javaServer.LaunchServer.SceneHeight;
+	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
 	      instructions = new Text("A task is about to start"+"\n"+
 	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
-	    		  "please begin as soon as possible");
+	    		  "please begin drawing when you are ready");
 	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);	   
@@ -78,7 +80,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      root.requestFocus();
 	      setScene(scene);
 	      setX(800);
-	      setY(600);
+	      setY(0);
 	      show();  	      
 	}
 	
@@ -89,6 +91,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {	
+		    	show();
 		instructions.setText("Please select which was the "+ "\n"+"last shape that you finished completely tracing");
 		instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.GREEN); 
@@ -111,6 +114,7 @@ public class ReadAndObserveInstructionStage extends Stage{
           
           RadioButton sgrb4 = new RadioButton("Filling in a circle");
           sgrb4.setToggleGroup(shapeGroup);
+          shapeGroup.selectToggle(sgrb3);
           
           radioButtons.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4);        
           root.getChildren().add(radioButtons);
@@ -132,13 +136,13 @@ public class ReadAndObserveInstructionStage extends Stage{
    		 	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
    		 	    		  "please begin as soon as possible");
    		 	      instructions.setFont(Font.font ("Verdana", 20));
-   		 	      instructions.setFill(Color.BLACK);
-   		 	      
+   		 	      instructions.setFill(Color.BLACK);   		 	      
    				CreateFile x = new CreateFile("User1 selected "+groupResultString,"User 1 freeze test shape claim");
+   				hide();
                }
           }); 
           
-          timer = new Text("10");
+          timer = new Text("30");
           long startTime = System.currentTimeMillis();
           TimeWidget t = new TimeWidget(startTime,timer,me);
           t.start();

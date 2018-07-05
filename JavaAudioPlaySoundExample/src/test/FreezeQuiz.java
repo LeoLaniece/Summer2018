@@ -67,8 +67,8 @@ public class FreezeQuiz extends Stage{
         setTitle("Freeze Quiz");
         //set the size of the window here
         //make sure the height is 200 + what you want to accommodate the color picker and sample line
-        int SceneWidth = 800;
-        int SceneHeight = 600;
+        int SceneWidth = javaServer.LaunchServer.SceneWidth; 
+        int SceneHeight = javaServer.LaunchServer.SceneHeight;
         VBox root = new VBox();	        
         Scene scene = new Scene(root, SceneWidth,SceneHeight);
         
@@ -120,6 +120,7 @@ public class FreezeQuiz extends Stage{
          
         RadioButton rb3 = new RadioButton("they are sitting still");
         rb3.setToggleGroup(group);
+        group.selectToggle(rb3);
         question1.getChildren().addAll(rb1,rb2,rb3);
         
         //if the user selects was drawing, show multiple choices for shapes and for tool used
@@ -142,6 +143,7 @@ public class FreezeQuiz extends Stage{
                     
                     RadioButton tgrb4 = new RadioButton("Erasing");
                     tgrb4.setToggleGroup(toolGroup);
+                    toolGroup.selectToggle(tgrb1);
                     bullets.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4);
                     
                   //shape toggle group
@@ -163,6 +165,7 @@ public class FreezeQuiz extends Stage{
                     
                     RadioButton sgrb6 = new RadioButton("None of the above");
                     sgrb6.setToggleGroup(shapeGroup);
+                    shapeGroup.selectToggle(sgrb5);
                     moreBullets.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4,sgrb5,sgrb6);        
 				}else {
 					bullets.getChildren().clear();
@@ -174,6 +177,7 @@ public class FreezeQuiz extends Stage{
        Button submit = new Button("SUBMIT");
        submit.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) { 
+            	
             	userInput = "User selected region "+selectedField+"\n"+
             "The user was "+t2.getText()+" in his selection \n";
             	
@@ -193,7 +197,7 @@ public class FreezeQuiz extends Stage{
 				//send userInput to controller
 				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
                 System.out.println(userInput);	                               
-                con.state = con.PAN_READY;
+                con.state = con.NOTREADY;
                 con.iModel.freezeTestOff();
 				con.model.notifySubscribers();					
 				//con.model.showTaskStage();									
@@ -222,7 +226,7 @@ public class FreezeQuiz extends Stage{
             	
             	gc.setFill(Color.WHITE);
             	gc.fillRect(0, 0, c.getWidth(), c.getHeight());
-            	gc.setFill(Color.YELLOW);            	            	
+            	gc.setFill(Color.LIGHTGREEN);            	            	
             	if (me.getX()> 0 && me.getX()< c.getWidth()/2) {
             		if (me.getY() >0 && me.getY() < c.getHeight()/2) {
             			//draw rectangle in region 1
@@ -254,7 +258,7 @@ public class FreezeQuiz extends Stage{
             	state = SELECTED;
             	gc.setFill(Color.WHITE);
             	gc.fillRect(0, 0, c.getWidth(), c.getHeight());
-            	gc.setFill(Color.RED);            	            	
+            	gc.setFill(Color.BLACK);            	            	
             	if (me.getX()> 0 && me.getX()< c.getWidth()/2) {
             		if (me.getY() >0 && me.getY() < c.getHeight()/2) {
             			//draw rectangle in region 1

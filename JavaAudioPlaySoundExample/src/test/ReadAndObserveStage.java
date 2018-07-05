@@ -73,8 +73,8 @@ public class ReadAndObserveStage extends Stage{
       setTitle("read and observe stage!");
       //set the size of the window here
       //make sure the height is 200 + what you want to accommodate the color picker and sample line
-      int SceneWidth = 800;
-      int SceneHeight = 600;
+      int SceneWidth = javaServer.LaunchServer.SceneWidth; 
+      int SceneHeight = javaServer.LaunchServer.SceneHeight;
       //VBox root = new VBox();	        
       Scene scene = new Scene(root, SceneWidth,SceneHeight);
       User1ActiveTimes = new ArrayList<>();
@@ -98,7 +98,7 @@ public class ReadAndObserveStage extends Stage{
       t.setFont(Font.font ("Verdana", 14));
       t.setFill(Color.BLACK);           
       
-      Text timer = new Text("0");
+      Text timer = new Text("60");
       timer.setFont(Font.font ("Verdana", 20));
       timer.setFill(Color.GREEN); 
 
@@ -131,6 +131,9 @@ public class ReadAndObserveStage extends Stage{
         	  root.getChildren().add(timer);
               UpdateTimer z = new UpdateTimer(startTime, timer,me);
               z.start();
+              setX(800);
+              controller.state = controller.READY_TO_BEGIN_TASK;
+              model.notifySubscribers();
               exit = new Button("exit");
               exit.setOnAction(new EventHandler<ActionEvent>() {
                    public void handle(ActionEvent event) {
@@ -139,7 +142,7 @@ public class ReadAndObserveStage extends Stage{
                  	  }                 	  
                    }
               });
-             root.getChildren().add(exit);
+           //  root.getChildren().add(exit);
         	  //when 5 seconds have gone by, remove button, prompt for answering questions       	  
         	  
           }
@@ -153,7 +156,7 @@ public class ReadAndObserveStage extends Stage{
       
       root.requestFocus();
       setScene(scene);
-      setX(800);
+      setX(0);
       setY(0);
       show();  
       
@@ -338,8 +341,9 @@ public class ReadAndObserveStage extends Stage{
 		    @Override
 		        public void run() {	
 		    	controller.state = controller.CLOSE_INSTRUCTIONS;
-		    	controller.model.showTaskStage();
+		    	//controller.model.showTaskStage();
 		    	controller.model.notifySubscribers();
+		    	TaskCompleteStage x = new TaskCompleteStage(controller);
 		close();
 		    }
 		});

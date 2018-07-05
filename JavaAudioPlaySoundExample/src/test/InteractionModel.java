@@ -44,7 +44,7 @@ public class InteractionModel {
 	//+(viewPortY+viewPortHeight)*7/view.radarView.height);
 		Coordinate p =new Coordinate((viewPortX+viewPortWidth/2)*7/view.radarView.width, 
 				(viewPortY+viewPortHeight/2)*7/view.radarView.height);
-		//System.out.println("miniMap center "+p.x+" "+p.y);
+		System.out.println("miniMap center "+p.x+" "+p.y);
 		//System.out.println("viewport relative width "+iModel.viewPortWidth);
 		return p;	
 	}

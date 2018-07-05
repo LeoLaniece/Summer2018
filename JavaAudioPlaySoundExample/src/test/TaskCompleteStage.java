@@ -1,5 +1,6 @@
 package test;
 
+
 import javafx.application.Application;
 
 //import javafx.beans.value.ChangeListener;
@@ -47,14 +48,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField ;
 
 
-public class FreezeTestInstructions extends Stage{
+public class TaskCompleteStage extends Stage{
 	
 	private Draw2Controller controller;
-	FreezeTestInstructions me = this;
-
-	public FreezeTestInstructions(Draw2Controller c) {
+	
+	public TaskCompleteStage(Draw2Controller c) {
 		controller = c;
-	      setTitle("Freeze test instructions");
+	      setTitle("Task Complete");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
 	      HBox root5 = new HBox();
@@ -63,11 +63,11 @@ public class FreezeTestInstructions extends Stage{
 	        int SceneHeight = javaServer.LaunchServer.SceneHeight;
 	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
-	      Text instructions = new Text("FreezeTest is about to start"+"\n"+
-	      "Until promted to stop, please trace the all the shapes you can find in the workspace"+"\n"+
-	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+
-	    		  "please press the ready button when you are ready to begin");
-	      instructions.setFont(Font.font ("Verdana", 30));
+	      Text instructions = new Text("Congratulations!!"+"\n"+
+	      "The task was successfully"+"\n"+  
+	      	    		  "completed!"+"\n"+
+	    		  "Please press the Okay button to continue");
+	      instructions.setFont(Font.font ("Verdana", 40));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);
 	      root.getChildren().add(root5);
@@ -75,22 +75,22 @@ public class FreezeTestInstructions extends Stage{
 	      Text timer = new Text("0");
 	      timer.setFont(Font.font ("Verdana", 20));
 	      timer.setFill(Color.GREEN); 	     	      
-	      Button ready = new Button("ready");
-	      ready.setOnAction(new EventHandler<ActionEvent>() {
+	      Button okay = new Button("Okay");
+	      okay.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {
-	        	   System.out.println("ready!!");
-	        	   long startTime = System.currentTimeMillis();	        	   
-	        	   FreezeTestTimer x = new FreezeTestTimer(startTime,timer,controller, me);
-	        	   x.start();
+	        	   System.out.println("okay!!");        	   	        	   
 	        	   //send message over network to hide user1's instruction stage
-	        	   controller.state = controller.READY_TO_BEGIN_TASK;	        	   
+	        	   controller.state = controller.NOTREADY;
+	        	   controller.taskRunning = false;
+	        	   controller.view.setImageForFreezeTest();
+	        	   controller.view.resetView();
+	        	   controller.model.showTaskStage();
 	        	   controller.model.notifySubscribers();
 	        	   close();
-	        	   controller.view.drawBorder();	        	   
 	           }
 	      });
-	      root5.getChildren().add(ready);
-	     // root5.getChildren().add(timer);
+	      root5.getChildren().add(okay);
+	      //root5.getChildren().add(timer);
 	      
 	      root5.requestFocus();
 	      setScene(scene);
@@ -99,18 +99,4 @@ public class FreezeTestInstructions extends Stage{
 	      show();  
 	      
 	}
-	
-	public void closeStage() {
-		Platform.runLater(new Runnable() {
-		    @Override
-		        public void run() {	
-		close();		
-		controller.state = controller.CLOSE_INSTRUCTIONS;
-		controller.model.notifySubscribers();
-		//controller.model.showTaskStage();
-		new TaskCompleteStage(controller);
-		    }
-		});
-	}
-	
 }

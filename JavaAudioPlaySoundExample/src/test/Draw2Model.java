@@ -687,6 +687,15 @@ public class Draw2Model {
 		});
 	}
 	
+	public void hideInstructions() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+				instructions.hide();				
+		    }
+		});
+	}
+	
 	//should happen when user2 is promted for a freeze test questionaire
 	public void updateInstructionsStage() {
 		//get bullet questionaire to query about which shape was drawn

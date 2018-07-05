@@ -55,6 +55,7 @@ public class Draw2Controller {
 	public int CLOSE_INSTRUCTIONS = 4;
 	public int FREEZE_TEST_TASK =5;
 	public int PROMPT_FOR_SHAPE = 6;
+	public int READY_TO_BEGIN_TASK = 7;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
@@ -63,6 +64,7 @@ public class Draw2Controller {
 	public MouseTest soundVelocityThread;
 	public long startTime;
 	public ReadAndObserveStage readAndObserveTrial =null;
+	public boolean taskRunning =false;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
@@ -534,6 +536,7 @@ public class Draw2Controller {
 	   
 	   public void startTask3() {
 			state = READ_AND_OBSERVE;
+			taskRunning = true;
 			//view.foc
 			model.notifySubscribers();
 			//send in iModel, model and radarView
@@ -542,8 +545,8 @@ public class Draw2Controller {
 	   
 	   public void startTask2() {		   		   
 			state = FREEZE_TEST_TASK;
-			model.notifySubscribers();
-			
+			taskRunning = true;
+			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
 		  // FreezeQuiz fr = null;
 		  // state = FREEZE;

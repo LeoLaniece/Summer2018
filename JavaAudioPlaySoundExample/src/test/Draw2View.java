@@ -58,6 +58,10 @@ public class Draw2View extends Pane implements modelListener{
 	public Draw2miniMap radarView;
     File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\randomScatteredShapes.JPG");        
     Image image = new Image(pencil.toURI().toString());
+    double imageWidth;
+    double imageHeight;
+    double imageX;
+    double imageY;
 	
 	//put in a logical size?
 	public Draw2View(double w, double h, Draw2Model m) {
@@ -206,16 +210,20 @@ public class Draw2View extends Pane implements modelListener{
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, width, height);
 	}		
+	
+	@Override
 	public void modelChanged() {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {		
 		if (controller.state == controller.PAN_READY) {
 			drawImage();			
-			//if we are running the read and observe task, don't draw the paths
-			
+			//if we are running the read and observe task, don't draw the paths			
 			drawModelPaths();			
 		}else {
+			if (controller.taskRunning) {
+				drawBorder();
+			}			
 			drawPath();
 		}					
 		if (iModel.freezeTest) {
@@ -225,15 +233,20 @@ public class Draw2View extends Pane implements modelListener{
 			//probably means that i have hit the clear button
 			drawImage();					
 			drawModelPaths();
+			if (controller.taskRunning) {
+				drawBorder();
+			}
 		}
 		if (controller.state ==controller.READ_AND_OBSERVE) {
-			setImageForReadAndObserve();
+			setImageForReadAndObserve();			
 			drawImage();					
+			drawBorder();
 			//drawModelPaths();
 		}
 		if (controller.state ==controller.FREEZE_TEST_TASK) {
 			setImageForFreezeTest();
 			drawImage();					
+			drawBorder();
 			//drawModelPaths();
 		}
 		
@@ -241,6 +254,16 @@ public class Draw2View extends Pane implements modelListener{
 		});
 	}	
 	
+	public void resetView() {
+		drawImage();
+		drawModelPaths();
+	}
+	
+	public void drawBorder() {
+		gc.setStroke(Color.GREEN);
+		gc.setLineWidth(5);
+		gc.strokeRect(0, 0, width, height);
+	}
 	
 	public void startPath(double x, double y) {
 		//should take into account the size of the view
@@ -265,7 +288,12 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	public void setModelRadarView(Draw2miniMap v) {
 		radarView = v;		
-		gc.drawImage(image, 0, 0, radarView.width, radarView.height);
+		imageWidth = radarView.width;
+		imageHeight = radarView.height;
+		imageX = 0;
+		imageY = 0;
+		//gc.drawImage(image, 0, 0, radarView.width, radarView.height);
+		drawImage();
 	}
 	public void zoomIn() {
 		zoomScale += 0.2;
@@ -273,13 +301,10 @@ public class Draw2View extends Pane implements modelListener{
 		//zoom the paths		
 	}
 
-	public void drawImage() {
-		double addToX = 0;
-		double addToY = 0;		
-		System.out.println("radr view width!"+radarView.width);
+	public void drawImage() {			
 		synchronized (getImage()) {
-		gc.drawImage(getImage(), -iModel.viewPortX*7+addToX, -iModel.viewPortY*7+addToY, 
-				radarView.width, radarView.height);
+		gc.drawImage(getImage(), -iModel.viewPortX*7 +imageX, -iModel.viewPortY*7+imageY, 
+				imageWidth, imageHeight);
 		}
 		
 	}
@@ -408,6 +433,10 @@ public class Draw2View extends Pane implements modelListener{
 	public void setImageForFreezeTest() {
 		File randomShapes = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\randomScatteredShapes.JPG");        
 	    image = new Image(randomShapes.toURI().toString());
+		imageWidth = radarView.width;
+		imageHeight = radarView.height;
+		imageX = 0;
+		imageY = 0;
 		drawImage();					
 		drawModelPaths();
 	}
@@ -415,6 +444,10 @@ public class Draw2View extends Pane implements modelListener{
 	public void setImageForReadAndObserve() {
 		File camelFacts = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\camelFacts.JPG");        
 	    image = new Image(camelFacts.toURI().toString());
+		imageWidth = width/2;
+		imageHeight = height/6*7;
+		imageX = radarView.width/7;
+		//imageY = radarView.height/3;
 		drawImage();					
 		drawModelPaths();
 	}

@@ -17,12 +17,13 @@ import javafx.scene.canvas.GraphicsContext;
 public class ClientDrawingStage extends Stage {
 	public Draw2Model m;
 	public Draw2Controller c;
+
 	
 	ClientDrawingStage(){
 		setTitle("Drawing Tool client");
         //a type of layout	        
-		int SceneWidth = 800;
-        int SceneHeight = 600;
+		int SceneWidth = javaServer.LaunchServer.SceneWidth;
+        int SceneHeight = javaServer.LaunchServer.SceneHeight;
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, SceneWidth,SceneHeight);
         Draw2Model model = new Draw2Model();

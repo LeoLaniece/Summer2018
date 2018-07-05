@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
@@ -20,6 +21,7 @@ import test.Coordinate;
 import test.Draw2Controller;
 import test.Draw2Model;
 import test.Draw2View;
+import test.TaskCompleteStage;
 import test.modelListener;
 
 import java.io.*;
@@ -87,17 +89,34 @@ public void run() {
         	 //open instructions
      		if (clientState == controller.READ_AND_OBSERVE|| clientState == controller.FREEZE_TEST_TASK) {     			
      			model.launchReadAndObserverInstructionsStage();
+     			controller.taskRunning =true;
      		}     		     		
      		//close instructions
      		if (clientState == controller.CLOSE_INSTRUCTIONS) {
        		 //close instruction window if it is still there
        		 if (model.instructions != null) {
-       			 model.closeInstructions();
+       			 model.closeInstructions();       			
+       			controller.taskRunning =false;
+   			    controller.view.resetView();
+   				Platform.runLater(new Runnable() {
+   				    @Override
+   				        public void run() {	
+   			 new TaskCompleteStage(controller);
+   				    }
+   				});
        		 }
     		}
      		
+     		if (clientState == controller.READY_TO_BEGIN_TASK) {
+          		 //close instruction window if it is still there
+          		 if (model.instructions != null) {
+          			 model.hideInstructions();
+          			// model.createFileForFreezeTest();
+          		 }
+       		}
+     		
      		if (clientState == controller.PROMPT_FOR_SHAPE) {
-     			System.out.println("got prompted to shape !");
+     			 System.out.println("got prompted to shape !");
         		 model.updateInstructionsStage();     			
      		}
         	 
@@ -205,7 +224,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-    /*  
+   // /*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

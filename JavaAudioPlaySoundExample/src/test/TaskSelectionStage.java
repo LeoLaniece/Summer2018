@@ -53,8 +53,8 @@ public class TaskSelectionStage extends Stage{
 		setTitle("Task selection Stage");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
-	      int SceneWidth = 200;
-	      int SceneHeight = 200;
+        int SceneWidth = javaServer.LaunchServer.SceneWidth; 
+        int SceneHeight = javaServer.LaunchServer.SceneHeight;
 	      VBox root = new VBox();	        
 	      Scene scene = new Scene(root, SceneWidth,SceneHeight);
 	     
@@ -81,7 +81,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      root.getChildren().addAll(task1,task2,task3);
+	      root.getChildren().addAll(task2,task3);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

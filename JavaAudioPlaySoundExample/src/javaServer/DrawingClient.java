@@ -93,15 +93,32 @@ public DrawingClient(String [] args) {
      		if (serverState == controller.READ_AND_OBSERVE || serverState == controller.FREEZE_TEST_TASK) {
      			//System.out.println("state is read and observe");
      			model.launchReadAndObserverInstructionsStage();
+     			controller.taskRunning =true;
      		}
      		
      		if (serverState == controller.CLOSE_INSTRUCTIONS) {
         		 //close instruction window if it is still there
         		 if (model.instructions != null) {
         			 model.closeInstructions();
+        			 controller.taskRunning =false;
+        			 controller.view.resetView();
         			 model.createFileForFreezeTest();
+        				Platform.runLater(new Runnable() {
+           				    @Override
+           				        public void run() {	
+           			 new TaskCompleteStage(controller);
+           				    }
+           				});
         		 }
      		}
+     		
+     		if (serverState == controller.READY_TO_BEGIN_TASK) {
+       		 //close instruction window if it is still there
+       		 if (model.instructions != null) {
+       			 model.hideInstructions();
+       			// model.createFileForFreezeTest();
+       		 }
+    		}
      		     		
      		if (serverState == controller.PROMPT_FOR_SHAPE) {
      			System.out.println("got prompted to shape !");

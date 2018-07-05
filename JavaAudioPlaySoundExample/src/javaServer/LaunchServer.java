@@ -23,14 +23,18 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 
 public class LaunchServer extends Application{
+	
+   public static int SceneWidth = 800;
+   public static int SceneHeight = 600;
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Drawing Tool Server");
         //set the size of the window here
         //make sure the height is 200 + what you want to accommodate the color picker and sample line
         //these set the size of the workspace
-        int SceneWidth = 1600;
-        int SceneHeight = 1000;
+      //  int SceneWidth = 1600;
+       // int SceneHeight = 1000;
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, SceneWidth,SceneHeight);
         Draw2Model model = new Draw2Model();

@@ -25,8 +25,8 @@ public class TimeWidget extends Thread{
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 10001) {
-			timer.setText(Long.toString(10-(System.currentTimeMillis()-startTime)/1000));
+		while ((System.currentTimeMillis() - startTime) < 30001) {
+			timer.setText(Long.toString(30-(System.currentTimeMillis()-startTime)/1000));
 		}
 			
 	      //log all the info before you close
