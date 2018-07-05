@@ -95,6 +95,11 @@ public void run() {
        			 model.closeInstructions();
        		 }
     		}
+     		
+     		if (clientState == controller.PROMPT_FOR_SHAPE) {
+     			System.out.println("got prompted to shape !");
+        		 model.updateInstructionsStage();     			
+     		}
         	 
         	 if (clientState == controller.PAN_READY) {
         		  //START the VPDS generator here

@@ -55,22 +55,25 @@ public class ReadAndObserveInstructionStage extends Stage{
 	
 	private VBox root;
 	private Text instructions;
-	private ToggleGroup shapeGroup;
+	private ToggleGroup shapeGroup =null;
+	VBox radioButtons = null;
+	Text timer;
+	ReadAndObserveInstructionStage me = this;
 
 	public ReadAndObserveInstructionStage() {
 	      setTitle("read and observe stage!");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
 	      root = new VBox();	        
-	      Scene scene = new Scene(root);
+	      Scene scene = new Scene(root,600,300);
 	      
-	      Text instructions = new Text("A task is about to start"+"\n"+
-	      "Until this pop-up window closes, please trace the all the shapes you can find in the workspace"+"\n"+
+	      instructions = new Text("A task is about to start"+"\n"+
+	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
 	    		  "please begin as soon as possible");
-	      instructions.setFont(Font.font ("Verdana", 40));
+	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
-	      root.getChildren().add(instructions);
-	      root.setAlignment(Pos.CENTER);
+	      root.getChildren().add(instructions);	   
+	      root.setAlignment(Pos.BASELINE_LEFT);
 	      
 	      root.requestFocus();
 	      setScene(scene);
@@ -80,7 +83,20 @@ public class ReadAndObserveInstructionStage extends Stage{
 	}
 	
 	public void showShapeQuestions(Draw2Model model) {		
-		instructions.setText("Please select which was the last shape that you finished completely tracing");
+		//everytime this is called, i want a file to be created!
+		//if the user has not hit submit, create an empty file before resetting everything.
+		
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		instructions.setText("Please select which was the "+ "\n"+"last shape that you finished completely tracing");
+		instructions.setFont(Font.font ("Verdana", 20));
+	      instructions.setFill(Color.GREEN); 
+	      if (radioButtons !=null) {
+	    	  CreateFile f = new CreateFile("","User 1 freeze test shape claim");
+	    	  root.getChildren().remove(radioButtons);
+	      }
+		 radioButtons = new VBox();
         //shape toggle group
 		  
   		  shapeGroup = new ToggleGroup();
@@ -96,8 +112,9 @@ public class ReadAndObserveInstructionStage extends Stage{
           RadioButton sgrb4 = new RadioButton("Filling in a circle");
           sgrb4.setToggleGroup(shapeGroup);
           
-          root.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4);        
-          
+          radioButtons.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4);        
+          root.getChildren().add(radioButtons);
+          root.setAlignment(Pos.BASELINE_LEFT);
           Button submit = new Button("SUBMIT");
           submit.setOnAction(new EventHandler<ActionEvent>() {
                public void handle(ActionEvent event) { 
@@ -106,13 +123,50 @@ public class ReadAndObserveInstructionStage extends Stage{
    				String groupResultString = groupResult.getText();
    				System.out.println("user 1 result "+groupResultString);
    				model.user1FreezeQuestionResult += groupResultString+"\n";   				
-   				//need to send this to user2 
-   				//will not nessesairly be at the right moment for saving into a file
-   				//could save it onto this computer?
-   				//CreateFile x = new CreateFile("User1 selected "+groupResultString);
+   				
+   				//close and remove current bullets and submit button
+   				root.getChildren().remove(radioButtons);
+   				radioButtons = null;
+   				//timer = null;
+   		        instructions.setText("A task is about to start"+"\n"+
+   		 	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
+   		 	    		  "please begin as soon as possible");
+   		 	      instructions.setFont(Font.font ("Verdana", 20));
+   		 	      instructions.setFill(Color.BLACK);
+   		 	      
+   				CreateFile x = new CreateFile("User1 selected "+groupResultString,"User 1 freeze test shape claim");
                }
-          });          
+          }); 
+          
+          timer = new Text("10");
+          long startTime = System.currentTimeMillis();
+          TimeWidget t = new TimeWidget(startTime,timer,me);
+          t.start();
+          HBox submitTimer = new HBox();
+          submitTimer.getChildren().addAll(submit,timer);
+          radioButtons.getChildren().add(submitTimer);
+	      
+          
 		}
+	});
+	}
+	
+	public void restoreInstructions() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		if (radioButtons != null) {
+			root.getChildren().remove(radioButtons);
+			radioButtons = null;
+	        instructions.setText("A task is about to start"+"\n"+
+	 	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
+	 	    		  "please begin as soon as possible");
+	 	      instructions.setFont(Font.font ("Verdana", 20));
+	 	      instructions.setFill(Color.BLACK);
+		}
+		    }
+		});
+	}
 	
 	}
 	

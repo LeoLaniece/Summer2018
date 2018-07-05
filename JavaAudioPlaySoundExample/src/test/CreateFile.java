@@ -9,6 +9,13 @@ public class CreateFile {
 	public int fileCount;
 	public String fileInfo;
 	
+	/**
+	 * creates a rtf file.
+	 * takes 2 string, the first as the file info,
+	 * the second as the file title.
+	 * @param fileInfo
+	 * @param fileTitle
+	 */
 	public CreateFile(String fileInfo, String fileTitle) {
 		this.fileInfo =fileInfo;
 		fileCount = 0;		
