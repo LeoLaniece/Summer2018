@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+
 import javafx.scene.input.KeyCode;
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ import javax.sound.sampled.LineUnavailableException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
 import javafx.event.*;
 import javafx.scene.input.KeyEvent; 
 import javafx.scene.input.MouseEvent;
@@ -105,7 +107,88 @@ public class Draw2Controller {
 				if (key.getText().equals("r")) {					
 					state = READ_AND_OBSERVE;
 					model.notifySubscribers();
-					readAndObserveTrial = new ReadAndObserveStage(me);					
+					//readAndObserveTrial = new ReadAndObserveStage(me);					
+				}
+				
+				//pan the minimap if there is asdw key press
+				//and if we are in READANDOBSERVE state
+				if (state == READ_AND_OBSERVE) {
+				if (key.getText().equals("s")) {
+					System.out.println("key s pressed!");
+            		dy = 3;           		            		           		            		        		            		
+            		//move the viewPort within its bounds
+            		//but only if it is a drag allowed in the view port 
+            		if (iModel.viewPortY +dy >=0 &&            				
+            				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {            		
+            		iModel.viewPortY += dy/7;
+            		//drag the paths around to make it seem like we are panning the background
+            		for (int a = 0; a < model.getModelPaths().size(); a++) {            			
+            			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
+            			//model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
+            			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
+            		}
+            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+            		  model.notifySubscribers();    		
+            		}  
+				}
+				if (key.getText().equals("w")) {
+					System.out.println("key w pressed!");
+            		dy = -3;           		            		           		            		        		            		
+            		//move the viewPort within its bounds
+            		//but only if it is a drag allowed in the view port 
+            		if (iModel.viewPortY +dy >=0 &&            				
+            				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {            		
+            		iModel.viewPortY += dy/7;
+            		//drag the paths around to make it seem like we are panning the background
+            		for (int a = 0; a < model.getModelPaths().size(); a++) {            			
+            			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
+            			//model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
+            			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
+            		}
+            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+            		  model.notifySubscribers();    		
+            		} 
+				}
+				if (key.getText().equals("d")) {
+					System.out.println("key d pressed!");
+					dx = 3;            		            		           		            		        		            		
+            		//move the viewPort within its bounds
+            		//but only if it is a drag allowed in the view port 
+            		if (iModel.viewPortX +dx >=0 &&            				
+            				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7) 
+            				 {
+            		iModel.viewPortX += dx/7;            		
+            		//drag the paths around to make it seem like we are panning the background
+            		for (int a = 0; a < model.getModelPaths().size(); a++) {
+            			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;            			           			
+            			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);            			           			
+            		}
+            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+            		  model.notifySubscribers();    		
+            		}            		
+				}
+				if (key.getText().equals("a")) {
+					System.out.println("key a pressed!");
+					dx = -3;            		            		           		            		        		            		
+            		//move the viewPort within its bounds
+            		//but only if it is a drag allowed in the view port 
+            		if (iModel.viewPortX +dx >=0 &&            				
+            				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7) 
+            				 {
+            		iModel.viewPortX += dx/7;            		
+            		//drag the paths around to make it seem like we are panning the background
+            		for (int a = 0; a < model.getModelPaths().size(); a++) {
+            			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;            			           			
+            			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);            			           			
+            		}
+            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+            		  model.notifySubscribers();    		
+            		}            		
+				}
 				}
 			}     		
      	});
@@ -451,8 +534,10 @@ public class Draw2Controller {
 	   
 	   public void startTask3() {
 			state = READ_AND_OBSERVE;
+			//view.foc
 			model.notifySubscribers();
-			readAndObserveTrial = new ReadAndObserveStage(me);			
+			//send in iModel, model and radarView
+			readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			
 	   }
 	   
 	   public void startTask2() {		   		   

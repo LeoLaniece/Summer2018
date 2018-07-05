@@ -1,6 +1,11 @@
 package test;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.event.*;
+import javafx.scene.input.KeyEvent; 
 //import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton ;
 import javafx.scene.control.Toggle;
@@ -57,8 +62,14 @@ public class ReadAndObserveStage extends Stage{
 	private ReadAndObserveStage me;
 	private VBox root = new VBox();	
 	public Button exit;
+	private Draw2Model model;
+	private InteractionModel iModel;
+	private Draw2miniMap radarView;
+    private double dx = 0;
+    private double dy = 0;
 	
-	public ReadAndObserveStage(Draw2Controller controller) {
+	public ReadAndObserveStage(Draw2Controller controller, Draw2Model model,
+	InteractionModel iModel, Draw2miniMap radarView) {
       setTitle("read and observe stage!");
       //set the size of the window here
       //make sure the height is 200 + what you want to accommodate the color picker and sample line
@@ -76,9 +87,10 @@ public class ReadAndObserveStage extends Stage{
       //need to store user1's activity!
       
       Text t = new Text("Please read the article provided in the workspace."+"\n"+
+      "You can pan the workspace by pressing the awsd keys"+"\n"+
       " While reading, whenever you notice that the other user is drawing, please press and hold the big button."+"\n"+
     		  " When the other user ceases to draw, release the big button."+"\n"+
-      "After one minute we will ask you to answer a question pertaining to the information in the article"+"\n"+
+      "After one minute we will ask you to answer a question pertaining to the information in the article"+"\n"+    		  
     		  "Press the ready button when you are prepared to start.");
 
       root.getChildren().add(t);
@@ -153,7 +165,92 @@ public class ReadAndObserveStage extends Stage{
 						close();
 					}
 				}							    		
-   	});                               
+   	});
+      
+      //settings to pan the minimap when nessesary
+      
+      root.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent key) {
+      if (key.getText().equals("s")) {
+			System.out.println("key s pressed!");
+  		dy = 10;           		            		           		            		        		            		
+  		//move the viewPort within its bounds
+  		//but only if it is a drag allowed in the view port 
+  		if (iModel.viewPortY +dy >=0 &&            				
+  				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {            		
+  		iModel.viewPortY += dy/7;
+  		//drag the paths around to make it seem like we are panning the background
+  		for (int a = 0; a < model.getModelPaths().size(); a++) {            			
+  			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
+  			//model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
+  			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
+  		}
+  		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+  		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+  		  model.notifySubscribers();    		
+  		}  
+		}
+		if (key.getText().equals("w")) {
+			System.out.println("key w pressed!");
+  		dy = -10;           		            		           		            		        		            		
+  		//move the viewPort within its bounds
+  		//but only if it is a drag allowed in the view port 
+  		if (iModel.viewPortY +dy >=0 &&            				
+  				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {            		
+  		iModel.viewPortY += dy/7;
+  		//drag the paths around to make it seem like we are panning the background
+  		for (int a = 0; a < model.getModelPaths().size(); a++) {            			
+  			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
+  			//model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
+  			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
+  		}
+  		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+  		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+  		  model.notifySubscribers();    		
+  		} 
+		}
+		if (key.getText().equals("d")) {
+			System.out.println("key d pressed!");
+			dx = 10;            		            		           		            		        		            		
+  		//move the viewPort within its bounds
+  		//but only if it is a drag allowed in the view port 
+  		if (iModel.viewPortX +dx >=0 &&            				
+  				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7) 
+  				 {
+  		iModel.viewPortX += dx/7;            		
+  		//drag the paths around to make it seem like we are panning the background
+  		for (int a = 0; a < model.getModelPaths().size(); a++) {
+  			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;            			           			
+  			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);            			           			
+  		}
+  		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+  		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+  		  model.notifySubscribers();    		
+  		}            		
+		}
+		if (key.getText().equals("a")) {
+			System.out.println("key a pressed!");
+			dx = -10;            		            		           		            		        		            		
+  		//move the viewPort within its bounds
+  		//but only if it is a drag allowed in the view port 
+  		if (iModel.viewPortX +dx >=0 &&            				
+  				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7) 
+  				 {
+  		iModel.viewPortX += dx/7;            		
+  		//drag the paths around to make it seem like we are panning the background
+  		for (int a = 0; a < model.getModelPaths().size(); a++) {
+  			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;            			           			
+  			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);            			           			
+  		}
+  		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
+  		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
+  		  model.notifySubscribers();    		
+  		}            		
+		}
+			}
+      });
+      
 	}
 	
 	public void calculateAwareness() {

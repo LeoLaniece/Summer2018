@@ -48,7 +48,8 @@ public class Draw3 extends Application{
 	        view.setModelRadarView(radarView);
 	        view.setController(controller);
 	        radarView.setController(controller);
-
+	        
+	        
 	        primaryStage.setScene(scene);
 	        primaryStage.setX(0);
 	        primaryStage.setY(0);

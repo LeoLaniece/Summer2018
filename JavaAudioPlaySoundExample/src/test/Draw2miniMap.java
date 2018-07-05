@@ -155,7 +155,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {		
-		if (controller.state == controller.PAN_READY) {
+		if (controller.state == controller.PAN_READY|| controller.state == controller.READ_AND_OBSERVE) {
 			gc.drawImage(getImage(), 0, 0, width/scale, height/scale);
 			drawModelPaths();
 		drawViewPort();	
@@ -164,7 +164,9 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		}		
 		}else {
 			drawPath();
-		}				
+		}
+		
+		
 
 		if (iModel.freezeTest) {
 			paintOverPaths();

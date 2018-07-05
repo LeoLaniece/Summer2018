@@ -211,7 +211,9 @@ public class Draw2View extends Pane implements modelListener{
 		    @Override
 		        public void run() {		
 		if (controller.state == controller.PAN_READY) {
-			drawImage();					
+			drawImage();			
+			//if we are running the read and observe task, don't draw the paths
+			
 			drawModelPaths();			
 		}else {
 			drawPath();
