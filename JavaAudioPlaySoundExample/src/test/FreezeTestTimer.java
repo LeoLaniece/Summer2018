@@ -12,25 +12,30 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 
 public class FreezeTestTimer extends Thread{
-	Text timer;
+	//Text timer;
 	long startTime;	
 	public boolean done = false;
 	private Draw2Controller controller;
 	public boolean inloop = true;
 	public FreezeTestInstructions stage;
+	public int timeIncrement = 30000;
 	
-	public FreezeTestTimer(long startTime, Text timer, Draw2Controller con, FreezeTestInstructions stage) {
-		this.timer = timer;
+	public FreezeTestTimer(long startTime, Draw2Controller con, FreezeTestInstructions stage) {
+		//this.timer = timer;
 		this.startTime = startTime;	
 		controller = con;		
 		this.stage = stage;
+		if (controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK
+				|| controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
+			timeIncrement = 15000;
+		}
 	}
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 120001) {
-			timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
-			if ((System.currentTimeMillis() - startTime)%30000 == 0 ) {
+		while ((System.currentTimeMillis() - startTime) < 90001) {
+			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
+			if ((System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
 				//System.out.println("modulus 10000!!");
 				startTime-=10;
 				//   controller.state = controller.FREEZE;
@@ -46,14 +51,13 @@ public class FreezeTestTimer extends Thread{
 					fr = new FreezeQuiz(controller, controller.radarView.calculateNetViewPortCenter());					    	
 					    }
 					});
-					controller.state = controller.PROMPT_FOR_SHAPE;
-					//System.out.println("state = "+controller.state);
-					controller.model.notifySubscribers();
+					if (!(controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK)
+							&&!(controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK)) {
+						controller.state = controller.PROMPT_FOR_SHAPE;	
+						controller.model.notifySubscribers();
+					}					
 			}
 		}
-	      timer.setFont(Font.font ("Verdana", 20));
-	      timer.setFill(Color.RED); 
-	      timer.setText("time is up!!");
 	      stage.closeStage();
 	      //now close freezetestinstructions and show the task selection menu again.
 

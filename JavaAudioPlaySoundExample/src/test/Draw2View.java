@@ -217,8 +217,7 @@ public class Draw2View extends Pane implements modelListener{
 		    @Override
 		        public void run() {		
 		if (controller.state == controller.PAN_READY) {
-			drawImage();			
-			//if we are running the read and observe task, don't draw the paths			
+			drawImage();								
 			drawModelPaths();			
 		}else {
 			if (controller.taskRunning) {
@@ -239,6 +238,9 @@ public class Draw2View extends Pane implements modelListener{
 		}
 		if (controller.state ==controller.READ_AND_OBSERVE) {
 			setImageForReadAndObserve();			
+			if (iModel.task == iModel.ACTIVITY_IDENTIFICATION_TASK) {
+				setImageForFreezeTest();
+			}
 			drawImage();					
 			drawBorder();
 			//drawModelPaths();
@@ -256,7 +258,7 @@ public class Draw2View extends Pane implements modelListener{
 	
 	public void resetView() {
 		drawImage();
-		drawModelPaths();
+		drawModelPaths();		
 	}
 	
 	public void drawBorder() {

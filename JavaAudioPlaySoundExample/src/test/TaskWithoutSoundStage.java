@@ -1,6 +1,5 @@
 package test;
 
-
 import javafx.application.Application;
 
 //import javafx.beans.value.ChangeListener;
@@ -48,13 +47,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField ;
 
 
-public class TaskCompleteStage extends Stage{
+public class TaskWithoutSoundStage extends Stage{
 	
 	private Draw2Controller controller;
+	private int task;
+	private Stage me = this;
 	
-	public TaskCompleteStage(Draw2Controller c) {
+	public TaskWithoutSoundStage(Draw2Controller c, int task) {
 		controller = c;
-	      setTitle("Task Complete");
+		this.task = task;
+	      setTitle("Task without sound");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
 	      HBox root5 = new HBox();
@@ -63,32 +65,30 @@ public class TaskCompleteStage extends Stage{
 	        int SceneHeight = javaServer.LaunchServer.SceneHeight;
 	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
-	      Text instructions = new Text("Congratulations!!"+"\n"+
-	      "The task was successfully"+"\n"+  
-	      	    		  "completed!"+"\n"+
-	    		  "Please press the Okay button to continue");
+	      Text instructions = new Text("Please remove your headphones."+"\n"+
+	      "When you are ready, "+"\n"+  	      	    		  
+	    		  "Please press the Okay button.");
 	      instructions.setFont(Font.font ("Verdana", 40));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);
 	      root.getChildren().add(root5);
-	      
-	      Text timer = new Text("0");
-	      timer.setFont(Font.font ("Verdana", 20));
-	      timer.setFill(Color.GREEN); 	     	      
+	      	           	      
 	      Button okay = new Button("Okay");
 	      okay.setOnAction(new EventHandler<ActionEvent>() {
-	           public void handle(ActionEvent event) {
-	        	   System.out.println("okay!!");        	   	        	   
-	        	   //send message over network to hide user1's instruction stage
-	        	   controller.state = controller.NOTREADY;
-	        	   controller.taskRunning = false;
-	        	   controller.drawViewPort =true;
-	        	   controller.view.setImageForFreezeTest();
-	        	   controller.view.resetView();
-	        	   controller.radarView.resetView();
-	        	   controller.model.showTaskStage();
-	        	   controller.model.notifySubscribers();
-	        	   close();
+	           public void handle(ActionEvent event) {	        	           	   	        	   	        	   
+	        	   
+	        	   if (task == controller.FREEZE_TEST_TASK) {
+		        	   controller.drawViewPort =true;
+		        	   controller.startTask1();
+		               me.close();	
+	        	   }
+	        	   
+	        	   if (task == controller.READ_AND_OBSERVE) {
+		        	   controller.drawViewPort =true;
+		        	   controller.startTask2();
+		               me.close();
+	        	   }	        	   
+	        	   
 	           }
 	      });
 	      root5.getChildren().add(okay);

@@ -57,31 +57,86 @@ public class TaskSelectionStage extends Stage{
         int SceneHeight = javaServer.LaunchServer.SceneHeight;
 	      VBox root = new VBox();	        
 	      Scene scene = new Scene(root, SceneWidth,SceneHeight);
-	     
-	      Button task1 = new Button("Maze race study task");
+	      
+	      Button task1 = new Button("FreezeTest study task");
 	      task1.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {         	  	              
-	               	me.close();        	  	         	  
-	           }
-	      });
-	      
-	      Button task2 = new Button("FreezeTest study task");
-	      task2.setOnAction(new EventHandler<ActionEvent>() {
-	           public void handle(ActionEvent event) {         	  	              
-	               controller.startTask2();
+	        	   controller.drawViewPort =true;
+	               controller.startTask1();
 	               me.close();	               
 	           }
 	      });
 	      
-	      Button task3 = new Button("Read and observe study task");
-	      task3.setOnAction(new EventHandler<ActionEvent>() {
+	      Button task2 = new Button("Read and observe study task");
+	      task2.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {         	  	              
-	               	 controller.startTask3();
+	        	   controller.drawViewPort =true;
+	               	 controller.startTask2();
 	               	 me.close();
 	           }
 	      });
+	     
+	      Button task3 = new Button("FreezeTest study task, without the minimap!");
+	      task3.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {         	  	              
+	               //	me.close(); 
+	        	   //don't draw the viewPort
+	        	   controller.drawViewPort =false;
+	        	   controller.startTask1();
+	               me.close();	               
+	           }
+	      });
 	      
-	      root.getChildren().addAll(task2,task3);
+	      Button task4 = new Button("Read and observe study task, without the minimap!");
+	      task4.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	   controller.drawViewPort =false;
+	               	 controller.startTask2();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });	
+	      
+	      Button task5 = new Button("FreezeTest study task, without sounds!");
+	      task5.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {         	  	              
+	        	   new TaskWithoutSoundStage(controller,controller.FREEZE_TEST_TASK);
+	               me.close();	               
+	           }
+	      });
+	      
+	      Button task6 = new Button("Read and observe study task, without sounds!");
+	      task6.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	   new TaskWithoutSoundStage(controller,controller.READ_AND_OBSERVE);
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
+	      Button task7 = new Button("Freeze test, for location identification");
+	      task7.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	     controller.startTask0();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
+	      Button task8 = new Button("Freeze test, for tool identification");
+	      task8.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	     controller.startTask4();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
+	      Button task9 = new Button("Button holding task, for activity identification");
+	      task9.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	     controller.startTask5();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
+	      root.getChildren().addAll(task1,task2,task3,task4,task5,task6,task7,task8,task9);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

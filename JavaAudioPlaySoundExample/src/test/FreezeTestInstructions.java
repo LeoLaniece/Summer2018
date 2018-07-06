@@ -63,11 +63,28 @@ public class FreezeTestInstructions extends Stage{
 	        int SceneHeight = javaServer.LaunchServer.SceneHeight;
 	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
+	      //set text for regular freeze test
 	      Text instructions = new Text("FreezeTest is about to start"+"\n"+
 	      "Until promted to stop, please trace the all the shapes you can find in the workspace"+"\n"+
 	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+
 	    		  "please press the ready button when you are ready to begin");
-	      instructions.setFont(Font.font ("Verdana", 30));
+	      //change text for location task
+	      if (controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK) {
+	    	  instructions = new Text("Location identification task is about to begin"+"\n"+
+	    		      "Please observe the location of the other user's drawing and navigation activity"+"\n"+
+	    		    "When prompted, please identify in which area of the minimap"+"\n"+
+	    		    "the other user was previously active");
+	      }
+	      //change text for tool task
+	      if (controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
+	    	  instructions = new Text("Tool identification task is about to begin"+"\n"+
+	    		      "Please observe with which tool the other user is drawing"+"\n"+
+	    		    "When prompted, please identify with which tool"+"\n"+
+	    		    "the other user was previously using" +"\n"+
+		    		  "please press the ready button when you are ready to begin");
+	      }
+	      
+	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);
 	      root.getChildren().add(root5);
@@ -80,7 +97,7 @@ public class FreezeTestInstructions extends Stage{
 	           public void handle(ActionEvent event) {
 	        	   System.out.println("ready!!");
 	        	   long startTime = System.currentTimeMillis();	        	   
-	        	   FreezeTestTimer x = new FreezeTestTimer(startTime,timer,controller, me);
+	        	   FreezeTestTimer x = new FreezeTestTimer(startTime,controller, me);
 	        	   x.start();
 	        	   //send message over network to hide user1's instruction stage
 	        	   controller.state = controller.READY_TO_BEGIN_TASK;	        	   
@@ -89,8 +106,7 @@ public class FreezeTestInstructions extends Stage{
 	        	   controller.view.drawBorder();	        	   
 	           }
 	      });
-	      root5.getChildren().add(ready);
-	     // root5.getChildren().add(timer);
+	      root5.getChildren().add(ready);	     
 	      
 	      root5.requestFocus();
 	      setScene(scene);

@@ -24,7 +24,7 @@ public class UpdateTimer extends Thread{
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 60001) {
+		while ((System.currentTimeMillis() - startTime) < 5001) {
 			timer.setText(Long.toString(60-(System.currentTimeMillis()-startTime)/1000));
 		}
 	      //log all the info before you close

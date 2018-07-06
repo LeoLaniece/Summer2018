@@ -65,6 +65,7 @@ public class Draw2Controller {
 	public long startTime;
 	public ReadAndObserveStage readAndObserveTrial =null;
 	public boolean taskRunning =false;
+	public boolean drawViewPort = true;
 	
 	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
 {
@@ -534,7 +535,7 @@ public class Draw2Controller {
 			return (clipDuration)-(clipDuration*clipOverlapDuration);			
 	   }
 	   
-	   public void startTask3() {
+	   public void startTask2() {
 			state = READ_AND_OBSERVE;
 			taskRunning = true;
 			//view.foc
@@ -543,18 +544,56 @@ public class Draw2Controller {
 			readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			
 	   }
 	   
-	   public void startTask2() {		   		   
+	   public void startTask1() {		   		   
 			state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
-		  // FreezeQuiz fr = null;
-		  // state = FREEZE;
-			//view.paintOverPaths();
-		//	radarView.paintOverPaths();
-			//iModel.freezeTestOn();
-			//launch a pop up window requesting for the location of the other user and his activity?
-			//need to pass in the location of other user's viewPort
-			//fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());	
+	   }
+	   /**
+	    * will begin a location identification task
+	    * User 2 will be prompted to locate User 1 every 15 seconds
+	    * User 1 will just be tracing the shapes in the workspace
+	    * User 2 will just observe the workspace
+	    */
+	   public void startTask0() {
+		   //launch a partial version of FreezeTestTask with a different timer
+		   //different instructions for User 1
+		   iModel.task = iModel.LOCATION_IDENTIFICATION_TASK;
+		   state = FREEZE_TEST_TASK;
+			taskRunning = true;
+			model.notifySubscribers();			
+		   model.launchFreezeTestIntructions(me);		   
+	   }
+	   /**
+	    * will begin a tool identification task
+	    * User 2 will be prompted to identify which tool was previously in use by User 1 every 15 seconds
+	    * User 1 will just be tracing the shapes in the workspace, but! Circles = eraser, square = pencil, triangle = metal, squiggle = chalk
+	    * User 2 will just observe the workspace
+	    */
+	   public void startTask4() {
+		   //launch a partial version of FreezeTestTask with a different timer
+		   //different instructions for User 1
+		   iModel.task = iModel.TOOL_IDENTIFICATION_TASK;
+		   state = FREEZE_TEST_TASK;
+			taskRunning = true;
+			model.notifySubscribers();			
+		   model.launchFreezeTestIntructions(me);		   
+	   }
+	   /**
+	    * will begin an activity identification task
+	    * User 2 is tasked to hold down buttons based on the other user's activity
+	    * User 2 makes use of the 'drawing' and 'panning' buttons
+	    * User 1 will just be tracing the shapes in the workspace, Circles = eraser, square = pencil, triangle = metal, squiggle = chalk
+	    * User 2 will observe the workspace while pressing the buttons
+	    */
+	   public void startTask5() {
+		   //launch a partial version of FreezeTestTask with a different timer
+		   //different instructions for User 1
+		   iModel.task = iModel.ACTIVITY_IDENTIFICATION_TASK;
+		   state = READ_AND_OBSERVE;
+			taskRunning = true;
+			model.notifySubscribers();			
+			readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			   
 	   }
 }

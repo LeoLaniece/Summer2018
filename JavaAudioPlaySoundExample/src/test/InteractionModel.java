@@ -15,6 +15,10 @@ public class InteractionModel {
 	public ArrayList<Coordinate> viewPortXYLocation;
 	public Draw2View view;
 	public boolean freezeTest = false;
+	public int LOCATION_IDENTIFICATION_TASK = 0;
+	public int TOOL_IDENTIFICATION_TASK =1;
+	public int ACTIVITY_IDENTIFICATION_TASK = 2;
+	public int task = -1;
 	//public double normalizedViewPortX, normalizedViewPortY;
 	
 	public InteractionModel(Draw2Model m, Draw2View view) {

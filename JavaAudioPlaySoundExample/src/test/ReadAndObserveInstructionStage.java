@@ -71,7 +71,14 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      
 	      instructions = new Text("A task is about to start"+"\n"+
 	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
-	    		  "please begin drawing when you are ready");
+	    		  "Trace the triangles with the pencil"+"\n"+
+	    		  "Trace the squares with the nail"+"\n"+
+	    		  "Trace the squiggles with the chalk"+"\n"+
+	    		  "Erase the circles with the eraser"+"\n"+
+	    		  "Do not worry if you end up " +"\n"+
+	    		  "tracing the wrong shape with the wrong tool"+"\n"+
+	    		  "Just do your best!"+"\n"+
+	    		  "please begin drawing when the workspace appears");
 	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);	   

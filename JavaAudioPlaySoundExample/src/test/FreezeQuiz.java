@@ -83,7 +83,7 @@ public class FreezeQuiz extends Stage{
         t2.setFill(Color.BLACK);
         
         VBox minimapRepresentation = new VBox();	
-        Canvas c = new Canvas(1000/7,1000/7);
+        Canvas c = new Canvas(con.radarView.width/7,con.radarView.height/7);
         GraphicsContext gc = c.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, c.getWidth(), c.getHeight());
@@ -122,6 +122,21 @@ public class FreezeQuiz extends Stage{
         rb3.setToggleGroup(group);
         group.selectToggle(rb3);
         question1.getChildren().addAll(rb1,rb2,rb3);
+        
+        toolGroup = new ToggleGroup();
+        RadioButton tgrb1 = new RadioButton("Drawing with a pencil");
+        tgrb1.setToggleGroup(toolGroup);        
+
+        RadioButton tgrb2 = new RadioButton("Drawing with a piece of metal");
+        tgrb2.setToggleGroup(toolGroup);
+         
+        RadioButton tgrb3 = new RadioButton("Drawing with a piece of chalk");
+        tgrb3.setToggleGroup(toolGroup);
+        
+        RadioButton tgrb4 = new RadioButton("Erasing");
+        tgrb4.setToggleGroup(toolGroup);
+        toolGroup.selectToggle(tgrb1);
+       // bullets.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4);
         
         //if the user selects was drawing, show multiple choices for shapes and for tool used
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
@@ -174,12 +189,34 @@ public class FreezeQuiz extends Stage{
 			} 
         });
         
+        TextField t4 = new TextField();
+        
        Button submit = new Button("SUBMIT");
        submit.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) { 
+            public void handle(ActionEvent event) {             	            
+            	//don't worry about any of that stuff for tool test
+        		if ((con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK)) {
+        			//get reseult from tool toggle group
+        			// post what was the current tool selection for path sounds
+        			RadioButton toolGroupResult = (RadioButton) toolGroup.getSelectedToggle();
+    				String toolGroupResultString = toolGroupResult.getText();
+    				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
+    				userInput += "Current sound file for paths is "+con.model.selectedSoundFile.toString();
+    				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
+                    System.out.println(userInput);	                               
+            		
+                    con.state = con.NOTREADY;
+                    con.iModel.freezeTestOff();
+    				con.model.notifySubscribers();					
+    				//con.model.showTaskStage();									
+    				close();
+        		}else {
             	
             	userInput = "User selected region "+selectedField+"\n"+
-            "The user was "+t2.getText()+" in his selection \n";
+            "The user was "+t4.getText()+" in his selection \n";
+            	
+            	//don't worry about any of that stuff for location test
+        		if (!(con.iModel.task == con.iModel.LOCATION_IDENTIFICATION_TASK)) {        		        		
             	
             	//needs to be the results of the radio button questions
             	RadioButton groupResult = (RadioButton) group.getSelectedToggle();
@@ -193,31 +230,43 @@ public class FreezeQuiz extends Stage{
                 	userInput += "User claims that their partner is "+toolGroupResultString+"\n";
                 	userInput += "User claims that their partner is "+shapeGroupResultString+"\n";
                 }
-				
+        		}
+        		
 				//send userInput to controller
-				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
+        		String fileName = "FreezeTest";
+        		if (con.iModel.task == con.iModel.LOCATION_IDENTIFICATION_TASK) {
+        			fileName += " location identification";
+        		}
+        		if (con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK) {
+        			fileName += " tool identification";
+        		}
+				CreateFile log = new CreateFile(userInput, fileName);
                 System.out.println(userInput);	                               
+        		
                 con.state = con.NOTREADY;
                 con.iModel.freezeTestOff();
 				con.model.notifySubscribers();					
 				//con.model.showTaskStage();									
 				close();
             }
+            }
        });
        root.getChildren().add(submit);
         
-        TextField t4 = new TextField();
-        //root.getChildren().add(t4);
-        t4.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent key) {
-				if (key.getCode().equals(KeyCode.ENTER)) {
-	                
-	            }
+       //tweak appearance for location task
+		if (con.iModel.task == con.iModel.LOCATION_IDENTIFICATION_TASK) {
+			root.getChildren().remove(t3);
+			root.getChildren().remove(q1AndBullets);
+		}
+	       //tweak appearance for tool task
+			if (con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK) {
+				root.getChildren().clear();
+				t.setText("Please select with which tool \n was the other User previously drawing"
+						+ "Press the submit button when complete");
+				root.getChildren().add(t);
+				root.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4,submit);
+				
 			}
-        });
-        
-
                
         c.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
@@ -285,13 +334,13 @@ public class FreezeQuiz extends Stage{
             	}            	
             	System.out.println("view port region = "+determineViewPortRegion(viewPortCenter));
                 if (selectedField == determineViewPortRegion(viewPortCenter)) {
-                    t2.setFont(Font.font ("Verdana", 80));
-                    t2.setFill(Color.GREEN);
-                    t2.setText("CORRECT!");
+                    //t2.setFont(Font.font ("Verdana", 80));
+                    //t2.setFill(Color.GREEN);
+                    t4.setText("CORRECT!");
                 }else{             
-                	t2.setFont(Font.font ("Verdana", 20));
-                    t2.setFill(Color.RED);
-                    t2.setText("INCORRECT!");
+                	//t2.setFont(Font.font ("Verdana", 20));
+                    //t2.setFill(Color.RED);
+                    t4.setText("INCORRECT!");
                 }
             	
             }

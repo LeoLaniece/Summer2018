@@ -55,6 +55,7 @@ public class ReadAndObserveStage extends Stage{
 	public long startTime =0;
 	public long totalTime =0;
 	public Button userDrawing;
+	public Button userPanning;
 	public ArrayList<Long> User1ActiveTimes;
 	public ArrayList<Long> User2ActiveTimes;
 	private Draw2Controller controller;
@@ -92,6 +93,16 @@ public class ReadAndObserveStage extends Stage{
     		  " When the other user ceases to draw, release the big button."+"\n"+
       "After one minute we will ask you to answer a question pertaining to the information in the article"+"\n"+    		  
     		  "Press the ready button when you are prepared to start.");
+      
+      if (iModel.task == iModel.ACTIVITY_IDENTIFICATION_TASK) {
+    	  t.setText("Until the task is complete please:"+"\n"+
+    			  "Observe the activity of the other user"+"\n"+
+    			  "If the other user is not doing anything, you do not do anything"+"\n"+"\n"+
+    			  "If the other user is drawing, press and hold the DRAWING button until the other user stops drawing"+"\n"+"\n"+
+    			  "If the other user is panning the minimap, press and hold the"+"\n"+
+    			  "PANNING button until the other user stops panning the minimap"+"\n"+"\n"+    			     			  
+    			  "Press the ready button when you are ready to begin");
+      }
 
       root.getChildren().add(t);
       root.setAlignment(Pos.TOP_CENTER);        
@@ -102,10 +113,13 @@ public class ReadAndObserveStage extends Stage{
       timer.setFont(Font.font ("Verdana", 20));
       timer.setFill(Color.GREEN); 
 
+      //remove this big button, add 2 buttons, 
+      //get them to show when the user presses ready
+      //log the 2 different time stamps 
       
-      userDrawing = new Button("USER IS DRAWING");
-      userDrawing.setPrefHeight(400);
-      userDrawing.setPrefWidth(400);
+      userDrawing = new Button("DRAWING");
+      userDrawing.setPrefHeight(200);
+      userDrawing.setPrefWidth(200);
       userDrawing.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
           @Override
           public void handle(MouseEvent me) {
@@ -120,13 +134,32 @@ public class ReadAndObserveStage extends Stage{
         	User2ActiveTimes.add(System.currentTimeMillis()-startTime);
         }
       });       
+      
+      //second button for activity identification task
+      userPanning = new Button("PANNING");
+      userPanning.setPrefHeight(200);
+      userPanning.setPrefWidth(200);
+      userPanning.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
+          @Override
+          public void handle(MouseEvent me) {
+          	//totalTime += System.currentTimeMillis()-startTime;        	
+          	User2ActiveTimes.add(System.currentTimeMillis()-startTime);
+          }
+        });            
+      userPanning.setOnMouseReleased(new EventHandler<MouseEvent>()  {        	
+        @Override
+        public void handle(MouseEvent me) {
+        	//totalTime += System.currentTimeMillis()-startTime;        	
+        	User2ActiveTimes.add(System.currentTimeMillis()-startTime);
+        }
+      }); 
 
       
      Button ready = new Button("ready");
      ready.setOnAction(new EventHandler<ActionEvent>() {
           public void handle(ActionEvent event) {
-        	  startTime = System.currentTimeMillis();   
-        	  root.getChildren().add(userDrawing);        	 
+        	  startTime = System.currentTimeMillis();
+        	  root.getChildren().add(userDrawing);       	         	  
         	  root.getChildren().remove(1);
         	  root.getChildren().add(timer);
               UpdateTimer z = new UpdateTimer(startTime, timer,me);
@@ -142,15 +175,18 @@ public class ReadAndObserveStage extends Stage{
                  	  }                 	  
                    }
               });
+        	  if ((iModel.task == iModel.ACTIVITY_IDENTIFICATION_TASK)) {
+        		  root.getChildren().clear();
+        		  root.getChildren().add(t);
+        		  root.getChildren().add(userDrawing); 
+        		  root.getChildren().add(userPanning);
+        		  root.getChildren().add(timer);        		  
+        	  }
            //  root.getChildren().add(exit);
         	  //when 5 seconds have gone by, remove button, prompt for answering questions       	  
         	  
           }
      });
-     
-
-
-     
      
      root.getChildren().add(ready);                                          
       
@@ -274,11 +310,15 @@ public class ReadAndObserveStage extends Stage{
 			}else {
 				System.out.println("activity end"+User1ActiveTimes.get(i));
 			}			
+		} 
+		String fileName = "ReadAndObserve";
+		if (controller.iModel.task == controller.iModel.ACTIVITY_IDENTIFICATION_TASK) {
+			fileName += " activity identification";
 		}
 		
 		System.out.println("user2 awareness was only off by "+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds");		
 		CreateFile x = new CreateFile("user2 awareness was only off by "
-		+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds", "Read And Observe results");
+		+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds", fileName);
 	}
 	
 	public double calculateUser2Awareness(ArrayList<Long> User1, ArrayList<Long> User2) {

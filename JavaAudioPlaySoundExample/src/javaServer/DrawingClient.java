@@ -131,6 +131,10 @@ public DrawingClient(String [] args) {
        		  //START the VPDS generator here
         	     if (model.VPDS == null) {
             		 model.beginViewPortMovementSound();
+            		 //log user1 activity here 
+            		 if (controller.readAndObserveTrial != null) {
+            			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+            		 }
             	 }else {
             		 model.updateVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
             	 }         		 
@@ -138,13 +142,19 @@ public DrawingClient(String [] args) {
          		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
              	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;                     	              	 
              	 model.radarView.modelChanged();
-             	 model.radarView.drawViewPortFromNet(line[0], line[1]);          	         		         		          		        		 
+             	 model.radarView.drawViewPortFromNet(line[0], line[1]);    
+
          	 }else {
          		//stop the VPDS generator
             	 if (model.VPDS != null) {
             		 System.out.println("tried to stop VPDS");
             		 model.stopVPDS();
+               		 //log user 1 activity here
+            		 if (controller.readAndObserveTrial != null) {
+            			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+            		 }
             	 }
+ 
         	 }
         	  
          	 //if server is drawing a path, replicate path and produce sound

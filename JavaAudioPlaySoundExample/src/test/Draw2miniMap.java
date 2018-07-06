@@ -64,6 +64,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {	
+		    	if (controller.drawViewPort) {		    			    	
 		gc.drawImage(getImage(), 0, 0, width/scale, height/scale);		
 		drawModelPaths();
 		drawViewPort();	
@@ -74,6 +75,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		netMiniMapX =x;
 		netMiniMapY =y;
 	}
+		    }
 		});
 	}
 	
@@ -155,6 +157,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {		
+		    	if (controller.drawViewPort) {
 		if (controller.state == controller.PAN_READY|| controller.state == controller.READ_AND_OBSERVE) {
 			gc.drawImage(getImage(), 0, 0, width/scale, height/scale);
 			drawModelPaths();
@@ -183,7 +186,13 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	/*	if (controller.state ==controller.READ_AND_OBSERVE) {
 			setImageForReadAndObserve();
 		}*/
-		
+		    	}else {
+		    		gc.setFill(Color.WHITE);
+		    		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
+		    		gc.setLineWidth(1);
+		    		gc.setStroke(Color.BLACK);
+		    		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
+		    	}
 		    }
 		});
 	}
