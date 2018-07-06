@@ -107,6 +107,12 @@ public void run() {
        		 }
     		}
      		
+     		if (clientState == controller.PLAY_IMPACT) {
+     			int impactFile = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
+     			File impact = model.getImpactSoundFile(impactFile);
+     			model.player.playFileClip(impact);
+      		}
+     		
      		if (clientState == controller.READY_TO_BEGIN_TASK) {
           		 //close instruction window if it is still there
           		 if (model.instructions != null) {
@@ -224,7 +230,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-   // /*  
+    //*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

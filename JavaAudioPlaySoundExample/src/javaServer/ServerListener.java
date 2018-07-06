@@ -35,6 +35,15 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(fullmsg);
 			}
 			
+			if (controller.state == controller.PLAY_IMPACT) {	
+				msg.add(Integer.toString((model.currentTimbre))+"\n");
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
 			if (controller.state == controller.READY_TO_BEGIN_TASK) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {

@@ -33,7 +33,7 @@ public class FreezeTestTimer extends Thread{
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 90001) {
+		while ((System.currentTimeMillis() - startTime) < 60001) {
 			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
 			if ((System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
 				//System.out.println("modulus 10000!!");

@@ -41,7 +41,7 @@ public class LaunchServer extends Application{
         Draw2View view = new Draw2View(SceneWidth,SceneHeight-200,model);       
         //can change the size of the minimap here, minimap will be scaled to /7 of its size
         //this sets the size of the total virtual workspace.
-        Draw2miniMap radarView = new Draw2miniMap(2000,2000,model);
+        Draw2miniMap radarView = new Draw2miniMap(1000,1000,model);
         InteractionModel iModel = new InteractionModel(model,view);
         model.setIModel(iModel);
         view.setIModel(iModel);

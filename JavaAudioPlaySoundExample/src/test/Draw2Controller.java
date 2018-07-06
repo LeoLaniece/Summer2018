@@ -56,6 +56,7 @@ public class Draw2Controller {
 	public int FREEZE_TEST_TASK =5;
 	public int PROMPT_FOR_SHAPE = 6;
 	public int READY_TO_BEGIN_TASK = 7;
+	public int PLAY_IMPACT = 8;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;

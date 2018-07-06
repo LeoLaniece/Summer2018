@@ -70,7 +70,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
 	      instructions = new Text("A task is about to start"+"\n"+
-	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
+	      "Until notified , please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
 	    		  "Trace the triangles with the pencil"+"\n"+
 	    		  "Trace the squares with the nail"+"\n"+
 	    		  "Trace the squiggles with the chalk"+"\n"+

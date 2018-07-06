@@ -76,12 +76,35 @@ public class Draw2Model {
     public AnInteractiveStaggeredSoundGenerator soundGenerator;
     
     public File selectedSoundFile;
-    File selectedImpactFile;
+    public File selectedImpactFile;
     public int currentTimbre = 1;
     public int PENCIL = 1;
     public int METAL = 2;
     public int ERASER = 3;
     public int CHALK = 4;
+    
+    //impact sound files
+    public File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
+    public File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
+    public File chalkTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalkTap.WAV");
+    public File eraserTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserTap.WAV");
+    
+    
+    public File getImpactSoundFile(int timbre) {
+    	File impact;    	
+    		impact = pencilTap;
+    	
+    	if (timbre == METAL) {
+    		impact = metalTap;
+    	}
+    	if (timbre == ERASER) {
+    		impact = eraserTap;
+    	}
+    	if (timbre == CHALK) {
+    		impact = chalkTap;
+    	}    	
+    	return impact;
+    }
     
     public Draw2Model() {
     	modelListeners = new ArrayList<>();
@@ -137,7 +160,9 @@ public class Draw2Model {
             	sampleLine.setStroke(Color.BLACK);  
             	strokeSlider.setValue(3);
             	File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
-            	player.playFileClip(pencilTap);
+            	//player.playFileClip(pencilTap);
+            	view.controller.state = view.controller.PLAY_IMPACT;
+            	notifySubscribers();
             }
         });    	
     	btnMetal = new Button("Metal");
@@ -154,7 +179,9 @@ public class Draw2Model {
             	sampleLine.setStroke(Color.GREY);
             	strokeSlider.setValue(4);
             	File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
-            	player.playFileClip(metalTap);
+            	//player.playFileClip(metalTap);
+            	view.controller.state = view.controller.PLAY_IMPACT;
+            	notifySubscribers();
             }
         });    	
     	btnChalk = new Button("Chalk");
@@ -171,7 +198,9 @@ public class Draw2Model {
             	sampleLine.setStroke(Color.ANTIQUEWHITE);
             	strokeSlider.setValue(3);
             	File chalkTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalkTap.WAV");
-            	player.playFileClip(chalkTap);
+            	//player.playFileClip(chalkTap);
+            	view.controller.state = view.controller.PLAY_IMPACT;
+            	notifySubscribers();
             }
         });    	
     	btnEraser = new Button("Eraser");
@@ -188,7 +217,9 @@ public class Draw2Model {
             	sampleLine.setStroke(Color.WHITE);
             	strokeSlider.setValue(30);
             	File eraserTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserTap.WAV");
-            	player.playFileClip(eraserTap);
+            	//player.playFileClip(eraserTap);
+            	view.controller.state = view.controller.PLAY_IMPACT;
+            	notifySubscribers();
             }
         });    	    	
     }
