@@ -85,18 +85,30 @@ public void run() {
         	 
         	 clientState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 
-         	 //if the read and obserrve test is happening
+         	 //if the read and observe test is happening
         	 //open instructions
-     		if (clientState == controller.READ_AND_OBSERVE|| clientState == controller.FREEZE_TEST_TASK) {     			
-     			model.launchReadAndObserverInstructionsStage();
+     		if (clientState == controller.READ_AND_OBSERVE) {     			
+     			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
-     		}     		     		
+     		}
+     		
+     		if (clientState == controller.FREEZE_TEST_TASK) {
+     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
+     			System.out.println("server task "+serverTask);
+     			if (serverTask == model.iModel.LOCATION_IDENTIFICATION_TASK) {
+     				model.iModel.task = serverTask;
+     			}
+    			model.launchReadAndObserverInstructionsStage(model.iModel);
+     			controller.taskRunning =true;
+     		}
+     		
      		//close instructions
      		if (clientState == controller.CLOSE_INSTRUCTIONS) {
        		 //close instruction window if it is still there
        		 if (model.instructions != null) {
        			 model.closeInstructions();       			
        			controller.taskRunning =false;
+       			model.iModel.task = -1;
    			    controller.view.resetView();
    				Platform.runLater(new Runnable() {
    				    @Override

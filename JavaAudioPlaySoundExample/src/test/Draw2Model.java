@@ -132,8 +132,8 @@ public class Draw2Model {
     	labelStroke = new Label("Stroke Width");
     	sampleLine = new Line(0, 0, 140, 0);
         sampleLine.strokeWidthProperty().bind(strokeSlider.valueProperty());
-        sampleLine.setStroke(Color.BLUE);        
-        colorLabel = new Label("color: blue");
+        sampleLine.setStroke(Color.DIMGRAY);        
+        colorLabel = new Label("color: dimgray");
         
         //set up for sound things
         File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
@@ -157,7 +157,7 @@ public class Draw2Model {
     	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
             	setPencilTimbre();
-            	sampleLine.setStroke(Color.BLACK);  
+            	sampleLine.setStroke(Color.DIMGRAY);  
             	strokeSlider.setValue(3);
             	File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
             	//player.playFileClip(pencilTap);
@@ -176,7 +176,7 @@ public class Draw2Model {
     	btnMetal.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {              	
             	setMetalTimbre();
-            	sampleLine.setStroke(Color.GREY);
+            	sampleLine.setStroke(Color.SILVER);
             	strokeSlider.setValue(4);
             	File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
             	//player.playFileClip(metalTap);
@@ -697,12 +697,12 @@ public class Draw2Model {
 	}
 	public ReadAndObserveInstructionStage instructions =null;
 	
-	public void launchReadAndObserverInstructionsStage() {
+	public void launchReadAndObserverInstructionsStage(InteractionModel imodel) {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {	
 		    	if (instructions == null) {
-		    				instructions = new ReadAndObserveInstructionStage();	
+		    				instructions = new ReadAndObserveInstructionStage(imodel);	
 		    	}		
 		    }
 		});

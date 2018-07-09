@@ -33,7 +33,7 @@ public class FreezeTestTimer extends Thread{
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 60001) {
+		while ((System.currentTimeMillis() - startTime) < 59999) {
 			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
 			if ((System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
 				//System.out.println("modulus 10000!!");
@@ -47,8 +47,10 @@ public class FreezeTestTimer extends Thread{
 					Platform.runLater(new Runnable() {
 					    @Override
 					        public void run() {	
-					    FreezeQuiz fr ;	
-					fr = new FreezeQuiz(controller, controller.radarView.calculateNetViewPortCenter());					    	
+					    	if ((System.currentTimeMillis() - startTime)> timeIncrement) {
+					    	FreezeQuiz fr ;	
+					    	fr = new FreezeQuiz(controller, controller.radarView.calculateNetViewPortCenter());
+					    	}					    	
 					    }
 					});
 					if (!(controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK)
@@ -59,6 +61,7 @@ public class FreezeTestTimer extends Thread{
 			}
 		}
 	      stage.closeStage();
+	      
 	      //now close freezetestinstructions and show the task selection menu again.
 
 	}

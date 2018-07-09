@@ -60,7 +60,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 	Text timer;
 	ReadAndObserveInstructionStage me = this;
 
-	public ReadAndObserveInstructionStage() {
+	public ReadAndObserveInstructionStage(InteractionModel iModel) {
 	      setTitle("read and observe stage!");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
@@ -79,6 +79,17 @@ public class ReadAndObserveInstructionStage extends Stage{
 	    		  "tracing the wrong shape with the wrong tool"+"\n"+
 	    		  "Just do your best!"+"\n"+
 	    		  "please begin drawing when the workspace appears");
+	      System.out.println("iModel task "+iModel.task);
+	      if (iModel.task == iModel.LOCATION_IDENTIFICATION_TASK) {
+	    	  instructions = new Text("A task is about to start"+"\n"+
+	      "Until notified , please"+"\n"+"erase all the circles you can find in the workspace"+"\n"+	      		
+	    		  "You can select the Eraser tool in the bottom left corner of the workspace"+"\n"+
+	    		  "You can move around in the workspace by holding down the" +"\n"+
+	    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
+	    		  "Good luck!"+"\n"+
+	    		  "please begin drawing when the workspace appears");
+	      }
+	      
 	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);	   

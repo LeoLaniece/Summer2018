@@ -91,9 +91,19 @@ public DrawingClient(String [] args) {
          	 serverState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
          	 
          	 //if the read and obserrve test is happening
-     		if (serverState == controller.READ_AND_OBSERVE || serverState == controller.FREEZE_TEST_TASK) {
+     		if (serverState == controller.READ_AND_OBSERVE) {
      			//System.out.println("state is read and observe");
-     			model.launchReadAndObserverInstructionsStage();
+     			model.launchReadAndObserverInstructionsStage(model.iModel);
+     			controller.taskRunning =true;
+     		}
+     		
+     		if (serverState == controller.FREEZE_TEST_TASK) {
+     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
+     			System.out.println("server task "+serverTask);
+     			if (serverTask == model.iModel.LOCATION_IDENTIFICATION_TASK) {
+     				model.iModel.task = serverTask;
+     			}
+    			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
      		}
      		
@@ -102,6 +112,7 @@ public DrawingClient(String [] args) {
         		 if (model.instructions != null) {
         			 model.closeInstructions();
         			 controller.taskRunning =false;
+        			 model.iModel.task = -1;
         			 controller.view.resetView();
         			 model.createFileForFreezeTest();
         				Platform.runLater(new Runnable() {

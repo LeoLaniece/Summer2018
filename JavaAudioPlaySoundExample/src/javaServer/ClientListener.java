@@ -60,6 +60,7 @@ public class ClientListener implements modelListener{
 			}
 			
 			if (controller.state == controller.FREEZE_TEST_TASK) {				
+				msg.add(Integer.toString((model.iModel.task))+"\n");
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
