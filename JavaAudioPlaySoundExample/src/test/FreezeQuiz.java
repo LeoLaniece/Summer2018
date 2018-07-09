@@ -138,6 +138,27 @@ public class FreezeQuiz extends Stage{
         toolGroup.selectToggle(tgrb1);
        // bullets.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4);
         
+        //shape toggle group
+  		shapeGroup = new ToggleGroup();
+          RadioButton sgrb1 = new RadioButton("Tracing the shape of a triangle");
+          sgrb1.setToggleGroup(shapeGroup);        
+
+          RadioButton sgrb2 = new RadioButton("Tracing the shape of a square");
+          sgrb2.setToggleGroup(shapeGroup);
+           
+          RadioButton sgrb3 = new RadioButton("Tracing the shape of a squiggle");
+          sgrb3.setToggleGroup(shapeGroup);
+          
+          RadioButton sgrb4 = new RadioButton("Filling in a circle");
+          sgrb4.setToggleGroup(shapeGroup);
+          
+          RadioButton sgrb5 = new RadioButton("I do not know");
+          sgrb5.setToggleGroup(shapeGroup);
+          
+          RadioButton sgrb6 = new RadioButton("None of the above");
+          sgrb6.setToggleGroup(shapeGroup);
+          shapeGroup.selectToggle(sgrb5);
+        
         //if the user selects was drawing, show multiple choices for shapes and for tool used
         group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
 			@Override
@@ -196,7 +217,7 @@ public class FreezeQuiz extends Stage{
             public void handle(ActionEvent event) {             	            
             	//don't worry about any of that stuff for tool test
         		if ((con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK)) {
-        			//get reseult from tool toggle group
+        			//get result from tool toggle group
         			// post what was the current tool selection for path sounds
         			RadioButton toolGroupResult = (RadioButton) toolGroup.getSelectedToggle();
     				String toolGroupResultString = toolGroupResult.getText();
@@ -210,7 +231,21 @@ public class FreezeQuiz extends Stage{
     				con.model.notifySubscribers();					
     				//con.model.showTaskStage();									
     				close();
-        		}else {
+        		}else if ((con.iModel.task == con.iModel.SHAPE_DETECTION_TASK)) {
+        			//get result from shape toggle group        			
+        			RadioButton toolGroupResult = (RadioButton) shapeGroup.getSelectedToggle();
+    				String toolGroupResultString = toolGroupResult.getText();
+    				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
+    				//userInput += "Current sound file for paths is "+con.model.selectedSoundFile.toString();
+    				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
+                    System.out.println(userInput);	                               
+            		
+                    con.state = con.NOTREADY;
+                    con.iModel.freezeTestOff();
+    				con.model.notifySubscribers();					
+    				//con.model.showTaskStage();									
+    				close();
+        		}else {        			
             	
             	userInput = "User selected region "+selectedField+"\n"+
             "The user was "+t4.getText()+" in his selection \n";
@@ -264,9 +299,17 @@ public class FreezeQuiz extends Stage{
 				t.setText("Please select with which tool \n was the other User previously drawing"
 						+ "Press the submit button when complete");
 				root.getChildren().add(t);
-				root.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4,submit);
-				
+				root.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4,submit);				
 			}
+		       //tweak appearance for shape task
+				if (con.iModel.task == con.iModel.SHAPE_DETECTION_TASK) {
+					root.getChildren().clear();
+					t.setText("Please select which shape \n the other User was previously drawing"
+							+ "Press the submit button when complete");
+					root.getChildren().add(t);
+					root.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4,sgrb5,sgrb6,submit);				
+				}
+			
                
         c.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override

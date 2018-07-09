@@ -18,6 +18,8 @@ public class InteractionModel {
 	public int LOCATION_IDENTIFICATION_TASK = 0;
 	public int TOOL_IDENTIFICATION_TASK =1;
 	public int ACTIVITY_IDENTIFICATION_TASK = 2;
+	public int REAL_FREEZE_TEST = 3;
+	public int SHAPE_DETECTION_TASK =4;
 	public int task = -1;
 	//public double normalizedViewPortX, normalizedViewPortY;
 	

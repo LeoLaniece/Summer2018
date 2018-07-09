@@ -70,7 +70,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
 	      instructions = new Text("A task is about to start"+"\n"+
-	      "Until notified , please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
+	      "Until notified, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
 	    		  "Trace the triangles with the pencil"+"\n"+
 	    		  "Trace the squares with the nail"+"\n"+
 	    		  "Trace the squiggles with the chalk"+"\n"+
@@ -82,12 +82,26 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      System.out.println("iModel task "+iModel.task);
 	      if (iModel.task == iModel.LOCATION_IDENTIFICATION_TASK) {
 	    	  instructions = new Text("A task is about to start"+"\n"+
-	      "Until notified , please"+"\n"+"erase all the circles you can find in the workspace"+"\n"+	      		
+	      "Until notified, please"+"\n"+"erase all the circles you can find in the workspace"+"\n"+	      		
 	    		  "You can select the Eraser tool in the bottom left corner of the workspace"+"\n"+
 	    		  "You can move around in the workspace by holding down the" +"\n"+
 	    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
 	    		  "Good luck!"+"\n"+
 	    		  "please begin drawing when the workspace appears");
+	      }
+	      if (iModel.task == iModel.REAL_FREEZE_TEST) {
+	    	  instructions = new Text("A task is about to start"+"\n"+
+	    		      "Until notified, please"+"\n"+
+	    			  "trace the all the shapes you can find in the workspace ss fast as possible"+"\n"+	
+	    		      "Work with the other user to achieve this goal!"+"\n"+
+		    		  "Trace the triangles with the pencil"+"\n"+
+		    		  "Trace the squares with the nail"+"\n"+
+		    		  "Trace the squiggles with the chalk"+"\n"+
+		    		  "Erase the circles with the eraser"+"\n"+
+		    		  "Do not worry if you end up " +"\n"+
+		    		  "tracing the wrong shape with the wrong tool"+"\n"+
+		    		  "Just do your best!"+"\n"+
+		    		  "please begin drawing when the workspace appears"); 
 	      }
 	      
 	      instructions.setFont(Font.font ("Verdana", 20));

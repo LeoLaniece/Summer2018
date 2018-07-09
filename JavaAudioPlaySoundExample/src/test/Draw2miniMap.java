@@ -63,8 +63,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public void drawViewPortFromNet(double x, double y) {
 		Platform.runLater(new Runnable() {
 		    @Override
-		        public void run() {	
-		    	if (controller.drawViewPort) {		    			    	
+		        public void run() {			    			    			    	
 		gc.drawImage(getImage(), 0, 0, width/scale, height/scale);		
 		drawModelPaths();
 		drawViewPort();	
@@ -74,6 +73,14 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		gc.strokeRect(x, y, iModel.viewPortWidth, iModel.viewPortHeight);
 		netMiniMapX =x;
 		netMiniMapY =y;
+		if (controller.drawViewPort) {
+		//do nothing, else paint over
+	}else {
+		gc.setFill(Color.WHITE);
+		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
+		gc.setLineWidth(1);
+		gc.setStroke(Color.BLACK);
+		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 	}
 		    }
 		});
@@ -157,7 +164,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {		
-		    	if (controller.drawViewPort) {
+		    	
 		if (controller.state == controller.PAN_READY|| controller.state == controller.READ_AND_OBSERVE) {
 			gc.drawImage(getImage(), 0, 0, width/scale, height/scale);
 			drawModelPaths();
@@ -185,7 +192,8 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		drawViewPort();
 	/*	if (controller.state ==controller.READ_AND_OBSERVE) {
 			setImageForReadAndObserve();
-		}*/
+		}*/if (controller.drawViewPort) {
+			//do nothing, else, paint over 
 		    	}else {
 		    		gc.setFill(Color.WHITE);
 		    		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
@@ -346,5 +354,29 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		}	
 		}
 	}
-
+	
+	public Coordinate getLastKnownCoordinate() {
+		Coordinate p = calculateNetViewPortCenter();
+		synchronized (model.getModelPaths()) {	
+			if (model.getNetWorkPath()!=null) {						
+				if (model.getNetWorkPath().getElements().size() > 2) {
+					double x = ((((LineTo)model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+							*width/scale+model.netPathViewPortXYLocation.x); 
+					double y =(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
+							*height/scale+ model.netPathViewPortXYLocation.y;	 
+					p = new Coordinate(x,y);
+					return p;
+				}else if (model.getNetWorkPath().getElements().size() >1){
+					double x =
+					((((MoveTo)model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+							*width/scale+model.netPathViewPortXYLocation.x); 
+					double y =(((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
+							*height/scale+ model.netPathViewPortXYLocation.y;
+					p = new Coordinate(x,y);
+					return p;
+				}
+		}
+		return p;
+	}
+}
 }

@@ -27,7 +27,7 @@ public class FreezeTestTimer extends Thread{
 		this.stage = stage;
 		if (controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK
 				|| controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
-			timeIncrement = 15000;
+			timeIncrement = 10000;
 		}
 	}
 	

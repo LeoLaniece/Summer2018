@@ -597,4 +597,20 @@ public class Draw2Controller {
 			model.notifySubscribers();			
 			readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			   
 	   }
+	   /**
+	    * will begin a shape identification task
+	    * User 2 will be prompted to identify which shape was previously drawn by User 1 every 15 seconds
+	    * User 1 will just be tracing the shapes in the workspace, but! Circles = eraser, square = pencil, triangle = metal, squiggle = chalk
+	    * User 1 will also be asked which shape he has completed tracing every 15 seconds
+	    * User 2 will just observe the workspace
+	    */
+	   public void startTask6() {
+		   //launch a partial version of FreezeTestTask with a different timer
+		   //different instructions for User 1
+		   iModel.task = iModel.SHAPE_DETECTION_TASK;
+		   state = FREEZE_TEST_TASK;
+			taskRunning = true;
+			model.notifySubscribers();			
+		   model.launchFreezeTestIntructions(me);		   
+	   }
 }

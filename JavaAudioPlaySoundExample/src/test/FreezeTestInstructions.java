@@ -65,7 +65,8 @@ public class FreezeTestInstructions extends Stage{
 	      
 	      //set text for regular freeze test
 	      Text instructions = new Text("FreezeTest is about to start"+"\n"+
-	      "Until promted to stop, please trace the all the shapes you can find in the workspace"+"\n"+
+	      "Until promted to stop, please trace the all the shapes you can find in the workspace as fast as possible"+"\n"+
+	    		  "Work with the other user to achieve this goal"+"\n"+
 	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+
 	    		  "please press the ready button when you are ready to begin");
 	      //change text for location task
@@ -73,14 +74,33 @@ public class FreezeTestInstructions extends Stage{
 	    	  instructions = new Text("Location identification task is about to begin"+"\n"+
 	    		      "Please observe the location of the other user's drawing and navigation activity"+"\n"+
 	    		    "When prompted, please identify in which area of the minimap"+"\n"+
-	    		    "the other user was previously active");
+	    		    "the other user was previously active"+"\n"+"\n"+
+	    		    "The other user will be erasing all the circles in the workspace");
 	      }
 	      //change text for tool task
 	      if (controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
 	    	  instructions = new Text("Tool identification task is about to begin"+"\n"+
 	    		      "Please observe with which tool the other user is drawing"+"\n"+
 	    		    "When prompted, please identify with which tool"+"\n"+
-	    		    "the other user was previously using" +"\n"+
+	    		    "the other user was previously using"+"\n"+"\n"+
+	    		    "The other user will be tracing all the shapes in the workspace"+"\n"+
+	    		    "They will be tracing the triangles with the pencil"+"\n"+
+	    		    "The squares with the nail"+"\n"+
+	    		    "The squiggles with the chalk"+"\n"+
+	    		    "And erasing the circles with the eraser"+"\n"+	    		    
+		    		  "please press the ready button when you are ready to begin");
+	      }
+	      //change text for shape identification task
+	      if (controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
+	    	  instructions = new Text("Shape identification task is about to begin"+"\n"+
+	    		      "Please observe which shapes the other user is drawing"+"\n"+
+	    		    "When prompted, please identify which shape"+"\n"+
+	    		    "the other user was previously tracing"+"\n"+"\n"+
+	    		    "The other user will be tracing all the shapes in the workspace"+"\n"+
+	    		    "They will be tracing the triangles with the pencil"+"\n"+
+	    		    "The squares with the nail"+"\n"+
+	    		    "The squiggles with the chalk"+"\n"+
+	    		    "And erasing the circles with the eraser"+"\n"+	    		    
 		    		  "please press the ready button when you are ready to begin");
 	      }
 	      
