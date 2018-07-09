@@ -84,6 +84,7 @@ public class TaskCompleteStage extends Stage{
 	        	   controller.taskRunning = false;
 	        	   controller.drawViewPort =true;
 	        	   controller.view.setImageForFreezeTest();
+	        	   controller.model.resetModel();
 	        	   controller.view.resetView();
 	        	   controller.radarView.resetView();
 	        	   controller.model.showTaskStage();

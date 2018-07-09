@@ -189,7 +189,7 @@ public void run() {
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
         		 model.createNewPathFromNetwork(line,pathPaint);
         		//set timbre
-        		 model.setTimbre(netTimbre);
+        		 model.setNetTimbre(netTimbre);
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
         		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);     
@@ -242,7 +242,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-    //*  
+    /*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

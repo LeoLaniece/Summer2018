@@ -209,7 +209,7 @@ public DrawingClient(String [] args) {
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
         		 //set timbre
-        		 model.setTimbre(netTimbre);        		
+        		 model.setNetTimbre(netTimbre);        		
         		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);        		 
         		 //log user1 activity here 
         		 if (controller.readAndObserveTrial != null) {

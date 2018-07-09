@@ -77,6 +77,8 @@ public class Draw2Model {
     
     public File selectedSoundFile;
     public File selectedImpactFile;
+    public File netSelectedSoundFile;
+    public File netSelectedImpactFile;
     public int currentTimbre = 1;
     public int PENCIL = 1;
     public int METAL = 2;
@@ -138,7 +140,15 @@ public class Draw2Model {
         //set up for sound things
         File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
         File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-        player = new Grain2Files(soundFile, soundFile2);             
+        player = new Grain2Files(soundFile, soundFile2);
+        setNetTimbre(PENCIL);
+    }
+    
+    public void resetModel() {
+    	modelPathsCoordinates = new ArrayList<>();  
+        iModel.modelPathsTranslateByCoordinates =new ArrayList<>(); 
+        iModel.viewPortXYLocation =new ArrayList<>();                
+        modelPaths =new ArrayList<>();  
     }
     
     public synchronized ArrayList<Path> getModelPaths(){
@@ -236,6 +246,26 @@ public class Draw2Model {
     	}
     	if (t == CHALK) {
     		setChalkTimbre();
+    	}
+    }
+    
+    public void setNetTimbre(int t) {
+    	if (t == PENCIL ) {
+    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
+        	notifySubscribers();    		
+    	}
+    	if (t == METAL) {
+    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalImpact.WAV"); 		
+    	}
+    	if (t == ERASER) {
+    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserOnPaperFast.WAV");
+    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");    		
+    	}
+    	if (t == CHALK) {
+    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalk.WAV");
+    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
     	}
     }
     
@@ -436,8 +466,9 @@ public class Draw2Model {
 		}
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
 		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
-				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);
-		soundGenerator.start();
+				velocity,panValue, clipDuration,clipStaggerIncrement,netSelectedSoundFile,netSelectedImpactFile);
+		soundGenerator.start();		
+		//use netSelectedSoundFile and netSelectedImpactFile?
 	}
 	
 	public void stopSoundGenerator() {
