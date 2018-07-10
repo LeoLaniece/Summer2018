@@ -62,8 +62,12 @@ public class FreezeQuiz extends Stage{
     String userInput;
     ToggleGroup toolGroup;
     ToggleGroup shapeGroup;
+    FreezeTestTimer FTT;
+    long quizStartTime;
+    long FTTstartTimeCopy;
+    int FTTincrementCopy;
 	
-	public FreezeQuiz(Draw2Controller con, Coordinate viewPortCenter) {
+	public FreezeQuiz(Draw2Controller con, Coordinate viewPortCenter, FreezeTestTimer FTT) {
         setTitle("Freeze Quiz");
         //set the size of the window here
         //make sure the height is 200 + what you want to accommodate the color picker and sample line
@@ -71,6 +75,16 @@ public class FreezeQuiz extends Stage{
         int SceneHeight = javaServer.LaunchServer.SceneHeight;
         VBox root = new VBox();	        
         Scene scene = new Scene(root, SceneWidth,SceneHeight);
+        
+        this.FTT = FTT;
+        //timer business
+        FTTstartTimeCopy = FTT.startTime;
+        quizStartTime = System.currentTimeMillis();
+        System.out.println("FTT startTime :"+FTT.startTime);
+        FTT.startTime = Long.MAX_VALUE;
+        FTTincrementCopy = FTT.timeIncrement;
+        FTT.timeIncrement = Integer.MAX_VALUE;
+        //System.out.println("FTT max value :"+FTT.startTime);
         
         Text t = new Text("In which area of your minimap was your partner recently active?");
         Text t2 = new Text("Please select a region:");
@@ -149,7 +163,7 @@ public class FreezeQuiz extends Stage{
           RadioButton sgrb3 = new RadioButton("Tracing the shape of a squiggle");
           sgrb3.setToggleGroup(shapeGroup);
           
-          RadioButton sgrb4 = new RadioButton("Filling in a circle");
+          RadioButton sgrb4 = new RadioButton("Erasing a circle");
           sgrb4.setToggleGroup(shapeGroup);
           
           RadioButton sgrb5 = new RadioButton("I do not know");
@@ -226,11 +240,11 @@ public class FreezeQuiz extends Stage{
     				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
                     System.out.println(userInput);	                               
             		
-                    con.state = con.NOTREADY;
-                    con.iModel.freezeTestOff();
-    				con.model.notifySubscribers();					
+                   // con.state = con.NOTREADY;
+                   // con.iModel.freezeTestOff();
+    				//con.model.notifySubscribers();					
     				//con.model.showTaskStage();									
-    				close();
+    				//close();
         		}else if ((con.iModel.task == con.iModel.SHAPE_DETECTION_TASK)) {
         			//get result from shape toggle group        			
         			RadioButton toolGroupResult = (RadioButton) shapeGroup.getSelectedToggle();
@@ -240,11 +254,11 @@ public class FreezeQuiz extends Stage{
     				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
                     System.out.println(userInput);	                               
             		
-                    con.state = con.NOTREADY;
-                    con.iModel.freezeTestOff();
-    				con.model.notifySubscribers();					
+                   // con.state = con.NOTREADY;
+                   // con.iModel.freezeTestOff();
+    				//con.model.notifySubscribers();					
     				//con.model.showTaskStage();									
-    				close();
+    				//close();
         		}else {        			
             	
             	userInput = "User selected region "+selectedField+"\n"+
@@ -277,13 +291,16 @@ public class FreezeQuiz extends Stage{
         		}
 				CreateFile log = new CreateFile(userInput, fileName);
                 System.out.println(userInput);	                               
-        		
-                con.state = con.NOTREADY;
+        		}
+                //send msg to user 1 so that they can continue their task
+                con.state = con.CLOSE_PROMPT_FOR_SHAPE;
                 con.iModel.freezeTestOff();
 				con.model.notifySubscribers();					
-				//con.model.showTaskStage();									
+				//con.model.showTaskStage();	
+				FTT.startTime = FTTstartTimeCopy +(System.currentTimeMillis()-quizStartTime);
+				FTT.timeIncrement = FTTincrementCopy;
 				close();
-            }
+            
             }
        });
        root.getChildren().add(submit);

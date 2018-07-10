@@ -1,7 +1,7 @@
 package test;
 
-
 import javafx.application.Application;
+
 
 //import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton ;
@@ -47,60 +47,41 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField ;
 
-
-public class TaskCompleteStage extends Stage{
+public class DoneTrainingStage extends Stage{
 	
 	private Draw2Controller controller;
+	private FreezeTestInstructions prepStage;	
 	
-	public TaskCompleteStage(Draw2Controller c) {
+	public DoneTrainingStage(Draw2Controller c, FreezeTestInstructions lastStage) {
 		controller = c;
-	      setTitle("Task Complete");
-	      //set the size of the window here
-	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
-	      HBox root5 = new HBox();
+		prepStage = lastStage;
+		
+		setTitle("Training Terminal");	      
 	      VBox root = new VBox();	        	     
+	      
 	        int SceneWidth = javaServer.LaunchServer.SceneWidth; 
 	        int SceneHeight = javaServer.LaunchServer.SceneHeight;
 	      Scene scene = new Scene(root,SceneWidth,SceneHeight);
 	      
-	      Text instructions = new Text("Congratulations!!"+"\n"+
-	      "The task was successfully"+"\n"+  
-	      	    		  "completed!"+"\n"+
-	    		  "Please press the Okay button to continue");
-	      instructions.setFont(Font.font ("Verdana", 40));
-	      instructions.setFill(Color.BLACK); 
-	      root.getChildren().add(instructions);
-	      root.getChildren().add(root5);
-	      
-	      Text timer = new Text("0");
-	      timer.setFont(Font.font ("Verdana", 20));
-	      timer.setFill(Color.GREEN); 	     	      
-	      Button okay = new Button("Okay");
-	      okay.setOnAction(new EventHandler<ActionEvent>() {
+	      Button done = new Button("Completed Training");
+	      done.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {
-	        	   System.out.println("okay!!");        	   	        	   
-	        	   //send message over network to hide user1's instruction stage
-	        	   controller.state = controller.NOTREADY;
-	        	   controller.taskRunning = false;
-	        	   controller.drawViewPort =true;
-	        	   controller.iModel.task = -1;
-	        	   controller.view.setImageForFreezeTest();
-	        	   controller.model.resetModel();
-	        	   controller.view.resetView();
-	        	   controller.radarView.resetView();
-	        	   controller.model.showTaskStage();
-	        	   controller.model.notifySubscribers();
+	        	   //change super state 
+	        	   controller.superState = controller.SOUNDS_OVER_NETWORK;
+	        	   //open instructions window
+	        	   prepStage.show();
+	        	   //close this window
 	        	   close();
 	           }
 	      });
-	      root5.getChildren().add(okay);
-	      //root5.getChildren().add(timer);
-	      
-	      root5.requestFocus();
+	      done.setPrefHeight(SceneHeight);
+	      done.setPrefWidth(SceneWidth);
+	      root.getChildren().add(done);
 	      setScene(scene);
-	      setX(0);
+	      setX(800);
 	      setY(0);
-	      show();  
-	      
+	      show(); 
 	}
+	
+	
 }

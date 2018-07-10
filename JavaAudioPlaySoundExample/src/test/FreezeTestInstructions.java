@@ -2,6 +2,7 @@ package test;
 
 import javafx.application.Application;
 
+
 //import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ToggleButton ;
 import javafx.scene.control.Toggle;
@@ -65,8 +66,16 @@ public class FreezeTestInstructions extends Stage{
 	      
 	      //set text for regular freeze test
 	      Text instructions = new Text("FreezeTest is about to start"+"\n"+
-	      "Until promted to stop, please trace the all the shapes you can find in the workspace as fast as possible"+"\n"+
-	    		  "Work with the other user to achieve this goal"+"\n"+
+	      "Until promted to stop, please trace the all the shapes"+"\n"+"you can find in the workspace"+"\n"+
+	      "Only trace each shape once!"+"\n"+
+	      "Work with the other user to achieve this goal"+"\n"+"\n"+
+		  "Trace the triangles with the pencil"+"\n"+
+		  "Trace the squares with the nail"+"\n"+
+		  "Trace the squiggles with the chalk"+"\n"+
+		  "Erase the circles with the eraser"+"\n"+		  
+		  "Do not worry if you end up " +"\n"+
+		  "tracing the wrong shape with the wrong tool"+"\n"+
+		  "\n"+		  	    		  
 	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+
 	    		  "please press the ready button when you are ready to begin");
 	      //change text for location task
@@ -89,6 +98,7 @@ public class FreezeTestInstructions extends Stage{
 	    		    "The squiggles with the chalk"+"\n"+
 	    		    "And erasing the circles with the eraser"+"\n"+	    		    
 		    		  "please press the ready button when you are ready to begin");
+	    	  
 	      }
 	      //change text for shape identification task
 	      if (controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
@@ -126,6 +136,21 @@ public class FreezeTestInstructions extends Stage{
 	        	   controller.view.drawBorder();	        	   
 	           }
 	      });
+	      if (controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
+	    	  Button goToTraining = new Button("Go to training");
+		      goToTraining.setOnAction(new EventHandler<ActionEvent>() {
+		           public void handle(ActionEvent event) {
+		        	   //change super state 
+		        	   controller.superState = controller.SOUNDS_LOCAL;
+		        	   //add a window with a done training button
+		        	   new DoneTrainingStage(controller, me);
+		        	   //close this window
+		        	   hide();
+		           }
+		      });
+		      root5.getChildren().add(goToTraining);
+		           }
+	      
 	      root5.getChildren().add(ready);	     
 	      
 	      root5.requestFocus();
@@ -148,5 +173,7 @@ public class FreezeTestInstructions extends Stage{
 		    }
 		});
 	}
+	
+
 	
 }

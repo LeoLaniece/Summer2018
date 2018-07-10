@@ -18,6 +18,7 @@ public class ServerListener extends ClientListener {
 	
 	@Override 
 	public void modelChanged() {					
+		if (controller.superState == controller.SOUNDS_OVER_NETWORK) {
 	//public synchronized void pathThreadchanged() {
 		try {
 			//send transaction over
@@ -28,6 +29,22 @@ public class ServerListener extends ClientListener {
 			msg.add(Integer.toString(controller.state)+"\n");			
 			
 			if (controller.state == controller.READ_AND_OBSERVE) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
+			if (controller.state == controller.PAUSE_UNTIL_QUIZ_COMPLETE) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
+			if (controller.state == controller.CLOSE_PROMPT_FOR_SHAPE) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
@@ -168,6 +185,7 @@ public class ServerListener extends ClientListener {
 			}
 		
 		}	
+	}
 	}
 
 

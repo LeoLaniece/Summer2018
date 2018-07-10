@@ -95,16 +95,27 @@ public DrawingClient(String [] args) {
      			//System.out.println("state is read and observe");
      			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
+     			controller.view.drawBorder();
      		}
      		
      		if (serverState == controller.FREEZE_TEST_TASK) {
      			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
      			System.out.println("server task "+serverTask);
+     			if (serverTask == model.iModel.REAL_FREEZE_TEST) {
+     				model.iModel.task = serverTask;
+     			}
      			if (serverTask == model.iModel.LOCATION_IDENTIFICATION_TASK) {
      				model.iModel.task = serverTask;
      			}
     			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
+     			controller.view.drawBorder();
+     		}
+     		
+     		if (serverState == controller.CLOSE_PROMPT_FOR_SHAPE) {     		
+     			if (model.instructions!= null) {
+     				model.instructions.submit();
+     			}     			
      		}
      		
      		if (serverState == controller.CLOSE_INSTRUCTIONS) {
@@ -141,6 +152,11 @@ public DrawingClient(String [] args) {
      		if (serverState == controller.PROMPT_FOR_SHAPE) {
      			System.out.println("got prompted to shape !");
         		 model.updateInstructionsStage();     			
+     		}
+     		
+     		if (serverState == controller.PAUSE_UNTIL_QUIZ_COMPLETE) {
+     			System.out.println("pause until quiz cmplete !");
+        		 model.showPauseStage();     			
      		}
          	 
          	 //if server is panning move all paths by...

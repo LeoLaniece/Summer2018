@@ -46,8 +46,13 @@ public class Draw2Controller {
 	//velocityItems
 	//Coordinate[] points;
 	
+	//superStates	
+	public int SOUNDS_OVER_NETWORK = 0;
+	public int SOUNDS_LOCAL = 1;
+	public int superState = SOUNDS_OVER_NETWORK;
+			
 	//STATES
-	public int READY = 0;
+	public int READY = 0;	
 	public int PAN_READY = 1;
 	public int NOTREADY =-1;
 	public int FREEZE = 2;
@@ -55,8 +60,10 @@ public class Draw2Controller {
 	public int CLOSE_INSTRUCTIONS = 4;
 	public int FREEZE_TEST_TASK =5;
 	public int PROMPT_FOR_SHAPE = 6;
+	public int CLOSE_PROMPT_FOR_SHAPE = 9;
 	public int READY_TO_BEGIN_TASK = 7;
 	public int PLAY_IMPACT = 8;
+	public int PAUSE_UNTIL_QUIZ_COMPLETE = 10;
 	public int state = NOTREADY;
 	long time;
 	long velocityTime;
@@ -99,7 +106,7 @@ public class Draw2Controller {
 						iModel.freezeTestOn();
 						//launch a pop up window requesting for the location of the other user and his activity?
 						//need to pass in the location of other user's viewPort
-						fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());						
+						//fr = new FreezeQuiz(me, radarView.calculateNetViewPortCenter());						
 					}																	
 				}
 				//for logging purposes
@@ -292,11 +299,11 @@ public class Draw2Controller {
         	//relativize the mouse coordinates, do same as for start path
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
 
-        	
-			//model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
-			//		mouseCoordinates.get(mouseCoordinates.size()-1),  
-			//		clipDuration, clipStaggerIncrement);
-        	
+        	if (superState == SOUNDS_LOCAL) {
+			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
+					mouseCoordinates.get(mouseCoordinates.size()-1),  
+					clipDuration, clipStaggerIncrement);
+        	}
         	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
         	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
         	}
@@ -338,10 +345,14 @@ public class Draw2Controller {
             	
             //	model.playStaggeredSoundThreads(System.currentTimeMillis()-time, velocities, mouseCoordinates);
             	
-            	
+    
+            		
             	distanceTraveled = 0;            	
             	model.pathToNull();
-            	//model.stopSoundGenerator();
+            	if (superState == SOUNDS_LOCAL) {
+            		model.stopSoundGenerator();
+            	}
+            	
             	model.notifySubscribers();
             	mouseCoordinates=new ArrayList<Coordinate>();
             	}
@@ -419,7 +430,11 @@ public class Draw2Controller {
             	y = dy;
             	// keep lines within rectangle
 
-                if (view.c.getBoundsInLocal().contains(me.getX()+model.path.getStrokeWidth(), me.getY()+model.path.getStrokeWidth())) {
+                if (view.c.getBoundsInLocal().contains(me.getX()
+                		//+model.path.getStrokeWidth()
+                		, me.getY()
+                		//+model.path.getStrokeWidth()
+                		)) {
                 	
                 	//create new path in the controller
                 	
@@ -429,9 +444,10 @@ public class Draw2Controller {
             //				velocities.get(velocities.size()-1).x = 10;
             //			}
             	//	}
-            		
-            	//	model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
-            	//	model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+                	if (superState == SOUNDS_LOCAL) {
+            		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
+            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+                	}
             	//	model.updateSoundGeneratorPathAngle();
             	//	time = System.currentTimeMillis();
             		
@@ -547,6 +563,7 @@ public class Draw2Controller {
 	   
 	   public void startTask1() {		   		   
 			state = FREEZE_TEST_TASK;
+			iModel.task = iModel.REAL_FREEZE_TEST;
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);

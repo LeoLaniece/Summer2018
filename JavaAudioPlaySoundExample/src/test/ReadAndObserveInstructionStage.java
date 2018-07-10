@@ -59,6 +59,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 	VBox radioButtons = null;
 	Text timer;
 	ReadAndObserveInstructionStage me = this;
+	private Draw2Model model;
 
 	public ReadAndObserveInstructionStage(InteractionModel iModel) {
 	      setTitle("read and observe stage!");
@@ -92,22 +93,23 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      if (iModel.task == iModel.REAL_FREEZE_TEST) {
 	    	  instructions = new Text("A task is about to start"+"\n"+
 	    		      "Until notified, please"+"\n"+
-	    			  "trace the all the shapes you can find in the workspace ss fast as possible"+"\n"+	
-	    		      "Work with the other user to achieve this goal!"+"\n"+
+	    			  "trace the all the shapes you can find in the workspace"+"\n"+
+	    			  "Only trace each shape once!"+"\n"+
+	    		      "Work with the other user to achieve this goal!"+"\n"+"\n"+
 		    		  "Trace the triangles with the pencil"+"\n"+
 		    		  "Trace the squares with the nail"+"\n"+
 		    		  "Trace the squiggles with the chalk"+"\n"+
 		    		  "Erase the circles with the eraser"+"\n"+
 		    		  "Do not worry if you end up " +"\n"+
 		    		  "tracing the wrong shape with the wrong tool"+"\n"+
-		    		  "Just do your best!"+"\n"+
+		    		  "Just do your best!"+"\n"+"\n"+
 		    		  "please begin drawing when the workspace appears"); 
 	      }
 	      
 	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
 	      root.getChildren().add(instructions);	   
-	      root.setAlignment(Pos.BASELINE_LEFT);
+	      root.setAlignment(Pos.CENTER);
 	      
 	      root.requestFocus();
 	      setScene(scene);
@@ -116,7 +118,8 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      show();  	      
 	}
 	
-	public void showShapeQuestions(Draw2Model model) {		
+	public void showShapeQuestions(Draw2Model model) {
+		this.model = model;
 		//everytime this is called, i want a file to be created!
 		//if the user has not hit submit, create an empty file before resetting everything.
 		
@@ -144,9 +147,12 @@ public class ReadAndObserveInstructionStage extends Stage{
           RadioButton sgrb3 = new RadioButton("Tracing the shape of a squiggle");
           sgrb3.setToggleGroup(shapeGroup);
           
-          RadioButton sgrb4 = new RadioButton("Filling in a circle");
+          RadioButton sgrb4 = new RadioButton("Erasing a circle");
           sgrb4.setToggleGroup(shapeGroup);
-          shapeGroup.selectToggle(sgrb3);
+          
+          RadioButton sgrb5 = new RadioButton("can't remember");
+          sgrb5.setToggleGroup(shapeGroup);
+          shapeGroup.selectToggle(sgrb5);
           
           radioButtons.getChildren().addAll(sgrb1,sgrb2,sgrb3,sgrb4);        
           root.getChildren().add(radioButtons);
@@ -164,22 +170,23 @@ public class ReadAndObserveInstructionStage extends Stage{
    				root.getChildren().remove(radioButtons);
    				radioButtons = null;
    				//timer = null;
-   		        instructions.setText("A task is about to start"+"\n"+
-   		 	      "Until this pop-up window closes, please"+"\n"+"trace the all the shapes you can find in the workspace"+"\n"+
-   		 	    		  "please begin as soon as possible");
+   		        instructions.setText("The other user is completing a short questionaire"+"\n"+
+   			 	      "Please wait until this window automatically closes"+"\n"+
+   			 	    		  "This window will close when the other user is ready to begin");
    		 	      instructions.setFont(Font.font ("Verdana", 20));
    		 	      instructions.setFill(Color.BLACK);   		 	      
    				CreateFile x = new CreateFile("User1 selected "+groupResultString,"User 1 freeze test shape claim");
-   				hide();
+   				//hide();   				
+   				
                }
           }); 
           
           timer = new Text("30");
           long startTime = System.currentTimeMillis();
-          TimeWidget t = new TimeWidget(startTime,timer,me);
-          t.start();
+          //TimeWidget t = new TimeWidget(startTime,timer,me);
+         // t.start();
           HBox submitTimer = new HBox();
-          submitTimer.getChildren().addAll(submit,timer);
+          submitTimer.getChildren().addAll(submit);
           radioButtons.getChildren().add(submitTimer);
 	      
           
@@ -204,6 +211,42 @@ public class ReadAndObserveInstructionStage extends Stage{
 		});
 	}
 	
+	public void submit() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {			
+		if (radioButtons!= null) {
+       	RadioButton groupResult = (RadioButton) shapeGroup.getSelectedToggle();
+			String groupResultString = groupResult.getText();
+			System.out.println("user 1 result "+groupResultString);
+			model.user1FreezeQuestionResult += groupResultString+"\n";   				
+			
+			//close and remove current bullets and submit button
+			root.getChildren().remove(radioButtons);
+			radioButtons = null;
+			CreateFile x = new CreateFile("User1 selected "+groupResultString,"User 1 freeze test shape claim");
+		}
+		hide();
+		
+		    }
+		});
+	}
+	public void pauseForQuiz() {
+		Platform.runLater(new Runnable() {
+		    @Override
+		        public void run() {	
+		    	show();
+			root.getChildren().remove(radioButtons);
+			radioButtons = null;
+			//timer = null;
+	        instructions.setText("The other user is completing a short questionaire"+"\n"+
+	 	      "Please wait until this window automatically closes"+"\n"+
+	 	    		  "This window will close when the other user is ready to begin");
+	 	      instructions.setFont(Font.font ("Verdana", 20));
+	 	      instructions.setFill(Color.BLACK);
+		    }
+		});
+	}
 	}
 	
 	

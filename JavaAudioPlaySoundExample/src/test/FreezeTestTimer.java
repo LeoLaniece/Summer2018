@@ -18,7 +18,8 @@ public class FreezeTestTimer extends Thread{
 	private Draw2Controller controller;
 	public boolean inloop = true;
 	public FreezeTestInstructions stage;
-	public int timeIncrement = 30000;
+	public int timeIncrement = 10000;
+	public FreezeTestTimer me = this;
 	
 	public FreezeTestTimer(long startTime, Draw2Controller con, FreezeTestInstructions stage) {
 		//this.timer = timer;
@@ -28,13 +29,13 @@ public class FreezeTestTimer extends Thread{
 		if (controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK
 				|| controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK
 				|| controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
-			timeIncrement = 15000;
+			timeIncrement = 10000;
 		}
 	}
 	
 	@Override
 	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 59999) {
+		while ((System.currentTimeMillis() - startTime) < 29999) {
 			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
 			if ((System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
 				//System.out.println("modulus 10000!!");
@@ -50,15 +51,17 @@ public class FreezeTestTimer extends Thread{
 					        public void run() {	
 					    	if ((System.currentTimeMillis() - startTime)> timeIncrement) {
 					    	FreezeQuiz fr ;	
-					    	fr = new FreezeQuiz(controller, controller.radarView.calculateNetViewPortCenter());
+					    	fr = new FreezeQuiz(controller, controller.radarView.getLastKnownCoordinate(), me);					    	
 					    	}					    	
 					    }
 					});
 					if (!(controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK)
 							&&!(controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK)) {
-						controller.state = controller.PROMPT_FOR_SHAPE;	
-						controller.model.notifySubscribers();
-					}					
+						controller.state = controller.PROMPT_FOR_SHAPE;							
+					}else {
+						controller.state = controller.PAUSE_UNTIL_QUIZ_COMPLETE;
+					}
+					controller.model.notifySubscribers();
 			}
 		}
 	      stage.closeStage();

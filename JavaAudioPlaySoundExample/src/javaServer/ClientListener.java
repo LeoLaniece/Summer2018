@@ -24,6 +24,7 @@ public class ClientListener implements modelListener{
 	
 	@Override
 	public synchronized void modelChanged() {
+		if (controller.superState == controller.SOUNDS_OVER_NETWORK) {
 		try {
 			//send transaction over
 		//out.writeUTF(Boolean.toString(model.netTransaction));
@@ -35,6 +36,22 @@ public class ClientListener implements modelListener{
 			msg.add(Integer.toString(controller.state)+"\n");
 
 			if (controller.state == controller.READ_AND_OBSERVE) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
+			if (controller.state == controller.PAUSE_UNTIL_QUIZ_COMPLETE) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
+			if (controller.state == controller.CLOSE_PROMPT_FOR_SHAPE) {				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
@@ -167,7 +184,7 @@ public class ClientListener implements modelListener{
 			}
 		
 		}	
-		
+	}
 	}
 	
 

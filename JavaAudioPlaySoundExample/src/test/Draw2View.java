@@ -75,7 +75,7 @@ public class Draw2View extends Pane implements modelListener{
 		
 		topPane = new Pane();
 		
-		setCanvas(logicalHeight,logicalWidth);
+		setCanvas();
 		setLineGroup();     
 		mainViewOnly();
 	}
@@ -113,7 +113,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 
 	
-	public void setCanvas(double h, double w) {
+	public void setCanvas() {
 		c = new Canvas(width,height);
 		gc = c.getGraphicsContext2D();
 		gc.setFill(Color.WHITE);
@@ -132,10 +132,19 @@ public class Draw2View extends Pane implements modelListener{
 		UCLeft.getChildren().add(stackpane);		
 		UCLeft.getChildren().add(model.strokeSlider);
 		UCLeft.getChildren().add(model.btnClear);
-		UCLeft.getChildren().add(model.btnPencil);
-		UCLeft.getChildren().add(model.btnMetal);
-		UCLeft.getChildren().add(model.btnChalk);
-		UCLeft.getChildren().add(model.btnEraser);		
+		
+		HBox h1 = new HBox();		
+		h1.getChildren().addAll(model.btnPencil, model.triangle);		
+		UCLeft.getChildren().add(h1);
+		HBox h2 = new HBox();		
+		h2.getChildren().addAll(model.btnMetal, model.square);		
+		UCLeft.getChildren().add(h2);
+		HBox h3 = new HBox();		
+		h3.getChildren().addAll(model.btnChalk, model.squiggle);		
+		UCLeft.getChildren().add(h3);
+		HBox h4 = new HBox();		
+		h4.getChildren().addAll(model.btnEraser, model.circle);		
+		UCLeft.getChildren().add(h4);				
 		UCRight.getChildren().add(model.colorLabel);
 	}
 	
@@ -337,10 +346,18 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	
 	public void drawPath() {
+		
 		synchronized (model.getModelPaths()) {
+			
 		if (model.getModelPaths().size()>0) {		
 		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+			
+			//modelPaths size changes when you begin drawing the network path! how to adjust/change this?
+			//could change from size -1 to size -2 if netPath is alive?(2 cases)
+			//or put the net path as the 2nd last element in model paths
+			
 		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {
+			System.out.println("drawing path");
 			addToPath();
 		}else if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() ==2){
 			gc.beginPath();
@@ -415,9 +432,6 @@ public class Draw2View extends Pane implements modelListener{
 		}
 		}
 	}
-	
-	
-	
 	
 	public void setController(Draw2Controller c) {
 		controller = c;

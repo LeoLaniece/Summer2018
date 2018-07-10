@@ -125,7 +125,17 @@ public class LoadImage extends Application {
 	              primaryStage.close();	               
 	           }
 	      });
-	      sp.getChildren().add(task2);
+	      
+	      
+	        File square = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\basic-square-outline.JPG");        
+	        Image img = new Image(square.toURI().toString(), 20, 20, false, false);
+	        // simple displays ImageView the image as is
+	        ImageView iv1 = new ImageView();
+	        iv1.setImage(img);
+	        Label label3 = new Label("", iv1);
+	        
+	      
+	      sp.getChildren().add(label3);
         
         //Adding HBox to the scene
         Scene scene = new Scene(sp);

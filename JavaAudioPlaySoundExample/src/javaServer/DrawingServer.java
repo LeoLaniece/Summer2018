@@ -90,6 +90,7 @@ public void run() {
      		if (clientState == controller.READ_AND_OBSERVE) {     			
      			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
+     			controller.view.drawBorder();
      		}
      		
      		if (clientState == controller.FREEZE_TEST_TASK) {
@@ -100,6 +101,13 @@ public void run() {
      			}
     			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
+     			controller.view.drawBorder();
+     		}
+     		
+     		if (clientState == controller.CLOSE_PROMPT_FOR_SHAPE) {     		
+     			if (model.instructions!= null) {
+     				model.instructions.submit();
+     			}     			
      		}
      		
      		//close instructions
@@ -136,6 +144,11 @@ public void run() {
      		if (clientState == controller.PROMPT_FOR_SHAPE) {
      			 System.out.println("got prompted to shape !");
         		 model.updateInstructionsStage();     			
+     		}
+     		
+     		if (clientState == controller.PAUSE_UNTIL_QUIZ_COMPLETE) {
+     			System.out.println("pause until quiz cmplete !");
+        		 model.showPauseStage();     			
      		}
         	 
         	 if (clientState == controller.PAN_READY) {
@@ -211,6 +224,7 @@ public void run() {
          		
         	 }        	 
         	 if (isNetPathAlive == false) {
+        		 //model.radarView.getLastKnownCoordinate();
         		 model.netWorkPath = null;        		 
         		 model.stopSoundGenerator();  
         		 //log user 1 activity here
@@ -242,7 +256,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-    /*  
+    //*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

@@ -51,6 +51,11 @@ public class Draw2Model {
     Button btnMetal;
     Button btnChalk;
     Button btnEraser;    
+    Label square;
+    Label triangle;
+    Label squiggle;
+    Label circle;
+    
     public String user1FreezeQuestionResult = "";
     
     public ViewPortDisplacementSound VPDS;
@@ -129,6 +134,7 @@ public class Draw2Model {
         });    	
     	
     	setUpStrokeObjectButtons();
+    	setUpShapeLabels();
     	
     	strokeSlider = new Slider(MINSTROKE, MAXSTROKE, DEFAULTSTROKE);
     	labelStroke = new Label("Stroke Width");
@@ -163,7 +169,8 @@ public class Draw2Model {
         // simple displays ImageView the image as is
         ImageView iv1 = new ImageView();
         iv1.setImage(image);
-        btnPencil.setGraphic(iv1);
+        btnPencil.setGraphic(iv1);        
+        
     	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
             	setPencilTimbre();
@@ -175,7 +182,7 @@ public class Draw2Model {
             	notifySubscribers();
             }
         });    	
-    	btnMetal = new Button("Metal");
+    	btnMetal = new Button("Nail");
     	//add metal picture    	
     	File f2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\nail.png");        
         Image nail = new Image(f2.toURI().toString(), 20, 20, false, false);
@@ -232,6 +239,40 @@ public class Draw2Model {
             	notifySubscribers();
             }
         });    	    	
+    }
+    
+    public void setUpShapeLabels() {
+        //ADD this to an HBox beside the button.
+        File square = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\basic-square-outline.JPG");        
+        Image img = new Image(square.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv1 = new ImageView();
+        iv1.setImage(img);
+        this.square = new Label("", iv1);
+        
+        //ADD this to an HBox beside the button.
+        File triangle = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\triangle-outline.png");        
+        Image img2 = new Image(triangle.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv2 = new ImageView();
+        iv2.setImage(img2);
+        this.triangle = new Label("", iv2);
+        
+        //ADD this to an HBox beside the button.
+        File squiggle = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\squiggle.JPG");        
+        Image img3 = new Image(squiggle.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv3 = new ImageView();
+        iv3.setImage(img3);
+        this.squiggle = new Label("", iv3);
+        
+        //ADD this to an HBox beside the button.
+        File circle = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\circle.png");        
+        Image img4 = new Image(circle.toURI().toString(), 20, 20, false, false);
+        // simple displays ImageView the image as is
+        ImageView iv4 = new ImageView();
+        iv4.setImage(img4);
+        this.circle = new Label("", iv4);
     }
     
     public void setTimbre(int t) {
@@ -677,25 +718,65 @@ public class Draw2Model {
 		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
-	    modelPathsCoordinates.add(new Coordinate(points[0], points[1]));    
+		synchronized (getModelPaths()){
+			if ((getModelPaths().size() > 1)){
+				//make all model path things as 2nd last 	
+			    modelPathsCoordinates.add(new Coordinate(points[0], points[1])); 
+			    modelPathsCoordinates.add(modelPathsCoordinates.get(modelPathsCoordinates.size()-2));
+			    modelPathsCoordinates.remove(modelPathsCoordinates.size()-3);
+			    netPathCoordinate = modelPathsCoordinates.get(modelPathsCoordinates.size()-1);
+			    
+			    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));  
+			    iModel.modelPathsTranslateByCoordinates.add(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-2));
+			    iModel.modelPathsTranslateByCoordinates.remove(iModel.modelPathsTranslateByCoordinates.size()-3);
+			    
+			    netPathTranslateByCoordinate = iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1);
+			    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
+			    iModel.viewPortXYLocation.add(iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-2));
+			    iModel.viewPortXYLocation.remove(iModel.viewPortXYLocation.size()-3);
+			    
+			    netPathViewPortXYLocation = iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1);	    
+			   
+			    	  getModelPaths().add(netWorkPath);
+			    	  getModelPaths().add(getModelPaths().get(getModelPaths().size()-2));
+			    	  getModelPaths().remove(getModelPaths().size()-3);
+			    	   	    
+			}else {
+			//make all model path things as 2nd last 	
+	    modelPathsCoordinates.add(new Coordinate(points[0], points[1])); 
+	   // modelPathsCoordinates.add(modelPathsCoordinates.get(modelPathsCoordinates.size()-2));	    
 	    netPathCoordinate = modelPathsCoordinates.get(modelPathsCoordinates.size()-1);
+	    
 	    iModel.modelPathsTranslateByCoordinates.add(new Coordinate(0,0));  
+	    //iModel.modelPathsTranslateByCoordinates.add(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-2));
+	    
 	    netPathTranslateByCoordinate = iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1);
 	    iModel.viewPortXYLocation.add(new Coordinate(iModel.viewPortX, iModel.viewPortY));
+	    //iModel.viewPortXYLocation.add(iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-2));
 	    netPathViewPortXYLocation = iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1);	    
 	    
-	    getModelPaths().add(netWorkPath); 
+	    	  getModelPaths().add(netWorkPath);
+	    	 // getModelPaths().add(getModelPaths().get(getModelPaths().size()-2));
+	    	   	    
+		}
+		}
+		
+		
 	    //notifySubscribers();
 	    //replace with drawNetPath!
 	    view.drawNetPath();
-	    radarView.modelChanged();
+	    radarView.drawNetPath();
+	    if (iModel.freezeTest) {
+	    	radarView.paintOverPaths();
+	    }
 	}
 	
 	public void updateNewPathFromNetwork(double[] points) {
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));	
 		//replace with drawNetPath!
 	    view.drawNetPath();
-	    radarView.modelChanged();
+	    radarView.drawNetPath();
+	    
 	}
 	
 	public synchronized Path getNetWorkPath() {
@@ -764,6 +845,10 @@ public class Draw2Model {
 		instructions.showShapeQuestions(this);
 	}
 	
+	public void showPauseStage() {
+		instructions.pauseForQuiz();		
+	}
+	
 	public void createFileForFreezeTest() {
 		CreateFile x = new CreateFile(user1FreezeQuestionResult, "FreezeTest User 1 shape log");
 		user1FreezeQuestionResult = "";
@@ -786,13 +871,13 @@ public class Draw2Model {
 	}
 	
 	
-	
+	public FreezeTestInstructions freezeTestInstructionsStage =null;
 	public void launchFreezeTestIntructions(Draw2Controller c) {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {	
-		FreezeTestInstructions s = new FreezeTestInstructions(c);
-		s.show();
+		    	freezeTestInstructionsStage= new FreezeTestInstructions(c);
+		    	freezeTestInstructionsStage.show();
 		    }
 		});
 		
