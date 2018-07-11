@@ -96,9 +96,9 @@ public class FreezeTestInstructions extends Stage{
 	    		    "They will be tracing the triangles with the pencil"+"\n"+
 	    		    "The squares with the nail"+"\n"+
 	    		    "The squiggles with the chalk"+"\n"+
-	    		    "And erasing the circles with the eraser"+"\n"+	    		    
-		    		  "please press the ready button when you are ready to begin");
-	    	  
+	    		    "And erasing the circles with the eraser"+"\n"+"\n"+	  		    
+	    		    "To familiarize yourself with the tool sounds, please press the Go to training button"+"\n"+	   		    	    		    
+		    		  "When you are ready, please press the ready button ");	    	  
 	      }
 	      //change text for shape identification task
 	      if (controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
@@ -124,11 +124,12 @@ public class FreezeTestInstructions extends Stage{
 	      timer.setFill(Color.GREEN); 	     	      
 	      Button ready = new Button("ready");
 	      ready.setOnAction(new EventHandler<ActionEvent>() {
-	           public void handle(ActionEvent event) {
-	        	   System.out.println("ready!!");
-	        	   long startTime = System.currentTimeMillis();	        	   
-	        	   FreezeTestTimer x = new FreezeTestTimer(startTime,controller, me);
+	           public void handle(ActionEvent event) {	        	   
+	        	  // long startTime = System.currentTimeMillis();	 
+	        	   //problem here, the timer launches pause stages when i do not want to see them
+	        	   FreezeTestTimer x = new FreezeTestTimer(controller, me);
 	        	   x.start();
+	        	   
 	        	   //send message over network to hide user1's instruction stage
 	        	   controller.state = controller.READY_TO_BEGIN_TASK;	        	   
 	        	   controller.model.notifySubscribers();
@@ -136,7 +137,8 @@ public class FreezeTestInstructions extends Stage{
 	        	   controller.view.drawBorder();	        	   
 	           }
 	      });
-	      if (controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
+	      if (controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK
+	    		  || controller.iModel.task == controller.iModel.REAL_FREEZE_TEST) {
 	    	  Button goToTraining = new Button("Go to training");
 		      goToTraining.setOnAction(new EventHandler<ActionEvent>() {
 		           public void handle(ActionEvent event) {

@@ -872,10 +872,14 @@ public class Draw2Model {
 	
 	
 	public FreezeTestInstructions freezeTestInstructionsStage =null;
+	
 	public void launchFreezeTestIntructions(Draw2Controller c) {
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {	
+		    	if (freezeTestInstructionsStage != null) {
+		    		freezeTestInstructionsStage = null;
+		    	}
 		    	freezeTestInstructionsStage= new FreezeTestInstructions(c);
 		    	freezeTestInstructionsStage.show();
 		    }

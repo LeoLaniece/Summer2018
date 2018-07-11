@@ -20,10 +20,11 @@ public class FreezeTestTimer extends Thread{
 	public FreezeTestInstructions stage;
 	public int timeIncrement = 10000;
 	public FreezeTestTimer me = this;
+	public FreezeQuiz fr = null;
 	
-	public FreezeTestTimer(long startTime, Draw2Controller con, FreezeTestInstructions stage) {
+	public FreezeTestTimer(Draw2Controller con, FreezeTestInstructions stage) {
 		//this.timer = timer;
-		this.startTime = startTime;	
+		this.startTime = System.currentTimeMillis();	
 		controller = con;		
 		this.stage = stage;
 		if (controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK
@@ -31,14 +32,16 @@ public class FreezeTestTimer extends Thread{
 				|| controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
 			timeIncrement = 10000;
 		}
+		//this.start();
+		
 	}
 	
 	@Override
-	public void run() {
-		while ((System.currentTimeMillis() - startTime) < 29999) {
-			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));
-			if ((System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
-				//System.out.println("modulus 10000!!");
+	public void run() {		
+		
+		while ((System.currentTimeMillis() - startTime) < 5999) {
+			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));			
+			if ((System.currentTimeMillis() - startTime) != 0 && (System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
 				startTime-=10;
 				//   controller.state = controller.FREEZE;
 				//   controller.view.paintOverPaths();
@@ -49,8 +52,7 @@ public class FreezeTestTimer extends Thread{
 					Platform.runLater(new Runnable() {
 					    @Override
 					        public void run() {	
-					    	if ((System.currentTimeMillis() - startTime)> timeIncrement) {
-					    	FreezeQuiz fr ;	
+					    	if ((System.currentTimeMillis() - startTime)> timeIncrement) {					    		
 					    	fr = new FreezeQuiz(controller, controller.radarView.getLastKnownCoordinate(), me);					    	
 					    	}					    	
 					    }
