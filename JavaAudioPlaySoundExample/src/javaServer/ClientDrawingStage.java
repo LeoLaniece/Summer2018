@@ -56,6 +56,7 @@ public class ClientDrawingStage extends Stage {
         c.setIModel(iModel);
         view.setController(c);
         radarView.setController(c);
+        model.setController(c);
 
         setScene(scene);
         setX(800);

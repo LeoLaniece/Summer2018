@@ -134,9 +134,9 @@ public class Grain2Files implements Runnable {
 		 strokeTime = sT/1000;
 		 //slow stroke=slowPencil
 		 if (StrokeVelocity < 1) {
-			 soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
+			 soundFile = new File(new File("src\\soundAndImageFiles\\pencilSlow2.WAV").getAbsolutePath());
 		 }else {
-			 soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilFast.WAV");
+			 soundFile = new File(new File("src\\soundAndImageFiles\\metalOnWoodSlow.WAV").getAbsolutePath());
 		 }
 		 run();
 	}
@@ -182,7 +182,7 @@ public class Grain2Files implements Runnable {
 		  
 		  
 	      //set up strokeChange clip
-	      File strokeChange = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
+	      File strokeChange = new File(new File("src\\soundAndImageFiles\\metalOnWoodSlow.WAV").getAbsolutePath());
 	      AudioInputStream audioIn;
 		try {
 			audioIn = AudioSystem.getAudioInputStream(strokeChange);

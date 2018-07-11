@@ -56,7 +56,7 @@ public class Draw2View extends Pane implements modelListener{
 	public Group lineGroup;
 	InteractionModel iModel;
 	public Draw2miniMap radarView;
-    File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\randomScatteredShapes.JPG");        
+    File pencil = new File(new File("src\\soundAndImageFiles\\randomScatteredShapes.JPG").getAbsolutePath());        
     Image image = new Image(pencil.toURI().toString());
     double imageWidth;
     double imageHeight;
@@ -357,7 +357,7 @@ public class Draw2View extends Pane implements modelListener{
 			//or put the net path as the 2nd last element in model paths
 			
 		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {
-			System.out.println("drawing path");
+			
 			addToPath();
 		}else if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() ==2){
 			gc.beginPath();
@@ -437,7 +437,7 @@ public class Draw2View extends Pane implements modelListener{
 		controller = c;
 	}
 	
-	public File mouseCursor = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\mouseCursor.png");        
+	public File mouseCursor =new File(new File("src\\soundAndImageFiles\\mouseCursor.png").getAbsolutePath());       
     public Image mouseImage = new Image(mouseCursor.toURI().toString());
     
 	public void drawMouseCursor(double x, double y) {
@@ -447,7 +447,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	
 	public void setImageForFreezeTest() {
-		File randomShapes = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\randomScatteredShapes.JPG");        
+		File randomShapes = new File(new File("src\\soundAndImageFiles\\randomScatteredShapes.JPG").getAbsolutePath());       
 	    image = new Image(randomShapes.toURI().toString());
 		imageWidth = radarView.width;
 		imageHeight = radarView.height;
@@ -458,7 +458,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	
 	public void setImageForReadAndObserve() {
-		File camelFacts = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\camelFacts.JPG");        
+		File camelFacts = new File(new File("src\\soundAndImageFiles\\camelFacts.JPG").getAbsolutePath());        
 	    image = new Image(camelFacts.toURI().toString());
 		imageWidth = width/2;
 		imageHeight = height/6*7;

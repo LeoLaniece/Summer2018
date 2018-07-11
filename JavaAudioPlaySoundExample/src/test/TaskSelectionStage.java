@@ -112,7 +112,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      Button task7 = new Button("Freeze test, for location identification");
+	      Button task7 = new Button("Preparation for Freeze test, location identification");
 	      task7.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) { 
 	        	   controller.drawViewPort =true;
@@ -121,7 +121,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      Button task8 = new Button("Freeze test, for tool identification");
+	      Button task8 = new Button("Preparation for Freeze test, tool identification");
 	      task8.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {   
 	        	   controller.drawViewPort =true;
@@ -139,7 +139,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      Button task10 = new Button("Freeze test, for location identification, without the minimap!");
+	      Button task10 = new Button("Preparation for Freeze test, location identification, without the minimap!");
 	      task10.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
 	        	   controller.drawViewPort =false;
@@ -148,7 +148,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      Button task11 = new Button("Freeze test, for tool identification, without the minimap!");
+	      Button task11 = new Button("Preparation for Freeze test, tool identification, without the minimap!");
 	      task11.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) { 
 	        	   controller.drawViewPort =false;
@@ -166,7 +166,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      Button task13 = new Button("Freeze test, for shape detection");
+	      Button task13 = new Button("Preparation for Freeze test, shape detection");
 	      task13.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
 	        	   controller.drawViewPort =true;
@@ -175,7 +175,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      Button task14 = new Button("Freeze test, for shape detection, without the minimap!");
+	      Button task14 = new Button("Preparation for Freeze test, shape detection, without the minimap!");
 	      task14.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
 	        	   controller.drawViewPort =false;
@@ -184,7 +184,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      root.getChildren().addAll(task7,task10,task8, task11, task13,task5,task6,task3,task4,task1,task2);
+	      root.getChildren().addAll(task7,task10,task8, task11, task13, task14,task5,task6,task3,task4,task1,task2);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

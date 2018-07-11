@@ -79,7 +79,7 @@ public class MouseTest extends Thread {
        // primaryStage.setScene(scene);
        // primaryStage.show();
         //leo's addition
-		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
+		 File f1 = new File(new File("src\\soundAndImageFiles\\metalOnWoodSlow.WAV").getAbsolutePath());
 		 player = new Grain2Files(f1,f1);
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= player.fileLength(f1)*1000;

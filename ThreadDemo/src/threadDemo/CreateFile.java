@@ -3,6 +3,7 @@ package threadDemo;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 public class CreateFile {
 	
@@ -10,6 +11,10 @@ public class CreateFile {
 	public String fileInfo;
 	
 	public CreateFile(String fileInfo) {
+		
+		//progress
+		//need to figure out how to tell if we are logging from the same task!
+		
 		this.fileInfo =fileInfo;
 		fileCount = 0;		
 		File parentDir = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\logFiles");
@@ -25,6 +30,9 @@ public class CreateFile {
 		try {
 			file.createNewFile();
 			FileWriter writer = new FileWriter(file);
+	        Date date = new Date();
+	        // display time and date using toString()
+	        fileInfo = date.toString()+"\n"+fileInfo;
 			writer.write(fileInfo);
 			writer.close();
 		} catch (IOException e) {

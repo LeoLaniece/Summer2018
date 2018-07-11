@@ -17,7 +17,7 @@ public class ServerListener extends ClientListener {
 	}
 	
 	@Override 
-	public void modelChanged() {					
+	public void modelChanged() {							
 		if (controller.superState == controller.SOUNDS_OVER_NETWORK) {
 	//public synchronized void pathThreadchanged() {
 		try {
@@ -117,6 +117,7 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(fullmsg);
 				msgCount++;
 				System.out.println("msg count "+msgCount);
+				//System.out.println("controller super state "+controller.superState);
 			}
 		
 		if (controller.state ==controller.READY) { 

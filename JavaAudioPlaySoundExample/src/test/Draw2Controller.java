@@ -49,7 +49,7 @@ public class Draw2Controller {
 	//superStates	
 	public int SOUNDS_OVER_NETWORK = 0;
 	public int SOUNDS_LOCAL = 1;
-	public int superState = SOUNDS_OVER_NETWORK;
+	public int superState = SOUNDS_LOCAL;
 			
 	//STATES
 	public int READY = 0;	
@@ -83,7 +83,7 @@ public class Draw2Controller {
 		//timeOfChange = new ArrayList<>();
 		//points = new Coordinate[4];
 		 mouseCoordinates=new ArrayList<Coordinate>();
-		 File f1 = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");	
+		 File f1 = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
 		 clipStaggerIncrement = calculateStaggerIncrement(f1); 
 		 clipDuration= model.player.fileLength(f1)*1000;
      	soundVelocityThread = new MouseTest();

@@ -144,6 +144,7 @@ public class FreezeTestInstructions extends Stage{
 		           public void handle(ActionEvent event) {
 		        	   //change super state 
 		        	   controller.superState = controller.SOUNDS_LOCAL;
+		        	   System.out.println("super state = sounds local");
 		        	   //add a window with a done training button
 		        	   new DoneTrainingStage(controller, me);
 		        	   //close this window

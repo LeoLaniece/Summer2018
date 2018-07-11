@@ -24,6 +24,7 @@ public class ClientListener implements modelListener{
 	
 	@Override
 	public synchronized void modelChanged() {
+		
 		if (controller.superState == controller.SOUNDS_OVER_NETWORK) {
 		try {
 			//send transaction over

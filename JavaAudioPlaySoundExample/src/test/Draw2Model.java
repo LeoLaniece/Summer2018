@@ -68,7 +68,8 @@ public class Draw2Model {
     public ArrayList<Path> modelPaths;
     public ArrayList<Coordinate> modelPathsCoordinates;
     public ArrayList<Coordinate> modelPathsTranslateByCoordinates;
-    public InteractionModel iModel;    
+    public InteractionModel iModel;   
+    public Draw2Controller controller;
     drawPath dP = null;
     
     //eliminate all of this
@@ -91,10 +92,10 @@ public class Draw2Model {
     public int CHALK = 4;
     
     //impact sound files
-    public File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
-    public File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
-    public File chalkTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalkTap.WAV");
-    public File eraserTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserTap.WAV");
+    public File pencilTap = new File(new File("src\\soundAndImageFiles\\pencilTap.WAV").getAbsolutePath());
+    public File metalTap = new File(new File("src\\soundAndImageFiles\\metalTap.WAV").getAbsolutePath());
+    public File chalkTap = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
+    public File eraserTap = new File(new File("src\\soundAndImageFiles\\eraserTap.WAV").getAbsolutePath());
     
     
     public File getImpactSoundFile(int timbre) {
@@ -120,8 +121,8 @@ public class Draw2Model {
     	modelPathsTranslateByCoordinates = new ArrayList<>();
     	path = null;
     	//lineGroup = new Group();
-    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
+    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\pencilImpact.WAV").getAbsolutePath());
     	btnClear = new Button("Clear");
     	btnClear.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
@@ -144,8 +145,8 @@ public class Draw2Model {
         colorLabel = new Label("color: dimgray");
         
         //set up for sound things
-        File soundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow2.WAV");
-        File soundFile2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
+        File soundFile = new File(new File("src\\soundAndImageFiles\\pencilSlow2.WAV").getAbsolutePath());
+        File soundFile2 = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
         player = new Grain2Files(soundFile, soundFile2);
         setNetTimbre(PENCIL);
     }
@@ -164,7 +165,7 @@ public class Draw2Model {
     public void setUpStrokeObjectButtons() {
     	btnPencil = new Button("Pencil");
     	//add pencil picture
-        File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\pencil.png");        
+        File pencil = new File(new File("src\\soundAndImageFiles\\pencil.png").getAbsolutePath());       
         Image image = new Image(pencil.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv1 = new ImageView();
@@ -176,15 +177,17 @@ public class Draw2Model {
             	setPencilTimbre();
             	sampleLine.setStroke(Color.DIMGRAY);  
             	strokeSlider.setValue(3);
-            	File pencilTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilTap.WAV");
-            	//player.playFileClip(pencilTap);
+            	File pencilTap = new File(new File("src\\soundAndImageFiles\\pencilTap.WAV").getAbsolutePath());
+            	if (controller.superState == controller.SOUNDS_LOCAL) {
+            		player.playFileClip(pencilTap);
+            	}            	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
             }
         });    	
     	btnMetal = new Button("Nail");
     	//add metal picture    	
-    	File f2 = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\nail.png");        
+    	File f2 = new File(new File("src\\soundAndImageFiles\\nail.png").getAbsolutePath());        
         Image nail = new Image(f2.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv3 = new ImageView();
@@ -195,15 +198,17 @@ public class Draw2Model {
             	setMetalTimbre();
             	sampleLine.setStroke(Color.SILVER);
             	strokeSlider.setValue(4);
-            	File metalTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalTap.WAV");
-            	//player.playFileClip(metalTap);
+            	File metalTap = new File(new File("src\\soundAndImageFiles\\metalTap.WAV").getAbsolutePath());
+            	if (controller.superState == controller.SOUNDS_LOCAL) {
+            		player.playFileClip(metalTap);
+            	}               	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
             }
         });    	
     	btnChalk = new Button("Chalk");
     	//add eraser picture
-    	File c = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\chalk.png");        
+    	File c = new File(new File("src\\soundAndImageFiles\\chalk.png").getAbsolutePath());        
         Image chalk = new Image(c.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv4 = new ImageView();
@@ -214,15 +219,17 @@ public class Draw2Model {
             	setChalkTimbre();
             	sampleLine.setStroke(Color.ANTIQUEWHITE);
             	strokeSlider.setValue(3);
-            	File chalkTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalkTap.WAV");
-            	//player.playFileClip(chalkTap);
+            	File chalkTap = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
+            	if (controller.superState == controller.SOUNDS_LOCAL) {
+            		player.playFileClip(chalkTap);
+            	}               	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
             }
         });    	
     	btnEraser = new Button("Eraser");
     	//add eraser picture
-    	File f = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\eraser.png");        
+    	File f = new File(new File("src\\soundAndImageFiles\\eraser.png").getAbsolutePath());       
         Image eraser = new Image(f.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv2 = new ImageView();
@@ -233,8 +240,10 @@ public class Draw2Model {
             	setEraserTimbre();
             	sampleLine.setStroke(Color.WHITE);
             	strokeSlider.setValue(30);
-            	File eraserTap = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserTap.WAV");
-            	//player.playFileClip(eraserTap);
+            	File eraserTap = new File(new File("src\\soundAndImageFiles\\eraserTap.WAV").getAbsolutePath());
+            	if (controller.superState == controller.SOUNDS_LOCAL) {
+            		player.playFileClip(eraserTap);
+            	}               	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
             }
@@ -243,7 +252,7 @@ public class Draw2Model {
     
     public void setUpShapeLabels() {
         //ADD this to an HBox beside the button.
-        File square = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\basic-square-outline.JPG");        
+        File square = new File(new File("src\\soundAndImageFiles\\basic-square-outline.JPG").getAbsolutePath());       
         Image img = new Image(square.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv1 = new ImageView();
@@ -251,7 +260,7 @@ public class Draw2Model {
         this.square = new Label("", iv1);
         
         //ADD this to an HBox beside the button.
-        File triangle = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\triangle-outline.png");        
+        File triangle = new File(new File("src\\soundAndImageFiles\\triangle-outline.png").getAbsolutePath());        
         Image img2 = new Image(triangle.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv2 = new ImageView();
@@ -259,7 +268,7 @@ public class Draw2Model {
         this.triangle = new Label("", iv2);
         
         //ADD this to an HBox beside the button.
-        File squiggle = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\squiggle.JPG");        
+        File squiggle = new File(new File("src\\soundAndImageFiles\\squiggle.JPG").getAbsolutePath());       
         Image img3 = new Image(squiggle.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv3 = new ImageView();
@@ -267,7 +276,7 @@ public class Draw2Model {
         this.squiggle = new Label("", iv3);
         
         //ADD this to an HBox beside the button.
-        File circle = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\circle.png");        
+        File circle = new File(new File("src\\soundAndImageFiles\\circle.png").getAbsolutePath());        
         Image img4 = new Image(circle.toURI().toString(), 20, 20, false, false);
         // simple displays ImageView the image as is
         ImageView iv4 = new ImageView();
@@ -292,46 +301,46 @@ public class Draw2Model {
     
     public void setNetTimbre(int t) {
     	if (t == PENCIL ) {
-    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
+    		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
+    		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\pencilImpact.WAV").getAbsolutePath());
         	notifySubscribers();    		
     	}
     	if (t == METAL) {
-    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
-    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalImpact.WAV"); 		
+    		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\metalOnWoodSlow.WAV").getAbsolutePath());
+    		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\metalImpact.WAV").getAbsolutePath()); 		
     	}
     	if (t == ERASER) {
-    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserOnPaperFast.WAV");
-    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");    		
+    		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\eraserOnPaperFast.WAV").getAbsolutePath());
+    		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());    		
     	}
     	if (t == CHALK) {
-    		netSelectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalk.WAV");
-    		netSelectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
+    		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk.WAV").getAbsolutePath());
+    		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());
     	}
     }
     
     public void setPencilTimbre() {
     	currentTimbre =PENCIL;
-    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilSlow.WAV");
-    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\pencilImpact.WAV");
+    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\pencilImpact.WAV").getAbsolutePath());
     	notifySubscribers();
     }
     public void setMetalTimbre() {
     	currentTimbre =METAL;
-    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalOnWoodSlow.WAV");
-    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\metalImpact.WAV");
+    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\metalOnWoodSlow.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\metalImpact.WAV").getAbsolutePath());
     	notifySubscribers();
     }
     public void setEraserTimbre() {
     	currentTimbre =ERASER;
-    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserOnPaperFast.WAV");
-    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
+    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\eraserOnPaperFast.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());
     	notifySubscribers();
     }
     public void setChalkTimbre() {
     	currentTimbre =CHALK;
-    	selectedSoundFile = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\chalk.WAV");
-    	selectedImpactFile = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\eraserImpact.WAV");
+    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());
     	notifySubscribers();
     }        
     
@@ -341,8 +350,8 @@ public class Draw2Model {
         
     public void notifySubscribers() {
     	modelListeners.forEach(a->a.modelChanged());
-    	System.out.println("count! "+count);
-    	count++;
+    	//System.out.println("count! "+count);
+    	//count++;
     }
     
 	//this bit should call a method in the model, just pass in the coordinates.
@@ -504,10 +513,15 @@ public class Draw2Model {
 		float panValue = doNotCalculatePanValue(mouseCoordinate); 	
 		if (soundGenerator != null) {
 			stopSoundGenerator();
-		}
+		}		
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
+    	if (controller.superState == controller.SOUNDS_LOCAL) {
+    		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
+    				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);
+    	}else {   
 		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
 				velocity,panValue, clipDuration,clipStaggerIncrement,netSelectedSoundFile,netSelectedImpactFile);
+    	}
 		soundGenerator.start();		
 		//use netSelectedSoundFile and netSelectedImpactFile?
 	}
@@ -885,6 +899,9 @@ public class Draw2Model {
 		    }
 		});
 		
+	}
+	public void setController(Draw2Controller c) {
+		controller =c;
 	}
 	
 }

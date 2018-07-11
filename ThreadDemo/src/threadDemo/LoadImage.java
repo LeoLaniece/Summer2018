@@ -19,7 +19,10 @@ import javafx.scene.input.KeyCode ;
 import javafx.scene.shape.LineTo; 
 
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -89,8 +92,16 @@ public class LoadImage extends Application {
         primaryStage.setTitle("Load Image");
 
         StackPane sp = new StackPane();
-     // new Image(url)
-        File pencil = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\pencil.png");        
+     // new Image(url)\\chalk.png
+        final File f = new File(LoadImage.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        //Path p = Paths.get(LoadImage.class.getPackage());
+        //Path folder = p.getParent();
+        //System.out.println(LoadImage.class.getPackage().getPackages());
+        // Instantiate a Date object
+        
+       
+        File pencil = new File(new File("src\\soundAndImageFiles\\chalk.png").getAbsolutePath());	
+        File square1 = new File("C:\\Users\\HCI Lab\\eclipse-workspace\\ThreadDemo\\soundAndImageFiles\\chalk.png"); 
         Image image = new Image(pencil.toURI().toString());
         
         // new BackgroundSize(width, height, widthAsPercentage, heightAsPercentage, contain, cover)
@@ -113,34 +124,32 @@ public class LoadImage extends Application {
       //  ImageView imgView = new ImageView(img);
        // sp.setBackground(background);
         sp.getChildren().add(c);
+        
+        
         long startTime = System.currentTimeMillis();
         Text timer = new Text("0:00");
         timer.setFont(Font.font ("Verdana", 14));
         timer.setFill(Color.BLACK); 
-        sp.getChildren().add(timer);
+        //sp.getChildren().add(timer);
         
 	      Button task2 = new Button("FreezeTest study task");
 	      task2.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {        	  	             	               
 	              primaryStage.close();	               
 	           }
-	      });
-	      
-	      
-	        File square = new File("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\basic-square-outline.JPG");        
-	        Image img = new Image(square.toURI().toString(), 20, 20, false, false);
+	      });	      
+	      //"C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\images\\circle.png"
+File square = new File("C:\\Users\\HCI Lab\\eclipse-workspace\\JavaAudioPlaySoundExample\\soundAndImageFiles\\chalk.png");        
+	        Image img = new Image(square.toURI().toString(), 50, 50, false, false);
 	        // simple displays ImageView the image as is
 	        ImageView iv1 = new ImageView();
 	        iv1.setImage(img);
-	        Label label3 = new Label("", iv1);
-	        
-	      
+	        Label label3 = new Label("", iv1);	        	      
 	      sp.getChildren().add(label3);
         
         //Adding HBox to the scene
         Scene scene = new Scene(sp);
-        primaryStage.setScene(scene);
-        
+        primaryStage.setScene(scene);        
         primaryStage.show();
     }    
 }

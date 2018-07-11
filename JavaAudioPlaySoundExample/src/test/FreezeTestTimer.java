@@ -39,7 +39,7 @@ public class FreezeTestTimer extends Thread{
 	@Override
 	public void run() {		
 		
-		while ((System.currentTimeMillis() - startTime) < 5999) {
+		while ((System.currentTimeMillis() - startTime) < 59999) {
 			//timer.setText((Long.toString(60-(System.currentTimeMillis()-startTime)/1000)));			
 			if ((System.currentTimeMillis() - startTime) != 0 && (System.currentTimeMillis() - startTime)%timeIncrement == 0 ) {
 				startTime-=10;

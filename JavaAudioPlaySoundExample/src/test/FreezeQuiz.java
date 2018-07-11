@@ -207,7 +207,7 @@ public class FreezeQuiz extends Stage{
                     RadioButton sgrb3 = new RadioButton("Tracing the shape of a squiggle");
                     sgrb3.setToggleGroup(shapeGroup);
                     
-                    RadioButton sgrb4 = new RadioButton("Filling in a circle");
+                    RadioButton sgrb4 = new RadioButton("Erasing");
                     sgrb4.setToggleGroup(shapeGroup);
                     
                     RadioButton sgrb5 = new RadioButton("I do not know");
@@ -236,7 +236,7 @@ public class FreezeQuiz extends Stage{
         			RadioButton toolGroupResult = (RadioButton) toolGroup.getSelectedToggle();
     				String toolGroupResultString = toolGroupResult.getText();
     				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
-    				userInput += "Current sound file for paths is "+con.model.selectedSoundFile.toString();
+    				userInput += "Current sound file for paths is "+con.model.netSelectedSoundFile.toString();
     				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
                     System.out.println(userInput);	                               
             		
@@ -290,7 +290,7 @@ public class FreezeQuiz extends Stage{
         			fileName += " tool identification";
         		}
 				CreateFile log = new CreateFile(userInput, fileName);
-                System.out.println(userInput);	                               
+                System.out.println(userInput);
         		}
                 //send msg to user 1 so that they can continue their task
                 con.state = con.CLOSE_PROMPT_FOR_SHAPE;
@@ -313,7 +313,7 @@ public class FreezeQuiz extends Stage{
 	       //tweak appearance for tool task
 			if (con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK) {
 				root.getChildren().clear();
-				t.setText("Please select with which tool \n was the other User previously drawing"
+				t.setText("Please select with which tool \n was the other User previously drawing\n"
 						+ "Press the submit button when complete");
 				root.getChildren().add(t);
 				root.getChildren().addAll(tgrb1,tgrb2,tgrb3,tgrb4,submit);				
