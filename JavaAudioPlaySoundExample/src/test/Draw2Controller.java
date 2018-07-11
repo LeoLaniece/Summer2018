@@ -49,7 +49,7 @@ public class Draw2Controller {
 	//superStates	
 	public int SOUNDS_OVER_NETWORK = 0;
 	public int SOUNDS_LOCAL = 1;
-	public int superState = SOUNDS_LOCAL;
+	public int superState = SOUNDS_OVER_NETWORK;
 			
 	//STATES
 	public int READY = 0;	
