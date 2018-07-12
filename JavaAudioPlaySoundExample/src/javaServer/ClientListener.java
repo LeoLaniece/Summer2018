@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import test.*;
+
+/**
+ * This class will send messages over the network whenever the client model changes
+ * All messages are received by the DrawingServer
+ * @author HCI Lab
+ *
+ */
 public class ClientListener implements modelListener{
 
 	public Draw2Model model;
@@ -24,16 +31,13 @@ public class ClientListener implements modelListener{
 	
 	@Override
 	public synchronized void modelChanged() {
-		
+		//only send messages if the super state indicates that the network should be used!
 		if (controller.superState == controller.SOUNDS_OVER_NETWORK) {
 		try {
-			//send transaction over
-		//out.writeUTF(Boolean.toString(model.netTransaction));
-			ArrayList<String> msg = new ArrayList<String>();
-		
+			//send transaction over in a single message
+			ArrayList<String> msg = new ArrayList<String>();		
 												
 			//send the controller state over
-			//out.writeUTF(Integer.toString(controller.state));
 			msg.add(Integer.toString(controller.state)+"\n");
 
 			if (controller.state == controller.READ_AND_OBSERVE) {				
@@ -110,12 +114,10 @@ public class ClientListener implements modelListener{
 				out.writeUTF(fullmsg);
 			}
 			
-			if (controller.state == controller.PAN_READY) {
-				//out.writeUTF(Double.toString(model.iModel.viewPortX));
-				msg.add(Double.toString(model.iModel.viewPortX)+"\n");
-				//out.writeUTF(Double.toString(model.iModel.viewPortY));	
-				msg.add(Double.toString(model.iModel.viewPortY)+"\n");
-				//send single string over the net
+			if (controller.state == controller.PAN_READY) {				
+				//send current viewPort location 
+				msg.add(Double.toString(model.iModel.viewPortX)+"\n");					
+				msg.add(Double.toString(model.iModel.viewPortY)+"\n");				
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);
@@ -124,54 +126,38 @@ public class ClientListener implements modelListener{
 			}		
 		
 		if (controller.state ==controller.READY) { 
-			//need to not send info too often?
-			//	out.writeUTF("Server model changed!");
-				msg.add("Server model changed!"+"\n");
-				//is the path Alive
-				//path is not null when other user is drawing on your canvas?
+			//path information is sent over the network	
+			
+				msg.add("Client model changed!"+"\n");
+				//is the path Alive?				
 				if (model.path == null) {
-			//		out.writeUTF("false");
 					msg.add("false"+"\n");
 				}else {
-			//		out.writeUTF("true");
 					msg.add("true"+"\n");
-				}				
-				
-				//sending the line over			
-			//	out.writeUTF(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width)));
-				msg.add(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width))+"\n");
-			//	out.writeUTF(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height)));	
+				}								
+				//sending the line over						
+				msg.add(Double.toString(model.currentPathCoordinate.x+(model.iModel.viewPortX*7/model.radarView.width))+"\n");			
 				msg.add(Double.toString(model.currentPathCoordinate.y+(model.iModel.viewPortY*7/model.radarView.height))+"\n");
 				
 				//sending the colour over
-			//	out.writeUTF(model.sampleLine.getStroke().toString());
 				msg.add(model.sampleLine.getStroke().toString()+"\n");
 				//send the strokeWidth over
-			//	out.writeUTF(Double.toString(model.sampleLine.getStrokeWidth()));
 				msg.add(Double.toString(model.sampleLine.getStrokeWidth())+"\n");
 				
 				//sending the sound over
 				//velocity
-			//	out.writeUTF(Double.toString(controller.soundVelocityThread.getVelocity()));
 				msg.add(Double.toString(controller.soundVelocityThread.getVelocity())+"\n");
 				//mouseCoordinates
-			//	out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x));
 				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).x)+"\n");
-			//	out.writeUTF(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y));
 				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y)+"\n");
-				//angle
-			//	out.writeUTF(Double.toString(model.currentPathAngle));
-				//msg.add(Double.toString(model.currentPathAngle)+"\n");
 				//clipDuration
-			//	out.writeUTF(Double.toString(controller.clipDuration));
+				//could eliminate this to make my app even more efficient(clipDuration can be determined from the timbre
 				msg.add(Double.toString(controller.clipDuration)+"\n");
 				//clipStaggerIncrement
-			//	out.writeUTF(Double.toString(controller.clipStaggerIncrement));
 				msg.add(Double.toString(controller.clipStaggerIncrement)+"\n");
 				//current timbre
-				msg.add(Integer.toString(model.currentTimbre));
-				
-				//send one msg over
+				msg.add(Integer.toString(model.currentTimbre));				
+		
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);

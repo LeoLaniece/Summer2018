@@ -113,6 +113,19 @@ public class FreezeTestInstructions extends Stage{
 	    		    "And erasing the circles with the eraser"+"\n"+	    		    
 		    		  "please press the ready button when you are ready to begin");
 	      }
+	      //change text for tool reaction task
+	      if (controller.iModel.task == controller.iModel.TOOL_REACTION_TASK) {
+	    	  instructions = new Text("Tool reaction task is about to begin"+"\n"+
+	    			  "Please trace all the shapes in the workspace"+"\n"+
+		    		    "Trace the triangles with the pencil"+"\n"+
+		    		    "Trace the squares with the nail"+"\n"+
+		    		    "Trace the squiggles with the chalk"+"\n"+
+		    		    "And erase the circles with the eraser"+"\n"+"\n"+	    		    
+	    		      "Please also observe with which tool the other user is drawing"+"\n"+
+	    		    "Whenever you notice that the other user has changed tools"+"\n"+
+	    		    "You must change to the same tool they are using"+"\n"+"\n"+	    		    
+		    		  "please press the ready button when you are ready to begin");
+	      }
 	      
 	      instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.BLACK); 
@@ -143,8 +156,7 @@ public class FreezeTestInstructions extends Stage{
 		      goToTraining.setOnAction(new EventHandler<ActionEvent>() {
 		           public void handle(ActionEvent event) {
 		        	   //change super state 
-		        	   controller.superState = controller.SOUNDS_LOCAL;
-		        	   System.out.println("super state = sounds local");
+		        	   controller.superState = controller.SOUNDS_LOCAL;		        	   
 		        	   //add a window with a done training button
 		        	   new DoneTrainingStage(controller, me);
 		        	   //close this window

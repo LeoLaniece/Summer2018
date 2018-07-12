@@ -182,7 +182,11 @@ public class Draw2Model {
             		player.playFileClip(pencilTap);
             	}            	
             	view.controller.state = view.controller.PLAY_IMPACT;
-            	notifySubscribers();
+            	notifySubscribers();            	
+            	if (iModel.task == iModel.TOOL_REACTION_TASK) {
+            		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
+            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            	}
             }
         });    	
     	btnMetal = new Button("Nail");
@@ -204,6 +208,10 @@ public class Draw2Model {
             	}               	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
+            	if (iModel.task == iModel.TOOL_REACTION_TASK) {
+            		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
+            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            	}
             }
         });    	
     	btnChalk = new Button("Chalk");
@@ -225,6 +233,10 @@ public class Draw2Model {
             	}               	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
+            	if (iModel.task == iModel.TOOL_REACTION_TASK) {
+            		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
+            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            	}
             }
         });    	
     	btnEraser = new Button("Eraser");
@@ -246,6 +258,10 @@ public class Draw2Model {
             	}               	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();
+            	if (iModel.task == iModel.TOOL_REACTION_TASK) {
+            		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
+            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            	}
             }
         });    	    	
     }
@@ -902,6 +918,19 @@ public class Draw2Model {
 	}
 	public void setController(Draw2Controller c) {
 		controller =c;
+	}
+	
+	private String getSelectedTimbreAndNetTimbreAsStrings(){		
+		String result = "User was using "+selectedSoundFile.toString()+
+				"\n"+"Partner was using "+netSelectedSoundFile.toString();			
+		return result;
+	}
+	
+	public void logPartnerImpact() {
+		if (iModel.task == iModel.TOOL_REACTION_TASK) {
+		String userInput = "Partner just selected "+netSelectedSoundFile.toString();
+		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+	}
 	}
 	
 }

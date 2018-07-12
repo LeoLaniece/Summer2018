@@ -121,7 +121,7 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
-		UCLeft.getChildren().add(model.labelStroke);		
+		//UCLeft.getChildren().add(model.labelStroke);		
 		//sizing for sampleLine
 		StackPane stackpane = new StackPane();
         stackpane.setPrefHeight(model.MAXSTROKE);
@@ -129,8 +129,8 @@ public class Draw2View extends Pane implements modelListener{
         stackpane.setAlignment(Pos.CENTER);
         stackpane.getChildren().add(model.sampleLine);
 		
-		UCLeft.getChildren().add(stackpane);		
-		UCLeft.getChildren().add(model.strokeSlider);
+		//UCLeft.getChildren().add(stackpane);		
+		//UCLeft.getChildren().add(model.strokeSlider);
 		UCLeft.getChildren().add(model.btnClear);
 		
 		HBox h1 = new HBox();		
@@ -145,7 +145,7 @@ public class Draw2View extends Pane implements modelListener{
 		HBox h4 = new HBox();		
 		h4.getChildren().addAll(model.btnEraser, model.circle);		
 		UCLeft.getChildren().add(h4);				
-		UCRight.getChildren().add(model.colorLabel);
+		//UCRight.getChildren().add(model.colorLabel);
 	}
 	
 	public void setFlowPane(VBox UCRight) {
@@ -184,7 +184,7 @@ public class Draw2View extends Pane implements modelListener{
                 }
             }
         }
-        UCRight.getChildren().add(flow);
+       // UCRight.getChildren().add(flow);
 	}
 	
 	public void drawModelPaths() {	

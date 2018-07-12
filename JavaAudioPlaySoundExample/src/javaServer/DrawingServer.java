@@ -131,6 +131,9 @@ public void run() {
      			int impactFile = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
      			File impact = model.getImpactSoundFile(impactFile);
      			model.player.playFileClip(impact);
+     			if (model.iModel.task == model.iModel.TOOL_REACTION_TASK) {
+     				model.logPartnerImpact();
+     			}
       		}
      		
      		if (clientState == controller.READY_TO_BEGIN_TASK) {
@@ -256,7 +259,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
    } catch (IOException e) {
       e.printStackTrace();
    }   
-    /*  
+    //*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

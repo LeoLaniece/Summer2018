@@ -184,7 +184,16 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      root.getChildren().addAll(task7,task10,task8, task11, task13, task14,task5,task6,task3,task4,task1,task2);
+	      Button task15 = new Button("Tool identification reaction task");
+	      task15.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	   controller.drawViewPort =true;
+	        	     controller.startTask7();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
+	      root.getChildren().addAll(task7,task10,task8, task11, task13, task14,task5,task6,task3,task4,task1,task2,task15);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

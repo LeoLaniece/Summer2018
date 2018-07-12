@@ -630,4 +630,19 @@ public class Draw2Controller {
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);		   
 	   }
+	   /**
+	    * will begin a tool identification task
+	    * Both user's will be tracing the shapes in the workspace 
+	    * User 2 will only switch tool when they notice User 1 switch tool
+	    */
+	   public void startTask7() {
+		   //launch a partial version of FreezeTestTask with a different timer interval
+		   //different instructions for User 1
+		   iModel.task = iModel.TOOL_REACTION_TASK;
+		   state = FREEZE_TEST_TASK;
+			taskRunning = true;
+			model.notifySubscribers();			
+		   model.launchFreezeTestIntructions(me);		   
+	   }
+	   
 }

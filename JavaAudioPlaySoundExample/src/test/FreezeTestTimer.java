@@ -32,6 +32,9 @@ public class FreezeTestTimer extends Thread{
 				|| controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
 			timeIncrement = 10000;
 		}
+		if (controller.iModel.task == controller.iModel.TOOL_REACTION_TASK) {
+			timeIncrement = Integer.MAX_VALUE;
+		}
 		//this.start();
 		
 	}

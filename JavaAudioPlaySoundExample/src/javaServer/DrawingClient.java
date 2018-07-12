@@ -2,7 +2,6 @@ package javaServer;
 
 
 import java.io.BufferedReader;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -12,17 +11,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
-//File Name GreetingClient.java
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import test.*;
 
+/**
+ * This class receives all messages sent from the serverListener 
+ * Will execute the appropriate action based on the message received
+ * Actions are executed on the drawing client stage
+ * @author HCI Lab
+ *
+ */
 public class DrawingClient extends Thread{
 	
 	public Draw2View view;
@@ -60,8 +64,8 @@ public DrawingClient(String [] args) {
 	e.printStackTrace();
 }finally {}
 }
-      public void run() {
-    	  
+	//listening for messages
+      public void run() {    	  
     	  //initialize variables which will store information received from the drawing server
     	  DataInputStream objectIn;    	  
 		try {						
@@ -72,9 +76,8 @@ public DrawingClient(String [] args) {
           String fullmsg = "";
           double[] line = new double[9];
           int serverState;
-          while (true) {       	          	  
-        	  //model.netTransaction = false;        	  
-         	 //get the client state
+          while (true) {       	          	        	  
+         	 //read the message line by line
         	  fullmsg = objectIn.readUTF();
         		String msgline;
         		ArrayList<String> netInfo = new ArrayList<>();
@@ -87,20 +90,21 @@ public DrawingClient(String [] args) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
         		}
-        		int netInfoIndex = 0;        	  
+        		int netInfoIndex = 0;
+        		
+        		//get the controller state of the drawing server
          	 serverState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
          	 
-         	 //if the read and obserrve test is happening
-     		if (serverState == controller.READ_AND_OBSERVE) {
-     			//System.out.println("state is read and observe");
+         	 //if the read and observe test is happening
+     		if (serverState == controller.READ_AND_OBSERVE) {     			
      			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
      			controller.view.drawBorder();
      		}
      		
+     		//if the Freeze Test test is happening
      		if (serverState == controller.FREEZE_TEST_TASK) {
-     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
-     			System.out.println("server task "+serverTask);
+     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;     			
      			if (serverTask == model.iModel.REAL_FREEZE_TEST) {
      				model.iModel.task = serverTask;
      			}
@@ -112,14 +116,15 @@ public DrawingClient(String [] args) {
      			controller.view.drawBorder();
      		}
      		
+     		//if the FreezeQuiz questionnaire just got submitted
      		if (serverState == controller.CLOSE_PROMPT_FOR_SHAPE) {     		
      			if (model.instructions!= null) {
      				model.instructions.submit();
      			}     			
      		}
      		
-     		if (serverState == controller.CLOSE_INSTRUCTIONS) {
-        		 //close instruction window if it is still there
+     		//if the server task is complete
+     		if (serverState == controller.CLOSE_INSTRUCTIONS) {        		 
         		 if (model.instructions != null) {
         			 model.closeInstructions();
         			 controller.taskRunning =false;
@@ -135,12 +140,17 @@ public DrawingClient(String [] args) {
         		 }
      		}
      		
+     		//if the server has just selected a drawing tool
      		if (serverState == controller.PLAY_IMPACT) {
      			int impactFile = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
      			File impact = model.getImpactSoundFile(impactFile);
      			model.player.playFileClip(impact);
+     			if (model.iModel.task == model.iModel.TOOL_REACTION_TASK) {
+     				model.logPartnerImpact();
+     			}
       		}
      		
+     		//if the server has pressed ready and is ready to begin the task
      		if (serverState == controller.READY_TO_BEGIN_TASK) {
        		 //close instruction window if it is still there
        		 if (model.instructions != null) {

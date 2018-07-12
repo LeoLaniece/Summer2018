@@ -20,6 +20,7 @@ public class InteractionModel {
 	public int ACTIVITY_IDENTIFICATION_TASK = 2;
 	public int REAL_FREEZE_TEST = 3;
 	public int SHAPE_DETECTION_TASK =4;
+	public int TOOL_REACTION_TASK =5;
 	public int task = -1;
 	//public double normalizedViewPortX, normalizedViewPortY;
 	
