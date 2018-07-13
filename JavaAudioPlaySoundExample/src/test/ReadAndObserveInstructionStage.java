@@ -79,16 +79,29 @@ public class ReadAndObserveInstructionStage extends Stage{
 	    		  "Do not worry if you end up " +"\n"+
 	    		  "tracing the wrong shape with the wrong tool"+"\n"+
 	    		  "Just do your best!"+"\n"+
+	    		  "You can move around in the workspace by holding down the" +"\n"+
+	    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
 	    		  "please begin drawing when the workspace appears");
-	      System.out.println("iModel task "+iModel.task);
+	      
 	      if (iModel.task == iModel.LOCATION_IDENTIFICATION_TASK) {
 	    	  instructions = new Text("A task is about to start"+"\n"+
-	      "Until notified, please"+"\n"+"erase all the circles you can find in the workspace"+"\n"+	      		
+	      "Until notified, please"+"\n"+"erase all the circles and squiggles you can find in the workspace"+"\n"+	      		
 	    		  "You can select the Eraser tool in the bottom left corner of the workspace"+"\n"+
 	    		  "You can move around in the workspace by holding down the" +"\n"+
 	    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
 	    		  "Good luck!"+"\n"+
 	    		  "please begin drawing when the workspace appears");
+	      }
+	      if (iModel.task == iModel.SHAPE_DETECTION_TASK) {
+	    	  instructions = new Text("A task is about to start"+"\n"+
+	    		      "Until notified, please"+"\n"+
+	    			  "trace the all the shapes you can find in the workspace"+"\n"+
+	    			  "Only trace each shape once!"+"\n"+
+	    		      "\n"+
+		    		  "Trace all shapes with the pencil"+"\n"+
+		    		  "You can move around in the workspace by holding down the" +"\n"+
+		    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
+		    		  "please begin drawing when the workspace appears"); 
 	      }
 	      if (iModel.task == iModel.REAL_FREEZE_TEST) {
 	    	  instructions = new Text("A task is about to start"+"\n"+
@@ -103,6 +116,8 @@ public class ReadAndObserveInstructionStage extends Stage{
 		    		  "Do not worry if you end up " +"\n"+
 		    		  "tracing the wrong shape with the wrong tool"+"\n"+
 		    		  "Just do your best!"+"\n"+"\n"+
+		    		  "You can move around in the workspace by holding down the" +"\n"+
+		    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
 		    		  "please begin drawing when the workspace appears"); 
 	      }
 	      

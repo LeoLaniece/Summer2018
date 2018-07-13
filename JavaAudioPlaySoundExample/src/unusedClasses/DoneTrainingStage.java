@@ -1,4 +1,4 @@
-package test;
+package unusedClasses;
 
 import javafx.application.Application;
 
@@ -18,6 +18,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import test.Draw2Controller;
+import test.FreezeTestInstructions;
 import javafx.geometry.Pos ;
 import java.lang.reflect.Field;
 import javafx.application.Platform;

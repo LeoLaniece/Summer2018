@@ -303,7 +303,12 @@ public class FreezeQuiz extends Stage{
             
             }
        });
-       root.getChildren().add(submit);
+       submit.prefHeight(100);
+       VBox submitBox = new VBox();
+       submitBox.setPrefHeight(SceneHeight);
+       submitBox.setAlignment(Pos.BOTTOM_CENTER);
+       submitBox.getChildren().add(submit);       
+       root.getChildren().add(submitBox);
         
        //tweak appearance for location task
 		if (con.iModel.task == con.iModel.LOCATION_IDENTIFICATION_TASK) {

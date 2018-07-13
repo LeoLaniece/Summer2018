@@ -85,7 +85,8 @@ public class CalculateVelocityThread extends Thread{
 		public void setPoints(double x, double y) {
 			for (int i =0;i<4;i++) {
 				points[i] = new Coordinate(x,y);
-				points[i].time = System.currentTimeMillis();
+				//time used to be in the coordinate class
+				//points[i].time = System.currentTimeMillis();
 			}
 		}
 		/**
@@ -100,7 +101,7 @@ public class CalculateVelocityThread extends Thread{
 				if (System.currentTimeMillis()-startTime >10) {
 					points[i].x = points[i-1].x;
 				points[i].y = points[i-1].y;
-				points[i].time = System.currentTimeMillis();
+				//points[i].time = System.currentTimeMillis();
 
 					startTime = System.currentTimeMillis();
 					i--;
@@ -111,7 +112,7 @@ public class CalculateVelocityThread extends Thread{
 			}
 			points[0].x = x;
 			points[0].y = y;
-			points[0].time = System.currentTimeMillis();
+		//	points[0].time = System.currentTimeMillis();
 
 				
 
@@ -126,7 +127,7 @@ public class CalculateVelocityThread extends Thread{
 		 */
 		public double calculateVelocity(Coordinate a, Coordinate b) {
 			double distanceTraveled = Math.abs(Math.sqrt(Math.pow((b.x-a.x), 2)+Math.pow((b.y-a.y), 2)));
-			return distanceTraveled/(a.time-b.time);
+			return distanceTraveled;///(a.time-b.time);
 		}
 		//last 4 points, take the average of the 3 velocities
 		//functions: 	

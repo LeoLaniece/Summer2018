@@ -22,26 +22,28 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * Will launch the server version of the drawing application
+ * Will connect to a single client version of the drawing application
+ * @author HCI Lab
+ *
+ */
 public class LaunchServer extends Application{
 	
+	//sets the size of all windows in the aplication
    public static int SceneWidth = 800;
    public static int SceneHeight = 600;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Drawing Tool Server");
-        //set the size of the window here
-        //make sure the height is 200 + what you want to accommodate the color picker and sample line
-        //these set the size of the workspace
-      //  int SceneWidth = 1600;
-       // int SceneHeight = 1000;
         StackPane root = new StackPane();	        
         Scene scene = new Scene(root, SceneWidth,SceneHeight);
         Draw2Model model = new Draw2Model();
         Draw2View view = new Draw2View(SceneWidth,SceneHeight-200,model);       
-        //can change the size of the minimap here, minimap will be scaled to /7 of its size
-        //this sets the size of the total virtual workspace.
-        Draw2miniMap radarView = new Draw2miniMap(1000,1000,model);
+        //can change the size of the minimap here, minimap will be scaled to 1/7 of the submitted values size
+        //the submitted values sets the size of the virtual workspace.
+        Draw2miniMap radarView = new Draw2miniMap(2000,2000,model);
         InteractionModel iModel = new InteractionModel(model,view);
         model.setIModel(iModel);
         view.setIModel(iModel);
@@ -64,9 +66,6 @@ public class LaunchServer extends Application{
         view.setController(controller);
         radarView.setController(controller);
         model.setController(controller);
-
-       // view.onKeyPressedProperty();
-       // view.setOnKeyPressed(controller::handleKeyPressed());
         
         primaryStage.setScene(scene);
         primaryStage.setX(0);
@@ -76,10 +75,7 @@ public class LaunchServer extends Application{
         //launch the server
 		String[] args = new String[1];
 		args[0] = "HEELOWORLD";
-		DrawingServer.main(args, model, controller);
-		
-		//to fix bugs, restore the Clientlistener as a model listerner
-		//trying to reduce the amount of msgs sent.				
+		DrawingServer.main(args, model, controller);		
 	}	
 	
 	 public static void main(String[] args) {

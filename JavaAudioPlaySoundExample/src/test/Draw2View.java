@@ -9,6 +9,7 @@ import javafx.scene.shape.LineTo;
 
 import java.lang.reflect.Modifier;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -62,7 +63,8 @@ public class Draw2View extends Pane implements modelListener{
     double imageHeight;
     double imageX;
     double imageY;
-	
+    public VBox UCRight;
+    
 	//put in a logical size?
 	public Draw2View(double w, double h, Draw2Model m) {
 		model = m;
@@ -93,9 +95,9 @@ public class Draw2View extends Pane implements modelListener{
 		VBox UCLeft = new VBox();
 		UCLeft.setPrefWidth(height);
 		UCLeft.setAlignment(Pos.BOTTOM_LEFT);
-		VBox UCRight = new VBox();
+		UCRight = new VBox();
 		UCRight.setPrefWidth(height);
-		UCRight.setAlignment(Pos.BOTTOM_RIGHT);
+		UCRight.setAlignment(Pos.BOTTOM_CENTER);
 		underCanvas.getChildren().add(UCLeft);
 		underCanvas.getChildren().add(UCRight);
 		
@@ -316,8 +318,7 @@ public class Draw2View extends Pane implements modelListener{
 		synchronized (getImage()) {
 		gc.drawImage(getImage(), -iModel.viewPortX*7 +imageX, -iModel.viewPortY*7+imageY, 
 				imageWidth, imageHeight);
-		}
-		
+		}		
 	}
 	
 	public void addToPath() {
@@ -466,5 +467,22 @@ public class Draw2View extends Pane implements modelListener{
 		//imageY = radarView.height/3;
 		drawImage();					
 		drawModelPaths();
+	}
+	
+	public void addDoneTrainingButton(FreezeTestInstructions lastStage) {
+	      Button done = new Button("Completed Training");
+	      done.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {
+	        	   //change super state 
+	        	   controller.superState = controller.SOUNDS_OVER_NETWORK;
+	        	   //open instructions window
+	        	   lastStage.show();
+	        	   //close this window
+	        	   UCRight.getChildren().remove(done);
+	           }
+	      });
+	      done.setPrefHeight(100);
+	     // done.setPrefWidth(100);
+	      UCRight.getChildren().add(done);
 	}
 }

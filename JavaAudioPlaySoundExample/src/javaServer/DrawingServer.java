@@ -35,7 +35,15 @@ public Socket server;
 public Draw2Controller controller;
 public int transaction = 1;
 
-
+/**
+ * This class receives all messages sent from the clientListener 
+ * Will execute the appropriate action based on the message received
+ * Actions are executed on the drawing server stage
+ * @param port
+ * @param m
+ * @param c
+ * @throws IOException
+ */
 public DrawingServer(int port, Draw2Model m, Draw2Controller c) throws IOException {
    serverSocket = new ServerSocket(port);
    serverSocket.setSoTimeout(100000);
@@ -47,20 +55,18 @@ public DrawingServer(int port, Draw2Model m, Draw2Controller c) throws IOExcepti
 public void run() {		
    while(true) {
       try {    	      	      	  
+    	  //establish connection
          System.out.println("Waiting for client on port " + 
-            serverSocket.getLocalPort() + "...");
-        
-         server = serverSocket.accept();
-         
+            serverSocket.getLocalPort() + "...");        
+         server = serverSocket.accept();         
          System.out.println("Just connected to " + server.getRemoteSocketAddress());
          DataInputStream in = new DataInputStream(server.getInputStream());         
          System.out.println(in.readUTF());         
          DataOutputStream out = new DataOutputStream(server.getOutputStream());         
          DataInputStream objectIn = new DataInputStream(server.getInputStream());
          ServerListener serverListener = new ServerListener(model, controller,out);
-         //wait for a message, print the message
-         
-         
+
+         //initialize variables needed for networking
          boolean isNetPathAlive = false;
          String msg = "greetingServer";
          String fullmsg = "";
@@ -68,7 +74,7 @@ public void run() {
          double[] line = new double[9];
          int clientState;
          while (msg!="exit") {
-        	 //get the client state
+        	 //get clientListener message as a line separated string    	 
        	  fullmsg = objectIn.readUTF();
        		String msgline;
        		ArrayList<String> netInfo = new ArrayList<>();
@@ -83,6 +89,7 @@ public void run() {
        		}
        		int netInfoIndex = 0;   
         	 
+       		//get the client state
         	 clientState = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
         	 
          	 //if the read and observe test is happening
@@ -93,24 +100,31 @@ public void run() {
      			controller.view.drawBorder();
      		}
      		
+     		//if the freeze test is in progress lauch the instruction stage 
      		if (clientState == controller.FREEZE_TEST_TASK) {
-     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
-     			System.out.println("server task "+serverTask);
+     			//adjust iModeltask depending on freeze test variation
+     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++; 
+     			if (serverTask == model.iModel.REAL_FREEZE_TEST) {
+     				model.iModel.task = serverTask;
+     			}
      			if (serverTask == model.iModel.LOCATION_IDENTIFICATION_TASK) {
+     				model.iModel.task = serverTask;
+     			}
+     			if (serverTask == model.iModel.SHAPE_DETECTION_TASK) {
      				model.iModel.task = serverTask;
      			}
     			model.launchReadAndObserverInstructionsStage(model.iModel);
      			controller.taskRunning =true;
      			controller.view.drawBorder();
      		}
-     		
+     		//if the FreezeQuiz questionnaire just got submitted
      		if (clientState == controller.CLOSE_PROMPT_FOR_SHAPE) {     		
      			if (model.instructions!= null) {
      				model.instructions.submit();
      			}     			
      		}
      		
-     		//close instructions
+     		//if the server task is complete
      		if (clientState == controller.CLOSE_INSTRUCTIONS) {
        		 //close instruction window if it is still there
        		 if (model.instructions != null) {
@@ -127,6 +141,7 @@ public void run() {
        		 }
     		}
      		
+     		//if the server has just selected a drawing tool
      		if (clientState == controller.PLAY_IMPACT) {
      			int impactFile = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;
      			File impact = model.getImpactSoundFile(impactFile);
@@ -136,36 +151,39 @@ public void run() {
      			}
       		}
      		
+     		//if the server has pressed ready and is ready to begin the task
      		if (clientState == controller.READY_TO_BEGIN_TASK) {
           		 //close instruction window if it is still there
           		 if (model.instructions != null) {
-          			 model.hideInstructions();
-          			// model.createFileForFreezeTest();
+          			 model.hideInstructions();          			
           		 }
        		}
      		
+     		//if the server is filling out a survey and needs to know which shape was drawn
      		if (clientState == controller.PROMPT_FOR_SHAPE) {
      			 System.out.println("got prompted to shape !");
         		 model.updateInstructionsStage();     			
      		}
      		
+     		//if the server is filling out a survey and needs the other user to sit still
      		if (clientState == controller.PAUSE_UNTIL_QUIZ_COMPLETE) {
      			System.out.println("pause until quiz cmplete !");
         		 model.showPauseStage();     			
      		}
         	 
+     		//adjust the server's minimap location
         	 if (clientState == controller.PAN_READY) {
-        		  //START the VPDS generator here
+        		 //START the ViewPortDisplacementSound generator here
         	     if (model.VPDS == null) {
             		 model.beginViewPortMovementSound();
             	 }else {
+            		 //update sound if the view port sound is already happening
             		 model.updateVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
             	 }
         		 //draw a second viewport on the miniMap!!
         		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
              	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;           
-            	 model.radarView.modelChanged();
-            	 //want these values to be relative to the minimap logical size
+            	 model.radarView.modelChanged();            	 
             	 model.radarView.drawViewPortFromNet(line[0], line[1]);            	            	 
         	 }else {
          		//stop the VPDS generator
@@ -174,10 +192,10 @@ public void run() {
             	 }
         	 }
 
-
+        	//if server is drawing a path, replicate path and produce sound
         	 if (clientState == controller.READY) {
              	 msg = netInfo.get(netInfoIndex); netInfoIndex++;        	 
-             	 //draw path info
+             	 //path location, paint and size info
              	 isNetPathAlive = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;             	
              	 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
              	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;      	 
@@ -190,44 +208,48 @@ public void run() {
             	 //mouseCoordinates
             	 line[4] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 line[5] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
-            	 //angle
-            	// line[6] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	 
+            	//probably can eliminate these
             	 //clipDuration
-            	 line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+            	// line[7] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
             	 //clipStaggerIncrement
-            	 line[8] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++; 
+            	// line[8] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++; 
             	//timbre selection
             	 int netTimbre = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex ++;
         	 
+            	//draw the network path
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
+        		//draw the path
         		 model.createNewPathFromNetwork(line,pathPaint);
         		//set timbre
         		 model.setNetTimbre(netTimbre);
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
-        		 model.playPathInteractively(line[3], mouseCoordinate, line[7], line[8]);     
+        		 model.playPathInteractively(line[3], mouseCoordinate); //line[7], line[8]);     
         		 //log user1 activity here 
         		 if (controller.readAndObserveTrial != null) {
         			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
         		 }
         	 }else
+        		//add on to current network path
         	 if (model.netWorkPath!=null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
+        		//add bit to current path
         		 model.updateNewPathFromNetwork(line);
         		 //update the sound generator
          		model.updateSoundGeneratorVelocity(line[3]);
          		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
          		model.updateSoundGeneratorPanValue(mouseCoordinate);
-         		model.updateSoundGeneratorPathAngleFromNet(line[6]);        		 
-         		
-        	 }        	 
-        	 if (isNetPathAlive == false) {
-        		 //model.radarView.getLastKnownCoordinate();
+         		//can eliminate this line
+         		//model.updateSoundGeneratorPathAngleFromNet(line[6]);        		 
+        	 }        	
+        	//close the path and path sound generator
+        	 if (isNetPathAlive == false) {        		 
         		 model.netWorkPath = null;        		 
         		 model.stopSoundGenerator();  
         		 //log user 1 activity here
@@ -249,16 +271,16 @@ public void run() {
    }
 }
 
-public static void main(String [] args, Draw2Model m, Draw2Controller c) {
-	//test for javaFX component
-	
-   int port = 9080;
+public static void main(String [] args, Draw2Model m, Draw2Controller c) {		
+   //sets up server and client on the same device
+	int port = 9080;
    try {
       Thread t = new DrawingServer(port,m, c);
       t.start();
    } catch (IOException e) {
       e.printStackTrace();
-   }   
+   }      
+   //uncomment this block to test server client connection on the same device
     //*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";

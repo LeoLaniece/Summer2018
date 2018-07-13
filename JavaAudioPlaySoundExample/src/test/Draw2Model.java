@@ -331,7 +331,7 @@ public class Draw2Model {
     	}
     	if (t == CHALK) {
     		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk.WAV").getAbsolutePath());
-    		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());
+    		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
     	}
     }
     
@@ -356,7 +356,7 @@ public class Draw2Model {
     public void setChalkTimbre() {
     	currentTimbre =CHALK;
     	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk.WAV").getAbsolutePath());
-    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
     	notifySubscribers();
     }        
     
@@ -521,15 +521,29 @@ public class Draw2Model {
 	}
 	
 	/**
-	 * play the sound of the path as it is being drawn
 	 * 
+	 * @param velocity
+	 * @param mouseCoordinate
+	 * @param clipDuration
+	 * @param clipStaggerIncrement
 	 */
 	public void playPathInteractively(double velocity, Coordinate mouseCoordinate
-			, double clipDuration, double clipStaggerIncrement) {
+			) {
 		float panValue = doNotCalculatePanValue(mouseCoordinate); 	
 		if (soundGenerator != null) {
 			stopSoundGenerator();
 		}		
+		 double clipStaggerIncrement;
+		 double clipDuration;
+		if (controller.superState == controller.SOUNDS_LOCAL) {
+			clipStaggerIncrement = this.calculateStaggerIncrement(selectedSoundFile);
+		 clipDuration = player.fileLength(selectedSoundFile)*1000;
+		}else {
+			clipStaggerIncrement = this.calculateStaggerIncrement(netSelectedSoundFile);
+			 clipDuration = player.fileLength(netSelectedSoundFile)*1000;
+		}
+		
+
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
     	if (controller.superState == controller.SOUNDS_LOCAL) {
     		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
@@ -545,14 +559,6 @@ public class Draw2Model {
 	public void stopSoundGenerator() {
 		soundGenerator.setMouseReleased(true);		
 		stopDrawingSoundGenerator();
-	}
-	
-	//public void updateSoundGeneratorPathAngle() {		
-	//	soundGenerator.setAngle(currentPathAngle);
-	//}
-	
-	public void updateSoundGeneratorPathAngleFromNet(double angle) {		
-		soundGenerator.setAngle(angle);
 	}
 	
 	public void updateSoundGeneratorVelocity(double v) {
@@ -932,5 +938,17 @@ public class Draw2Model {
 		CreateFile log = new CreateFile(userInput, "Tool reaction task");
 	}
 	}
+	   /**
+	    * will calculate the stagger increment for a submitted file 
+	    */
+	   public double calculateStaggerIncrement(File f) {
+		   double clipDuration = player.fileLength(f)*1000;
+			double clipOverlapDuration = 0.8;//0.865;
+			return (clipDuration)-(clipDuration*clipOverlapDuration);			
+	   }
+	   public double calculateClipDuration() {		   
+		   return player.fileLength(selectedSoundFile)*1000;
+	   }
+	   
 	
 }

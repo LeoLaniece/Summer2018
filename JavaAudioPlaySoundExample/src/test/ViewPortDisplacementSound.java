@@ -52,11 +52,11 @@ public class ViewPortDisplacementSound extends Thread{
 	public Panner setUpSampleWavePlayer(AudioContext ac) {
 		  wpPitch = new Envelope(ac, 130);
 		  wp2Pitch = new Envelope(ac, 195);		
-		  WavePlayer wp = new WavePlayer(ac, wpPitch, Buffer.SINE);
+		  WavePlayer wp = new WavePlayer(ac, wpPitch, Buffer.TRIANGLE);
 		  WavePlayer wp2 = new WavePlayer(ac, wp2Pitch, Buffer.SINE);
 		  gainGlide = new Envelope(ac, 0f);
 		  Gain g = new Gain(ac, 1, gainGlide);
-			  gainGlide.addSegment(0.5f, 500);//maxVolume, 500);				      
+			  gainGlide.addSegment(0.1f, 100);//maxVolume, 500);				      
 			  g.addInput(wp);
 			  g.addInput(wp2);
 			  	panGlide = new Envelope(ac, -1f);
@@ -78,8 +78,8 @@ public class ViewPortDisplacementSound extends Thread{
 		if ((System.currentTimeMillis()-timeSinceLastUpdate)> 100) {
 			maxVolume = 0f;
 		}
-		if (maxVolume > 0.5) {
-			maxVolume = 0.5f;
+		if (maxVolume > 0.1) {
+			maxVolume = 0.1f;
 		}
 		gainGlide.setValue(maxVolume);		
 		timeSinceLastUpdate = System.currentTimeMillis();
@@ -92,7 +92,7 @@ public class ViewPortDisplacementSound extends Thread{
 	 */
 	public void updateLocation(Coordinate viewPortCenter) {
 		//update pitch
-		float fundamental = (float) (200*(1-viewPortCenter.y));
+		float fundamental = (float) (30*(1-viewPortCenter.y));
 		wpPitch.setValue(fundamental*4);
 		wp2Pitch.setValue(fundamental*5);
 		

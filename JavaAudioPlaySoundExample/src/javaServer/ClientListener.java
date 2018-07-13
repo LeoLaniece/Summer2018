@@ -10,9 +10,8 @@ import test.*;
 
 /**
  * This class will send messages over the network whenever the client model changes
- * All messages are received by the DrawingServer
+ * All messages are received by the DrawingServer class
  * @author HCI Lab
- *
  */
 public class ClientListener implements modelListener{
 
@@ -24,8 +23,7 @@ public class ClientListener implements modelListener{
 	public ClientListener(Draw2Model m, Draw2Controller c, DataOutputStream o) {
 		model = m;
 		controller = c;
-		out =o;
-		//model.setPathActivityListener(this);
+		out =o;		
 		model.addSubscriber(this);
 	}
 	
@@ -126,8 +124,7 @@ public class ClientListener implements modelListener{
 			}		
 		
 		if (controller.state ==controller.READY) { 
-			//path information is sent over the network	
-			
+			//path information is sent over the network				
 				msg.add("Client model changed!"+"\n");
 				//is the path Alive?				
 				if (model.path == null) {
@@ -152,12 +149,13 @@ public class ClientListener implements modelListener{
 				msg.add(Double.toString(controller.mouseCoordinates.get(controller.mouseCoordinates.size()-1).y)+"\n");
 				//clipDuration
 				//could eliminate this to make my app even more efficient(clipDuration can be determined from the timbre
-				msg.add(Double.toString(controller.clipDuration)+"\n");
+				//msg.add(Double.toString(controller.clipDuration)+"\n");
 				//clipStaggerIncrement
-				msg.add(Double.toString(controller.clipStaggerIncrement)+"\n");
+				//msg.add(Double.toString(controller.clipStaggerIncrement)+"\n");
 				//current timbre
 				msg.add(Integer.toString(model.currentTimbre));				
 		
+				//send one msg over
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);

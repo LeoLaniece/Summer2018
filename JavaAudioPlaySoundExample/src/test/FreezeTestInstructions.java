@@ -107,10 +107,7 @@ public class FreezeTestInstructions extends Stage{
 	    		    "When prompted, please identify which shape"+"\n"+
 	    		    "the other user was previously tracing"+"\n"+"\n"+
 	    		    "The other user will be tracing all the shapes in the workspace"+"\n"+
-	    		    "They will be tracing the triangles with the pencil"+"\n"+
-	    		    "The squares with the nail"+"\n"+
-	    		    "The squiggles with the chalk"+"\n"+
-	    		    "And erasing the circles with the eraser"+"\n"+	    		    
+	    		    "They will be tracing all shapes with the pencil"+"\n"+   		    
 		    		  "please press the ready button when you are ready to begin");
 	      }
 	      //change text for tool reaction task
@@ -158,7 +155,8 @@ public class FreezeTestInstructions extends Stage{
 		        	   //change super state 
 		        	   controller.superState = controller.SOUNDS_LOCAL;		        	   
 		        	   //add a window with a done training button
-		        	   new DoneTrainingStage(controller, me);
+		        	   //new DoneTrainingStage(controller, me);
+		        	   controller.view.addDoneTrainingButton(me);
 		        	   //close this window
 		        	   hide();
 		           }

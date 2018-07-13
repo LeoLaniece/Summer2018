@@ -1,13 +1,16 @@
 package test;
 
+/**
+ * This class stores 2 double values
+ * @author HCI Lab
+ *
+ */
 public class Coordinate {
 	public double x;
 	public double y;
-	public long time;
 	public Coordinate(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.time = 0;
 	}
 	
 	public void setX(double x) {
@@ -16,7 +19,5 @@ public class Coordinate {
 	public void setY(double x) {
 		this.y = x;
 	}
-	public void setTime(long t) {
-		time = t;
-	}
+
 }
