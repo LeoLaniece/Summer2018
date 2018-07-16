@@ -49,7 +49,7 @@ public class Draw3 extends Application{
 	        view.setController(controller);
 	        radarView.setController(controller);
 	        model.setController(controller);
-	        
+	        controller.superState = controller.SOUNDS_LOCAL;	        
 	        
 	        primaryStage.setScene(scene);
 	        primaryStage.setX(0);
@@ -57,8 +57,6 @@ public class Draw3 extends Application{
 	        primaryStage.show();	        	
 }
 	 public static void main(String[] args) {
-
 	        Application.launch(args);
-
 	    }
 }

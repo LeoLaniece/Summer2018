@@ -174,15 +174,15 @@ public DrawingClient(String [] args) {
          	 //adjust the server's minimap location
          	 if (serverState == controller.PAN_READY) {
        		  //START the ViewPortDisplacementSound generator here
-        	     if (model.VPDS == null) {
-            		 model.beginViewPortMovementSound();
+        	     if (model.networkVPDS == null) {
+            		 model.beginNetworkViewPortMovementSound();
             		 //log user1 activity here for read and observe
-            		 if (controller.readAndObserveTrial != null) {
-            			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+            		 if (controller.model.readAndObserveTrial != null) {
+            			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
             		 }
             	 }else {
             		 //update sound if the view port sound is already happening
-            		 model.updateVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
+            		 model.updateNetworkVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
             	 }         		 
          		 //draw a second viewport on the miniMap!
          		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
@@ -192,11 +192,11 @@ public DrawingClient(String [] args) {
 
          	 }else {
          		//stop the VPDS generator
-            	 if (model.VPDS != null) {            		 
-            		 model.stopVPDS();
+            	 if (model.networkVPDS != null) {            		 
+            		 model.stopNetworkVPDS();
                		 //log user 1 activity here for ReadAndObserve study task
-            		 if (controller.readAndObserveTrial != null) {
-            			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+            		 if (controller.model.readAndObserveTrial != null) {
+            			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
             		 }
             	 }
  
@@ -240,8 +240,8 @@ public DrawingClient(String [] args) {
         		 model.setNetTimbre(netTimbre);        		
         		 model.playPathInteractively(line[3], mouseCoordinate); //line[7], line[8]);        		 
         		 //log user1 activity here for read and observe
-        		 if (controller.readAndObserveTrial != null) {
-        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 if (controller.model.readAndObserveTrial != null) {
+        			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
         		 }
         	 }else
         		 //add on to current network path
@@ -263,8 +263,8 @@ public DrawingClient(String [] args) {
         		 model.netWorkPath = null;
         		 model.stopSoundGenerator();
         		 //log user 1 activity here for read and observe study task
-        		 if (controller.readAndObserveTrial != null) {
-        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 if (controller.model.readAndObserveTrial != null) {
+        			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
         		 }
         	 }       	          	                   	
      	 }

@@ -193,7 +193,7 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      root.getChildren().addAll(task7,task10,task8, task11, task13, task14,task5,task6,task3,task4,task1,task2,task15);
+	      root.getChildren().addAll(task7,task8, task13, task5,task6,task1,task2,task15);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

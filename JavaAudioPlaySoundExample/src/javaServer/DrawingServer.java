@@ -174,11 +174,11 @@ public void run() {
      		//adjust the server's minimap location
         	 if (clientState == controller.PAN_READY) {
         		 //START the ViewPortDisplacementSound generator here
-        	     if (model.VPDS == null) {
-            		 model.beginViewPortMovementSound();
+        	     if (model.networkVPDS == null) {
+            		 model.beginNetworkViewPortMovementSound();
             	 }else {
             		 //update sound if the view port sound is already happening
-            		 model.updateVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
+            		 model.updateNetworkVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
             	 }
         		 //draw a second viewport on the miniMap!!
         		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
@@ -187,8 +187,8 @@ public void run() {
             	 model.radarView.drawViewPortFromNet(line[0], line[1]);            	            	 
         	 }else {
          		//stop the VPDS generator
-            	 if (model.VPDS != null) {
-            		 model.stopVPDS();
+            	 if (model.networkVPDS != null) {
+            		 model.stopNetworkVPDS();
             	 }
         	 }
 
@@ -230,8 +230,8 @@ public void run() {
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
         		 model.playPathInteractively(line[3], mouseCoordinate); //line[7], line[8]);     
         		 //log user1 activity here 
-        		 if (controller.readAndObserveTrial != null) {
-        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 if (controller.model.readAndObserveTrial != null) {
+        			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
         		 }
         	 }else
         		//add on to current network path
@@ -253,8 +253,8 @@ public void run() {
         		 model.netWorkPath = null;        		 
         		 model.stopSoundGenerator();  
         		 //log user 1 activity here
-        		 if (controller.readAndObserveTrial != null) {
-        			 controller.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.readAndObserveTrial.startTime);
+        		 if (controller.model.readAndObserveTrial != null) {
+        			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
         		 }
         	 }        	
         	 }    

@@ -141,27 +141,40 @@ public class Draw2Controller {
 	 */
 	public long startTime;
 	/**
-	 * 
-	 */
-	public ReadAndObserveStage readAndObserveTrial =null;
+	 * Variable which indicate if this drawing application is running a task or not
+	 */	
 	public boolean taskRunning =false;
+	/**
+	 * Variable which indicates if this drawing application should display the RadarView for 
+	 * the given task
+	 */
 	public boolean drawViewPort = true;
 	
-	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) throws InterruptedException 
-{
+	/**
+	 * Creates a controller entity for the drawing application
+	 * Handles mouse and key events 
+	 * Communicates with the model
+	 * Also acts as a place holder for the current state of the drawing application
+	 * @param v The drawing application view
+	 * @param m The drawing application model
+	 * @param r the drawing application radarView
+	 * @throws InterruptedException
+	 */
+	public Draw2Controller(Draw2View v, Draw2Model m, Draw2miniMap r) {
+		//initialize necessary variables
 		view = v;
 		model = m;
 		radarView = r;
-		//timeOfChange = new ArrayList<>();
-		//points = new Coordinate[4];
 		 mouseCoordinates=new ArrayList<Coordinate>();
 		 File f1 = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
+		 //begin thread to calculate the mouse velocity
+		 //used to inform the sounds generated
      	soundVelocityThread = new MouseTest();
      	soundVelocityThread.start();
      	startTime = System.currentTimeMillis();
-		//setPoints();
-     	 model.startTaskStage(me);
-     	
+     	//launch the task selection menu 
+     	 model.startTaskStage(me);     	
+     	 
      	view.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent key) {	
@@ -169,223 +182,84 @@ public class Draw2Controller {
 				if (key.getCode()==KeyCode.SPACE) {
 					String hash = "Time for completion "+Long.toString(((System.currentTimeMillis() -startTime)/1000));
 					// CreateFile x = new	CreateFile(hash);														
-				}
-				//for the read and observe task
-				if (key.getText().equals("r")) {					
-					state = READ_AND_OBSERVE;
-					model.notifySubscribers();
-					//readAndObserveTrial = new ReadAndObserveStage(me);					
-				}
-				
-				//pan the minimap if there is asdw key press
-				//and if we are in READANDOBSERVE state
-				if (state == READ_AND_OBSERVE) {
-				if (key.getText().equals("s")) {
-					System.out.println("key s pressed!");
-            		dy = 3;           		            		           		            		        		            		
-            		//move the viewPort within its bounds
-            		//but only if it is a drag allowed in the view port 
-            		if (iModel.viewPortY +dy >=0 &&            				
-            				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {            		
-            		iModel.viewPortY += dy/7;
-            		//drag the paths around to make it seem like we are panning the background
-            		for (int a = 0; a < model.getModelPaths().size(); a++) {            			
-            			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
-            			//model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
-            			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
-            		}
-            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
-            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
-            		  model.notifySubscribers();    		
-            		}  
-				}
-				if (key.getText().equals("w")) {
-					System.out.println("key w pressed!");
-            		dy = -3;           		            		           		            		        		            		
-            		//move the viewPort within its bounds
-            		//but only if it is a drag allowed in the view port 
-            		if (iModel.viewPortY +dy >=0 &&            				
-            				(iModel.viewPortY +iModel.viewPortHeight +dy) <=radarView.height/7) {            		
-            		iModel.viewPortY += dy/7;
-            		//drag the paths around to make it seem like we are panning the background
-            		for (int a = 0; a < model.getModelPaths().size(); a++) {            			
-            			iModel.modelPathsTranslateByCoordinates.get(a).y-=dy;            			
-            			//model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
-            			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
-            		}
-            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
-            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
-            		  model.notifySubscribers();    		
-            		} 
-				}
-				if (key.getText().equals("d")) {
-					System.out.println("key d pressed!");
-					dx = 3;            		            		           		            		        		            		
-            		//move the viewPort within its bounds
-            		//but only if it is a drag allowed in the view port 
-            		if (iModel.viewPortX +dx >=0 &&            				
-            				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7) 
-            				 {
-            		iModel.viewPortX += dx/7;            		
-            		//drag the paths around to make it seem like we are panning the background
-            		for (int a = 0; a < model.getModelPaths().size(); a++) {
-            			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;            			           			
-            			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);            			           			
-            		}
-            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
-            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
-            		  model.notifySubscribers();    		
-            		}            		
-				}
-				if (key.getText().equals("a")) {
-					System.out.println("key a pressed!");
-					dx = -3;            		            		           		            		        		            		
-            		//move the viewPort within its bounds
-            		//but only if it is a drag allowed in the view port 
-            		if (iModel.viewPortX +dx >=0 &&            				
-            				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7) 
-            				 {
-            		iModel.viewPortX += dx/7;            		
-            		//drag the paths around to make it seem like we are panning the background
-            		for (int a = 0; a < model.getModelPaths().size(); a++) {
-            			iModel.modelPathsTranslateByCoordinates.get(a).x -=dx;            			           			
-            			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);            			           			
-            		}
-            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
-            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
-            		  model.notifySubscribers();    		
-            		}            		
-				}
-				}
+				}		
 			}     		
      	});
-
+     	//draw paths if state is ready, otherwise prepare to pan the viewPort
 	view.c.setOnMousePressed(new EventHandler<MouseEvent>()  {        	
         @Override
         public void handle(MouseEvent me) {        	
         	state = READY;
-        	model.pathToNull();
-        	
-        	//keep thinking about this
-        	//thread is possible
-        	//special type of event Handler?
-        	//objective is to keep calculating velocity, even when the mouse stops draging
-        	//current method only updates calculates and adds the velocities during mouse drag events
-        	//is there a better way to keep track of the mouse velocity?
-        	
-        	//like a velocityList coupled with a duration for the velocities?
-        	//would assign a duration and velocity at the same time to the velocities array
-        	
-        	
-        	
-        	//CalculateVelocityThread thread = new CalculateVelocityThread("thread",me.getX(),me.getY(),view);
-        	//thread.start();
-        	
-        	//setPoints(me.getX(),me.getY());
-        	
-       // 	if (model.p != null) {        		
-      //  		model.p.stop();
-       // 	}        	
-        	
+        	model.pathToNull();  	        	
+        	//if shift is down, the user wants to pan the viewPort
         	if (me.isShiftDown()) {
         		//pan the canvas
         		//new state
         		state = PAN_READY;   
             	x = me.getX();
-            	y = me.getY();
-            	//model.beginViewPortMovementSound();
-        		
-        	}else {
-        		state = READY;
+            	y = me.getY();        		
+         		//adjust the server's minimap location
+           	    if (state == PAN_READY) {
+           		 //START the ViewPortDisplacementSound generator here
+           	     if (model.localVPDS == null) {
+               		 model.beginLocalViewPortMovementSound();
+               	 }
+           	  }       	         		
         	}
         	if (state ==READY) {
         	//will be useful in mouseDragged for velocity
         	x = me.getX();
-        	y = me.getY();        	 
-        	
-        	//path should be started in the model
-        	model.startPath(me.getX(),me.getY());
-        	//velocities = new ArrayList<>();        	        	
-        	//relativize the mouse coordinates, do same as for start path
+        	y = me.getY();       	         	
+        	//begin drawing path and add it to the model database
+        	model.startPath(me.getX(),me.getY());      	        	
+        	//Mark the location of the path relative to the workspace for sound production 
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
-
+        	//if the state is SOUNDS_LOCAL paly the path sounds locally.
         	if (superState == SOUNDS_LOCAL) {
-			model.playPathInteractively(0,//soundVelocityThread.getVelocity(),//
-					mouseCoordinates.get(mouseCoordinates.size()-1)  
-					);
+			model.playPathInteractively(0,mouseCoordinates.get(mouseCoordinates.size()-1));
         	}
-        	//view.startPath(me.getX()/view.width, me.getY()/view.height); 
-        	//radarView.startPath(me.getX()/view.width, me.getY()/view.height); 
-        	}
-        	
-        	            		                        
+        	}        	        	            		                        
         }
     });
 	
-        //in the controller
+    //when the mouse is released stop drawing the path, panning the viewPort and producing sounds
 	view.c.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent me) {                     	            	
-            	
-            	if (state == READY) {
-            		//soundVelocityThread.preStop();
-            		//soundVelocityThread.stop();
-            	//still need sound generated appropriately for the sustained sections of the stroke
-            		//-can fix this by using longer recordings from the start so that they loop less?
-            		//-they would sound less distorted
-            		
-            		//still need the sound generated appropriately for the 'silent' portions of the stroke.
-            		//-this might mean mixing 3 different sounds
-            	
-            	
-            	//CAPTURES THE SECTIONS OF THE STROKE	            		
-            	//implements playFor with filesAndDurations            		            	
-            	//model.playStroke(System.currentTimeMillis()-time, velocities);            	            	            
-            		
-            	//GOOD FOR CAPTURING EDGES OR SHARP STROKES
-            	//implements playMixStreamsFor
-            		//updatePoints(me.getX(),me.getY());            	
-                //	velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));
-            	 //           	velocities.forEach(a ->{            	            		
-            	 //           		if (a.y > 0.044) {            	            		
-            	 //           			a.x = 0;
-            	 //           		}
-            	//});	            		
-            //	model.playPathSound(velocities, System.currentTimeMillis()-time, mouseCoordinates);
-            	
-            //	model.playStaggeredSoundThreads(System.currentTimeMillis()-time, velocities, mouseCoordinates);
-            	
-    
-            		
-                    	
+            public void handle(MouseEvent me) { 
+            	if (state == PAN_READY) {
+        		//stop the VPDS generator
+              	 if (model.localVPDS != null) {
+              		 model.stopLocalVPDS();
+              	 }
+            	}
+            	if (state == READY) {   
+            	//stop drawing the paths
             	model.pathToNull();
+            	//stop the sounds for local generatiom
             	if (superState == SOUNDS_LOCAL) {
             		model.stopSoundGenerator();
-            	}
-            	
+            	}            	
             	model.notifySubscribers();
+            	//reset the mouse coordinates for later use
             	mouseCoordinates=new ArrayList<Coordinate>();
-            	}
-            	
-                state = NOTREADY;                
-                        	
+            	}            	
+                state = NOTREADY;                                        	
             	model.notifySubscribers();
             }
-        });
-	
-	
+        });		
       
+	//When the mouse is dragged update paths, update sound generators and pan the viewPort
 	view.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent me) {              	
-
-            	if (state == PAN_READY) {
+            public void handle(MouseEvent me) { 
+            	//displace the viewPort, all modelPaths and the background image by 1 pixel
+            	if (state == PAN_READY) {            		
             		dx =me.getX()-x;
             		dy = me.getY()-y;
             		x = me.getX();
-            		y = me.getY();            		            		           		            		        		            		
-            		//move the viewPort within its bounds
-            		//but only if it is a drag allowed in the view port 
+            		y = me.getY();
+            		//move the viewPort 
+            		//but only if it is a drag allowed in the radarView bounds 
             		if (iModel.viewPortX +dx >=0 &&
             				iModel.viewPortY +dy >=0 &&
             				(iModel.viewPortX +iModel.viewPortWidth + dx) <=radarView.width/7 &&
@@ -399,183 +273,68 @@ public class Draw2Controller {
             			model.getModelPaths().get(a).setTranslateX(iModel.modelPathsTranslateByCoordinates.get(a).x);
             			model.getModelPaths().get(a).setTranslateY(iModel.modelPathsTranslateByCoordinates.get(a).y);            			
             		}
-            		 // model.updateVPDSGeneratorVelocity(soundVelocityThread.getVelocity());
-            		  //model.updateVPDSGeneratorLocation(iModel.calculateViewPortCenter());
             		  model.notifySubscribers();    		
-            		}            		
+            		}
+                   	if (state == PAN_READY && model.localVPDS!=null) {
+                 		 //update sound if the view port sound is already happening
+                 		 model.updateLocalVPDSGeneratorLocation(model.radarView.calculateViewPortCenter());
+                 	 }
             	}
-            	
-            	if (state ==READY) {            		
-            		
-                	//updatePoints(me.getX(),me.getY());            	
-                	//velocities.add(new Coordinate(calculatePointsAverageVelocity(), (double) (System.currentTimeMillis()-velocityTime)/1000));                	
-                	
-            	//set up relativized view coordinates
-            	double viewx = me.getX()/view.width;
-            	double viewy = me.getY()/view.height;            	
-        		//just for consisitency
-        		mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
-            	//calculate distance travel
-            	//calculate the velocity interactively
-            	//last 4 points, take the average of the 3 velocities
-            	//functions: 
-            	//setPoints()
-            	//updatePoints(double x, double y)
-            	//calculateVelocity(Coordinate 1, Coordinate 2)
-            	//double (pixels per ms) calculatePointsAverageVelocity()
-            	
-            	//use microseconds
-        		dx = me.getX();
-        		dy = me.getY();
-            	
-            	
-            	//use the events in timeOfChange to generate swipe sounds at those times in the actual sound recording.
-            	//could do this by running a thread at the same time as the strokePlayback 
-            	//Objective: produce a sound recording which produces swipes at the given times in a sound recording.
-            	//do this by mixing silence and the swipe. 
-            	
-            	
-            	
-            	x = dx;
-            	y = dy;
-            	// keep lines within rectangle
-
-                if (view.c.getBoundsInLocal().contains(me.getX()
-                		//+model.path.getStrokeWidth()
-                		, me.getY()
-                		//+model.path.getStrokeWidth()
-                		)) {
-                	
-                	//create new path in the controller
-                	
-                	model.strokePath(me.getX(), me.getY());                	
-            //		if (model.pathAngleCalculationCoordinatesUpdateCount>2) {
-            //			if (model.currentPathAngle < 90) {
-            //				velocities.get(velocities.size()-1).x = 10;
-            //			}
-            	//	}
+            	//update the path drawing and sound generator
+            	if (state ==READY) {            		            	
+            	//record path location for the sound generator
+        		mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));            	
+        		//only draw paths on the canvas
+                if (view.c.getBoundsInLocal().contains(me.getX(), me.getY())) { 
+                	//update current path
+                	model.strokePath(me.getX(), me.getY());  
+                	//if superStae is SOUNDS_LOCAL update the local sound generator
                 	if (superState == SOUNDS_LOCAL) {
             		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
             		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
-                	}
-            	//	model.updateSoundGeneratorPathAngle();
-            	//	time = System.currentTimeMillis();
-            		
-            			//model.playPathInteractively(soundVelocityThread.getVelocity(), //velocities.get(velocities.size()-1).x
-            			//		mouseCoordinates.get(mouseCoordinates.size()-1), model.currentPathAngle, 
-            			///		clipDuration);
-            			
-            			//System.out.println("velocity "+soundVelocityThread.getVelocity());            					
-            			
-            		
-            		
-                	//view.strokePath(viewx, viewy); 
-                	//view.startPath(viewx, viewy);
-                
-                //draw in the radarView               
-                //	radarView.strokePath(viewx, viewy); 
-                //	radarView.startPath(viewx, viewy);
+                	}            	
                 }
             	}
                 }
         });		
 
 	}
-	
-
-	
-	
-	//velocity calculation functions
 	/**
-	 * initializes the points for velocity calculation of given stroke
-	 * x,y = mousePressed location
-	 * 
-	 
-	public void setPoints(double x, double y) {
-		for (int i =0;i<4;i++) {
-			points[i] = new Coordinate(x,y);
-			points[i].time = System.currentTimeMillis();
-		}
-	}*/
-	/**
-	 * update the points to have the 4 previous mouse locations
-	 * @param x
-	 * @param y
-	 
-	public void updatePoints(double x, double y) {
-
-		long startTime = System.currentTimeMillis();		
-		for (int i =3;i>0;) {
-			if (System.currentTimeMillis()-startTime >5) {
-				points[i].x = points[i-1].x;
-			points[i].y = points[i-1].y;
-			points[i].time = System.currentTimeMillis();
-
-				startTime = System.currentTimeMillis();
-				i--;
-			}			
-		}
-		while (System.currentTimeMillis()-startTime <5) {
-			//wait
-		}
-		points[0].x = x;
-		points[0].y = y;
-		points[0].time = System.currentTimeMillis();			
-	}*/
-	/**
-	 * calculate given velocity between 2 coordinates
-	 * a should be earlier in time than b
-	 * @param a
-	 * @param b
-	 * @param startTime
-	 * @return
-	
-	public double calculateVelocity(Coordinate a, Coordinate b) {
-		double distanceTraveled = Math.abs(Math.sqrt(Math.pow((b.x-a.x), 2)+Math.pow((b.y-a.y), 2)));
-		return distanceTraveled/(a.time-b.time);
-	} */
-	//last 4 points, take the average of the 3 velocities
-	//functions: 	
-	//double (pixels per ms) calculatePointsAverageVelocity()
-	/**
-	 * will return the average velocity between the 4 previous mouse locations
-	 * @return 
-	 
-	public double calculatePointsAverageVelocity() {	
-
-		double average =0;
-		for (int i =0;i<3;i++) {
-			average+=calculateVelocity(points[0], points[i+1]);
-		}
-		return average/3;
-		
-	}*/
+	 * Will set a reference to the application InteractionModel in the controller
+	 * @param iM application interactionModel
+	 */
 	public void setIModel(InteractionModel iM) {
 		iModel = iM;
 	}
-	   /**
-	    * will calculate the stagger increment for a submitted file 
-	    */
-	   public double calculateStaggerIncrement(File f) {
-		   double clipDuration = model.player.fileLength(f)*1000;
-			double clipOverlapDuration = 0.8;//0.865;
-			return (clipDuration)-(clipDuration*clipOverlapDuration);			
-	   }
-	   
+	/**
+	 * Will begin executing the Read and Observe study task
+	 * will show instructions for the task
+	 * 
+	 * this task will ask one user to read a short article while maintaining basic awareness of their partner
+	 * If the said user notices their partner is active in the workspace, they must hold down a button
+	 * the task will last 60 seconds
+	 */
 	   public void startTask2() {
 			state = READ_AND_OBSERVE;
-			taskRunning = true;
-			//view.foc
+			taskRunning = true;			
 			model.notifySubscribers();
-			//send in iModel, model and radarView
-			readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			
+			//launch instruction stage
+			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			
 	   }
-	   
+	   /**
+	    * Will begin executing the Freeze test study task
+	    * Will show instructions for the task
+	    * 
+	    * This task will ask both users to trace all the shapes they can find in the workspace together
+	    * Every 20 seconds a pop up quiz will interrupt the task
+	    * The users must complete the quiz before continuing the task
+	    */
 	   public void startTask1() {		   		   
 			state = FREEZE_TEST_TASK;
 			iModel.task = iModel.REAL_FREEZE_TEST;
 			taskRunning = true;
-			model.notifySubscribers();			
+			model.notifySubscribers();	
+			//launch instructions
 		   model.launchFreezeTestIntructions(me);
 	   }
 	   /**
@@ -586,7 +345,7 @@ public class Draw2Controller {
 	    */
 	   public void startTask0() {
 		   //launch a partial version of FreezeTestTask with a different timer
-		   //different instructions for User 1
+		   //and different instructions for both users
 		   iModel.task = iModel.LOCATION_IDENTIFICATION_TASK;
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
@@ -601,7 +360,7 @@ public class Draw2Controller {
 	    */
 	   public void startTask4() {
 		   //launch a partial version of FreezeTestTask with a different timer
-		   //different instructions for User 1
+		   //and different instructions for both users
 		   iModel.task = iModel.TOOL_IDENTIFICATION_TASK;
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
@@ -617,12 +376,13 @@ public class Draw2Controller {
 	    */
 	   public void startTask5() {
 		   //launch a partial version of FreezeTestTask with a different timer
-		   //different instructions for User 1
+		   //and different instructions for both users
 		   iModel.task = iModel.ACTIVITY_IDENTIFICATION_TASK;
 		   state = READ_AND_OBSERVE;
 			taskRunning = true;
-			model.notifySubscribers();			
-			readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			   
+			model.notifySubscribers();	
+			//launch instructions for the task
+			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			   
 	   }
 	   /**
 	    * will begin a shape identification task
@@ -633,7 +393,7 @@ public class Draw2Controller {
 	    */
 	   public void startTask6() {
 		   //launch a partial version of FreezeTestTask with a different timer
-		   //different instructions for User 1
+		 //and different instructions for both users
 		   iModel.task = iModel.SHAPE_DETECTION_TASK;
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
@@ -647,12 +407,11 @@ public class Draw2Controller {
 	    */
 	   public void startTask7() {
 		   //launch a partial version of FreezeTestTask with a different timer interval
-		   //different instructions for User 1
+		 //and different instructions for both users
 		   iModel.task = iModel.TOOL_REACTION_TASK;
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);		   
-	   }
-	   
+	   }	   
 }

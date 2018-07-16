@@ -50,7 +50,7 @@ public class ClientDrawingStage extends Stage {
         root.getChildren().add(radarView);
         radarView.setPickOnBounds(false);
 
-		try {
+	
 			c = new Draw2Controller(view, model,radarView);
 
         model.addSubscriber(view);
@@ -66,9 +66,6 @@ public class ClientDrawingStage extends Stage {
         show();
         //the stage stores a reference of the model to pass networking events
         m = model;
-        		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 }

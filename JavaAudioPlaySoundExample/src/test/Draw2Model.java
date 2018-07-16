@@ -58,7 +58,8 @@ public class Draw2Model {
     
     public String user1FreezeQuestionResult = "";
     
-    public ViewPortDisplacementSound VPDS;
+    public ViewPortDisplacementSound localVPDS;
+    public ViewPortDisplacementSound networkVPDS;
     
     Slider strokeSlider;
     Label labelStroke;
@@ -71,6 +72,7 @@ public class Draw2Model {
     public InteractionModel iModel;   
     public Draw2Controller controller;
     drawPath dP = null;
+    public ReadAndObserveStage readAndObserveTrial =null;
     
     //eliminate all of this
   //  Coordinate[] pathAngleCalculationCoordinates = new Coordinate[3];
@@ -130,6 +132,8 @@ public class Draw2Model {
                 iModel.modelPathsTranslateByCoordinates =new ArrayList<>(); 
                 iModel.viewPortXYLocation =new ArrayList<>();                
                 modelPaths =new ArrayList<>();                         
+                view.resetView();
+                radarView.resetView();
                 notifySubscribers();
             }
         });    	
@@ -826,20 +830,37 @@ public class Draw2Model {
 		radarView = v;
 	}
 	
-	public void beginViewPortMovementSound() { 
-		VPDS = new ViewPortDisplacementSound();
-		VPDS.start();
+	public void beginLocalViewPortMovementSound() { 
+		localVPDS = new ViewPortDisplacementSound();
+		localVPDS.start();
 	}
-	public void stopVPDS() {
-		VPDS.updateDisplacementProgress();		
-		VPDS = null;
+	
+	public void beginNetworkViewPortMovementSound() { 
+		networkVPDS = new ViewPortDisplacementSound();
+		networkVPDS.start();
+	}	
+	
+	public void stopLocalVPDS() {
+		localVPDS.updateDisplacementProgress();		
+		localVPDS = null;
 	}
-	public void updateVPDSGeneratorVelocity(double velocity) {
-		VPDS.updateVelocity(velocity);
+	
+	public void stopNetworkVPDS() {
+		networkVPDS.updateDisplacementProgress();		
+		networkVPDS = null;
 	}
-	public void updateVPDSGeneratorLocation(Coordinate vp) {
-		VPDS.updateLocation(vp);
+	//public void updateVPDSGeneratorVelocity(double velocity) {
+	//	VPDS.updateVelocity(velocity);
+	//}
+	
+	public void updateLocalVPDSGeneratorLocation(Coordinate vp) {
+		localVPDS.updateLocation(vp);
 	}
+	
+	public void updateNetworkVPDSGeneratorLocation(Coordinate vp) {
+		networkVPDS.updateLocation(vp);
+	}
+	
 	public void stopDrawingSoundGenerator() {
 		soundGenerator.closeSoundGenerator();		
 	}

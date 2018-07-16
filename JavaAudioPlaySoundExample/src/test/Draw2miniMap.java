@@ -32,36 +32,59 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
- * radar view for the model
- * receives notifications from the model? to draw the lines of the user.
+ * This class is in charge of drawing all elements in the application radarView
+ * receives notifications from the model and from the network to draw elements
  * @author HCI Lab
  *
  */
 public class Draw2miniMap extends Draw2View implements modelListener {
-	
-	int scale;
+	/**
+	 * The workspace is scaled down in the radarView by this unit
+	 * ex) if you have a 1000 by 1000 workspace, the radar view will appear as a 1000/scale by 1000/scale 
+	 * representation in the application
+	 */
+	int scale ;
+	/**
+	 * Variable which indicates if there is a network viewPort to be drawn
+	 */
 	public boolean hasNetMiniMap = false; 
+	/**
+	 * Variable which indicates the location of the network viewPort (used for networking)
+	 */
 	public double netMiniMapX, netMiniMapY;
-	public Coordinate lastNetPathCoordinate = null;
-	
-	
+	/**
+	 * Variable which indicates the last know location of a path segment drawn from the network
+	 */
+	public Coordinate lastNetPathCoordinate = null;	
+	/**
+	 * constructor for application radarView
+	 * @param w width of the total virtual workspace
+	 * @param h height of the total virtual workspace
+	 * @param m model for the drawing application
+	 */
 	public Draw2miniMap(double w, double h, Draw2Model m) {		
-		super(w,h,m);
-		
-		setCanvas();
-		
-		this.gc.setStroke(Color.BLACK);
-		this.gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
+		super(w,h,m);		
+		setCanvas();			
 	}
 	
-	
+	/**
+	 * Will draw the viewPort on in the radarView
+	 * The viewPort represents the relative location of the canvas within the total workspace
+	 */
 	public void drawViewPort() {
 		gc.setLineWidth(5);
 		gc.setStroke(Color.CADETBLUE);
 		gc.strokeRect(iModel.viewPortX, iModel.viewPortY, iModel.viewPortWidth,iModel.viewPortHeight);
 	}
-	
+	/**
+	 * Will draw the viewPort location from the information sent by the network
+	 * Should render a yellow rectangle in the radar view which indicates the location of the other user's 
+	 * viewPort location
+	 * @param x x coordinate of network viewPort
+	 * @param y y coordinate of network viewPort
+	 */
 	public void drawViewPortFromNet(double x, double y) {
+		//all changes made to the canvas must be made on the Platform thread if the change is concurrent to other threads
 		Platform.runLater(new Runnable() {
 		    @Override
 		        public void run() {			    			    			    	
@@ -75,8 +98,9 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		netMiniMapX =x;
 		netMiniMapY =y;
 		if (controller.drawViewPort) {
-		//do nothing, else paint over
+		//do nothing
 	}else {
+		//paint over everything
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
 		gc.setLineWidth(1);
@@ -92,7 +116,6 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		//do nothing
 	}
 
-
 	@Override
 	public void setLineGroup() {
 		//do nothing
@@ -102,28 +125,33 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public void setFlowPane(VBox UCRight){
 		//do nothing
 	}
+	/**
+	 * Initializes the canvas for the radarView 
+	 */
 	@Override
 	public void setCanvas() {
+		//needs to be initialized here for some reason
 		scale =7;
+		
 		c = new Canvas(width/scale,height/scale);
 		gc = c.getGraphicsContext2D();
 		this.getChildren().add(c);
         gc.drawImage(image, 0, 0, width/scale, height/scale);		
+	//	gc.setStroke(Color.BLACK);
+	//	gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 	}
-	
 	
 	@Override
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
 		//do nothing
 	}
+	/**
+	 * Draw all the model paths onto the radarView
+	 * An expensive operation
+	 */
 	@Override
 	public void drawModelPaths() {		
-				//DRAW MODELpATHS
-				//draw the paths within the off set bounds of the viewPort
-				//when a path is created, record the location of viewPort X and Y
-				//for that path, always draw it with the X and Y offset.
-				double viewHeight = model.view.height;
-				double viewWidth = model.view.width;
+		//synchronized means no other thread can access getModelPaths() while this code is executing
 				synchronized (model.getModelPaths()) {
 						for (int i=0; i<model.getModelPaths().size();i++) {	
 							gc.beginPath();
@@ -133,8 +161,7 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 							gc.setLineWidth(model.getModelPaths().get(i).getStrokeWidth()/scale);
 							if (model.getModelPaths().get(i).getElements().size()>0) {
 							final double viewPortOffSetX = iModel.viewPortXYLocation.get(i).x;
-							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;
-							
+							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;							
 							for (int a = 0; a<model.getModelPaths().get(i).getElements().size(); a++) {
 								if (model.getModelPaths().get(i).getElements().get(a) instanceof LineTo) {
 								gc.lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()
@@ -143,13 +170,14 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 										*height/scale +viewPortOffSetY);	
 								}
 							}															
-							}
-							
+							}							
 							gc.stroke();
 							}				
 						}		
 	}
-	
+	/**
+	 * Paint over the entire radarView
+	 */
 	@Override
 	public void paintOverPaths() {
 		gc.setFill(Color.WHITE);
@@ -157,46 +185,42 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
-		//drawViewPort();
 	}
-	
+	/**
+	 * Whenever the model changes:
+	 * Draw something
+	 */
 	@Override
 	public void modelChanged() {
+		//all changes made to the canvas must be made on the Platform thread if the change is concurrent to other threads
 		Platform.runLater(new Runnable() {
 		    @Override
-		        public void run() {		
-		    	
-		if (controller.state == controller.PAN_READY|| controller.state == controller.READ_AND_OBSERVE) {
+		        public void run() {				    			    	
+		//if the user is panning the viewPort, draw eveything in the new location
+		if (controller.state == controller.PAN_READY) {
 			gc.drawImage(getImage(), 0, 0, width/scale, height/scale);
 			drawModelPaths();
 		drawViewPort();	
+		//if there is an active network viewPort, draw it.
 		if (hasNetMiniMap == true){
 			drawViewPortFromNet(netMiniMapX, netMiniMapY);
-		}		
-		}else {
+		}}
+		//if the user is not panning the viewPort they must be drawing something
+		else {
+			//add a segment to the path
 			drawPath();
 		}				
-
+		//if the user is conducting a variant of the freeze test task
 		if (iModel.freezeTest) {
 			paintOverPaths();
 		}
-		if (!controller.drawViewPort) {
-			paintOverPaths();
-		}
-		if (model.getModelPaths().size()==0) {
-			//probably means that i have hit the clear button
-			drawImage();					
-			drawModelPaths();
-		}
+		//in any case trace the outline of the radarView
 		gc.setLineWidth(1);
 		gc.setStroke(Color.BLACK);
 		gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 		drawViewPort();
-	/*	if (controller.state ==controller.READ_AND_OBSERVE) {
-			setImageForReadAndObserve();
-		}*/if (controller.drawViewPort) {
-			//do nothing, else, paint over 
-		    	}else {
+		//if the task requires the radarView to be covered, cover it
+		if (!controller.drawViewPort) {		
 		    		gc.setFill(Color.WHITE);
 		    		gc.fillRect(0, 0, c.getHeight(), c.getWidth());
 		    		gc.setLineWidth(1);
@@ -206,34 +230,50 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		    }
 		});
 	}
-	
+	/**
+	 * Will draw the background image scaled down to fit the radarView
+	 */
 	@Override
 	public void drawImage() {			
 		synchronized (getImage()) {
 			gc.drawImage(getImage(), 0, 0, width/scale, height/scale);
 			drawModelPaths();
-		}
-		
-	}
-	
+		}		
+	}	
 	
 	/**
-	 * calculate relative coordinates for the center of the netWork viewport
-	 * @return coordinate
+	 * calculate the coordinate of the center of the netWork viewport
+	 * @return coordinate network viewPort center location
 	 */
-	public Coordinate calculateNetViewPortCenter() {		 
+	public Coordinate calculateNetViewPortCenter() {
+		//if the network viewPort is active
 		if (hasNetMiniMap) {
 			Coordinate p =new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 
 				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);				
 		return p;
 		}else {
+			//if the network view port has never been active, return the center of the view port
+			//when the stage begins
 			Coordinate p = new Coordinate((((0+(iModel.viewPortWidth/2)))*7)/width, 
-					(((0+(iModel.viewPortHeight/2)))*7)/height);
-			System.out.println("netMiniMap center "+p.x+" "+p.y);
+					(((0+(iModel.viewPortHeight/2)))*7)/height);			
 			return p;
 		}
 
 	}
+	
+	/**
+	 * calculate the coordinate of the center of the viewport
+	 * @return coordinate network viewPort center location
+	 */
+	public Coordinate calculateViewPortCenter() {
+		//iModel.viewPortX, iModel.viewPortY, iModel.viewPortWidth,iModel.viewPortHeight
+			//if the network view port has never been active, return the center of the view port
+			//when the stage begins
+			Coordinate p = new Coordinate((((iModel.viewPortX+(iModel.viewPortWidth/2)))*7)/width, 
+					(((iModel.viewPortY+(iModel.viewPortHeight/2)))*7)/height);			
+			return p;
+		}
+
 	
 	/**
 	 * what is the max distance the center point is from the edge?
