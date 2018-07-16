@@ -50,12 +50,10 @@ import javafx.scene.control.TextField ;
 public class TaskWithoutSoundStage extends Stage{
 	
 	private Draw2Controller controller;
-	private int task;
 	private Stage me = this;
 	
-	public TaskWithoutSoundStage(Draw2Controller c, int task) {
+	public TaskWithoutSoundStage(Draw2Controller c) {
 		controller = c;
-		this.task = task;
 	      setTitle("Task without sound");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
@@ -77,17 +75,8 @@ public class TaskWithoutSoundStage extends Stage{
 	      okay.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {	        	           	   	        	   	        	   
 	        	   
-	        	   if (task == controller.FREEZE_TEST_TASK) {
-		        	   controller.drawViewPort =true;
-		        	   controller.startTask1();
-		               me.close();	
-	        	   }
-	        	   
-	        	   if (task == controller.READ_AND_OBSERVE) {
-		        	   controller.drawViewPort =true;
-		        	   controller.startTask2();
-		               me.close();
-	        	   }	        	   
+	        	   me.close();
+	        	   controller.iModel.noSounds =false;
 	        	   
 	           }
 	      });

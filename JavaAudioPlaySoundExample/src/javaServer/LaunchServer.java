@@ -30,7 +30,7 @@ import javafx.scene.input.MouseEvent;
  */
 public class LaunchServer extends Application{
 	
-	//sets the size of all windows in the aplication
+	//sets the size of all windows in the application
    public static int SceneWidth = 800;
    public static int SceneHeight = 600;
 	

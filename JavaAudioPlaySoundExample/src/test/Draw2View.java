@@ -113,13 +113,16 @@ public class Draw2View extends Pane implements modelListener{
 		topPane.getChildren().add(group);
 		
 	}
-
+	
+	protected synchronized GraphicsContext getGC() {
+		return gc;
+	}
 	
 	public void setCanvas() {
 		c = new Canvas(width,height);
 		gc = c.getGraphicsContext2D();
-		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, width,height);
+		getGC().setFill(Color.WHITE);
+		getGC().fillRect(0, 0, width,height);
 	}
 	
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
@@ -193,33 +196,37 @@ public class Draw2View extends Pane implements modelListener{
 		    	//DRAW MODELpATHS
 		//darw the relativized modelpath coordinates
 		//do everything the same, but! multiply by the canvas height and width where appropriate
+		synchronized (getGC()) {
 				for (int i=0; i<model.getModelPaths().size();i++) {	 
-					gc.beginPath();
-					gc.moveTo(model.modelPathsCoordinates.get(i).x*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(i).x),
+					getGC().beginPath();
+					getGC().moveTo(model.modelPathsCoordinates.get(i).x*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(i).x),
 							model.modelPathsCoordinates.get(i).y*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(i).y));											
-					gc.setStroke(model.getModelPaths().get(i).getStroke());
-					gc.setLineWidth(model.getModelPaths().get(i).getStrokeWidth());
+					getGC().setStroke(model.getModelPaths().get(i).getStroke());
+					getGC().setLineWidth(model.getModelPaths().get(i).getStrokeWidth());
 					if (model.getModelPaths().get(i).getElements().size()>0) {
 					final double translateX = iModel.modelPathsTranslateByCoordinates.get(i).x;
 					final double translateY = iModel.modelPathsTranslateByCoordinates.get(i).y;											
 					synchronized (model.getModelPaths()) {						
 						for (int a = 0; a<model.getModelPaths().get(i).getElements().size(); a++) {
 							if (model.getModelPaths().get(i).getElements().get(a) instanceof LineTo) {
-							gc.lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()*radarView.width
+								getGC().lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()*radarView.width
 									+translateX, 
 									((LineTo) model.getModelPaths().get(i).getElements().get(a)).getY()*radarView.height
 									+translateY);	
 							}
 						}																	
 					}					
-					gc.stroke();
+					getGC().stroke();
 				}					
 				}
+		}
 	}
 	
 	public void paintOverPaths() {
-		gc.setFill(Color.WHITE);
-		gc.fillRect(0, 0, width, height);
+		synchronized (getGC()) {
+		getGC().setFill(Color.WHITE);
+		getGC().fillRect(0, 0, width, height);
+		}
 	}		
 	
 	@Override
@@ -273,9 +280,11 @@ public class Draw2View extends Pane implements modelListener{
 	}
 	
 	public void drawBorder() {
-		gc.setStroke(Color.GREEN);
-		gc.setLineWidth(5);
-		gc.strokeRect(0, 0, width, height);
+		synchronized (getGC()) {
+			getGC().setStroke(Color.GREEN);
+			getGC().setLineWidth(5);
+			getGC().strokeRect(0, 0, width, height);
+		}
 	}
 	
 	public void startPath(double x, double y) {
@@ -287,9 +296,11 @@ public class Draw2View extends Pane implements modelListener{
 		pathStarty = y*height;
 	}
 	public void strokePath(double x, double y) {
-        gc.setLineWidth(model.sampleLine.getStrokeWidth());
-        gc.setStroke(model.sampleLine.getStroke());
-		gc.strokeLine(pathStartx, pathStarty, x*width, y*height);
+		synchronized (getGC()) {
+		getGC().setLineWidth(model.sampleLine.getStrokeWidth());
+		getGC().setStroke(model.sampleLine.getStroke());
+		getGC().strokeLine(pathStartx, pathStarty, x*width, y*height);
+		}
 	}
 	
 
@@ -316,40 +327,43 @@ public class Draw2View extends Pane implements modelListener{
 
 	public void drawImage() {			
 		synchronized (getImage()) {
-		gc.drawImage(getImage(), -iModel.viewPortX*7 +imageX, -iModel.viewPortY*7+imageY, 
+			synchronized (getGC()) {
+				getGC().drawImage(getImage(), -iModel.viewPortX*7 +imageX, -iModel.viewPortY*7+imageY, 			
 				imageWidth, imageHeight);
 		}		
+	}
 	}
 	
 	public void addToPath() {
 		//try 				
-		gc.beginPath();
-		synchronized (model.getModelPaths()) {						
+		
+		synchronized (model.getModelPaths()) {	
+			synchronized (getGC()) {
+				getGC().beginPath();
 		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
 		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {					
 		//move to the second last coordinate on the elements list
-		gc.moveTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
+			getGC().moveTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
 				*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
 				(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getY())
 				*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));	
-		gc.setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
-		gc.setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth());
+			getGC().setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
+			getGC().setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth());
 		
 		//draw a LineTo to the last element in the path
-		gc.lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
+			getGC().lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
 				*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
 				(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getY())
 				*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));		
 		//stroke the bit
-		gc.stroke();
+			getGC().stroke();
+		}
 		}
 		}
 	}
 	
-	public void drawPath() {
-		
-		synchronized (model.getModelPaths()) {
-			
+	public void drawPath() {		
+		synchronized (model.getModelPaths()) {			
 		if (model.getModelPaths().size()>0) {		
 		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
 			
@@ -357,56 +371,64 @@ public class Draw2View extends Pane implements modelListener{
 			//could change from size -1 to size -2 if netPath is alive?(2 cases)
 			//or put the net path as the 2nd last element in model paths
 			
-		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {
-			
+		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {			
 			addToPath();
 		}else if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() ==2){
-			gc.beginPath();
-			gc.moveTo((((MoveTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
+			synchronized (getGC()) {
+				getGC().beginPath();
+				getGC().moveTo((((MoveTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
 					*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
 					(((MoveTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getY())
 					*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));	
-			gc.setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
-			gc.setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth());			
+				getGC().setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
+				getGC().setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth());			
 			//draw a LineTo to the last element in the path
-			gc.lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
+				getGC().lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
 					*radarView.width +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).x), 
 					(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getY())
 					*radarView.height +(iModel.modelPathsTranslateByCoordinates.get(iModel.modelPathsTranslateByCoordinates.size()-1).y));		
 			//stroke the bit
-			gc.stroke();
+				getGC().stroke();
 		}
 		}	
 		}
+		}
 	}
+	
+	//PROGRESS 
+	//finish synchornising all access to the graphics context of the view and the radarView
+	
 	
 	//all for net path
 	public void addToNetPath() {
-		//try 				
-		gc.beginPath();
-		synchronized (model.getNetWorkPath()) {						
+		//try 						
+		synchronized (model.getNetWorkPath()) {	
+		synchronized (getGC()) {
+		getGC().beginPath();
 		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
 		if (model.getNetWorkPath().getElements().size() > 2) {					
 		//move to the second last coordinate on the elements list
-		gc.moveTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
+			getGC().moveTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
 				*radarView.width +(model.netPathTranslateByCoordinate.x), 
 				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
 				*radarView.height +(model.netPathTranslateByCoordinate.y));	
-		gc.setStroke(model.getNetWorkPath().getStroke());
-		gc.setLineWidth(model.getNetWorkPath().getStrokeWidth());
+			getGC().setStroke(model.getNetWorkPath().getStroke());
+			getGC().setLineWidth(model.getNetWorkPath().getStrokeWidth());
 		
 		//draw a LineTo to the last element in the path
-		gc.lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+			getGC().lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
 				*radarView.width +(model.netPathTranslateByCoordinate.x), 
 				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
 				*radarView.height +(model.netPathTranslateByCoordinate.y));		
 		//stroke the bit
-		gc.stroke();
+			getGC().stroke();
+		}
 		}
 		}
 	}
 	
 	public void drawNetPath() {
+		if (iModel.task != iModel.READ_AND_OBSERVE) {
 		if (controller.state != controller.READ_AND_OBSERVE) {
 		synchronized (model.getNetWorkPath()) {
 		if (model.getNetWorkPath()!=null) {		
@@ -414,22 +436,25 @@ public class Draw2View extends Pane implements modelListener{
 		if (model.getNetWorkPath().getElements().size() > 2) {
 			addToNetPath();
 		}else if (model.getNetWorkPath().getElements().size() ==2){
-			gc.beginPath();
-			gc.moveTo((((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
+			synchronized (getGC()) {
+				getGC().beginPath();
+				getGC().moveTo((((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
 					*radarView.width +(model.netPathTranslateByCoordinate.x), 
 					(((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
 					*radarView.height +(model.netPathTranslateByCoordinate.y));	
-			gc.setStroke(model.getNetWorkPath().getStroke());
-			gc.setLineWidth(model.getNetWorkPath().getStrokeWidth());			
+				getGC().setStroke(model.getNetWorkPath().getStroke());
+				getGC().setLineWidth(model.getNetWorkPath().getStrokeWidth());			
 			//draw a LineTo to the last element in the path
-			gc.lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
+				getGC().lineTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getX())
 					*radarView.width +(model.netPathTranslateByCoordinate.x), 
 					(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-1)).getY())
 					*radarView.height +(model.netPathTranslateByCoordinate.y));		
 			//stroke the bit
-			gc.stroke();
+				getGC().stroke();
+		}
 		}
 		}	
+		}
 		}
 		}
 	}
@@ -473,6 +498,9 @@ public class Draw2View extends Pane implements modelListener{
 	      Button done = new Button("Completed Training");
 	      done.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {
+	        	   controller.state = controller.CLEAR_WORKSPACE;
+	        	   model.resetModel();
+	        	   model.notifySubscribers();	        	   
 	        	   //change super state 
 	        	   controller.superState = controller.SOUNDS_OVER_NETWORK;
 	        	   //open instructions window

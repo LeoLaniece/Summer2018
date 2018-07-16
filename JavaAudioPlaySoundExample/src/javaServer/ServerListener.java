@@ -107,6 +107,14 @@ public class ServerListener extends ClientListener {
 				out.writeUTF(fullmsg);
 			}
 			
+			if (controller.state == controller.CLEAR_WORKSPACE) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
 			
 			if (controller.state == controller.PAN_READY) {
 				//send current viewPort location 

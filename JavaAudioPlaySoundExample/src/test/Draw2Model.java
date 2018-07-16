@@ -81,7 +81,8 @@ public class Draw2Model {
     
     public 	Draw2View view;
     public Draw2miniMap radarView;
-    public AnInteractiveStaggeredSoundGenerator soundGenerator;
+    public AnInteractiveStaggeredSoundGenerator localSoundGenerator;
+    public AnInteractiveStaggeredSoundGenerator networkSoundGenerator;
     
     public File selectedSoundFile;
     public File selectedImpactFile;
@@ -531,52 +532,80 @@ public class Draw2Model {
 	 * @param clipDuration
 	 * @param clipStaggerIncrement
 	 */
-	public void playPathInteractively(double velocity, Coordinate mouseCoordinate
+	public void playLocalPathInteractively(double velocity, Coordinate mouseCoordinate
 			) {
 		float panValue = doNotCalculatePanValue(mouseCoordinate); 	
-		if (soundGenerator != null) {
-			stopSoundGenerator();
+		if (localSoundGenerator != null) {
+			stopLocalSoundGenerator();
 		}		
 		 double clipStaggerIncrement;
-		 double clipDuration;
-		if (controller.superState == controller.SOUNDS_LOCAL) {
-			clipStaggerIncrement = this.calculateStaggerIncrement(selectedSoundFile);
-		 clipDuration = player.fileLength(selectedSoundFile)*1000;
-		}else {
-			clipStaggerIncrement = this.calculateStaggerIncrement(netSelectedSoundFile);
-			 clipDuration = player.fileLength(netSelectedSoundFile)*1000;
-		}
-		
-
+		 double clipDuration;		
+		 clipStaggerIncrement = this.calculateStaggerIncrement(selectedSoundFile);
+		 clipDuration = player.fileLength(selectedSoundFile)*1000;		
+		 
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
-    	if (controller.superState == controller.SOUNDS_LOCAL) {
-    		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
-    				velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);
-    	}else {   
-		soundGenerator = new AnInteractiveStaggeredSoundGenerator("staggeredThread",
-				velocity,panValue, clipDuration,clipStaggerIncrement,netSelectedSoundFile,netSelectedImpactFile);
-    	}
-		soundGenerator.start();		
+    	localSoundGenerator = new AnInteractiveStaggeredSoundGenerator("localStaggeredThread",
+    	velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);    	
+		localSoundGenerator.start();		
 		//use netSelectedSoundFile and netSelectedImpactFile?
 	}
 	
-	public void stopSoundGenerator() {
-		soundGenerator.setMouseReleased(true);		
-		stopDrawingSoundGenerator();
+	/**
+	 * 
+	 * @param velocity
+	 * @param mouseCoordinate
+	 * @param clipDuration
+	 * @param clipStaggerIncrement
+	 */
+	public void playNetworkPathInteractively(double velocity, Coordinate mouseCoordinate
+			) {
+		float panValue = doNotCalculatePanValue(mouseCoordinate); 	
+		if (networkSoundGenerator != null) {
+			stopNetworkSoundGenerator();
+		}		
+		 double clipStaggerIncrement;
+		 double clipDuration;
+		 clipStaggerIncrement = this.calculateStaggerIncrement(netSelectedSoundFile);
+		 clipDuration = player.fileLength(netSelectedSoundFile)*1000;
+
+		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
+
+		networkSoundGenerator = new AnInteractiveStaggeredSoundGenerator("networkStaggeredThread",
+				velocity,panValue, clipDuration,clipStaggerIncrement,netSelectedSoundFile,netSelectedImpactFile);
+    	
+		networkSoundGenerator.start();		
+		//use netSelectedSoundFile and netSelectedImpactFile?
 	}
 	
-	public void updateSoundGeneratorVelocity(double v) {
-		soundGenerator.setVelocity(v);
+	public void stopLocalSoundGenerator() {
+		localSoundGenerator.setMouseReleased(true);		
+		stopLocalDrawingSoundGenerator();
 	}
 	
-	public void updateSoundGeneratorPanValue(Coordinate mouseCoordinate) {
+	public void stopNetworkSoundGenerator() {
+		networkSoundGenerator.setMouseReleased(true);		
+		stopNetworkDrawingSoundGenerator();
+	}
+	
+	public void updateLocalSoundGeneratorVelocity(double v) {
+		localSoundGenerator.setVelocity(v);
+	}
+	
+	public void updateNetworkSoundGeneratorVelocity(double v) {
+		networkSoundGenerator.setVelocity(v);
+	}
+	
+	public void updateLocalSoundGeneratorPanValue(Coordinate mouseCoordinate) {
 		//float panValue = calculatePanValue(mouseCoordinate);
 		float panValue = doNotCalculatePanValue(mouseCoordinate);
-		soundGenerator.setPanValue(panValue);
+		localSoundGenerator.setPanValue(panValue);
 	}
 	
-
-	
+	public void updateNetworkSoundGeneratorPanValue(Coordinate mouseCoordinate) {
+		//float panValue = calculatePanValue(mouseCoordinate);
+		float panValue = doNotCalculatePanValue(mouseCoordinate);
+		networkSoundGenerator.setPanValue(panValue);
+	}		
 	
 	public void play() {
 		File f = new File ("C:\\Users\\HCI Lab\\Desktop\\Leo Laniece summer 2018\\sound recordings\\strokeChange.WAV");
@@ -861,9 +890,14 @@ public class Draw2Model {
 		networkVPDS.updateLocation(vp);
 	}
 	
-	public void stopDrawingSoundGenerator() {
-		soundGenerator.closeSoundGenerator();		
+	public void stopLocalDrawingSoundGenerator() {
+		localSoundGenerator.closeSoundGenerator();		
 	}
+	
+	public void stopNetworkDrawingSoundGenerator() {
+		networkSoundGenerator.closeSoundGenerator();		
+	}
+	
 	public ReadAndObserveInstructionStage instructions =null;
 	
 	public void launchReadAndObserverInstructionsStage(InteractionModel imodel) {
@@ -938,7 +972,10 @@ public class Draw2Model {
 		    		freezeTestInstructionsStage = null;
 		    	}
 		    	freezeTestInstructionsStage= new FreezeTestInstructions(c);
-		    	freezeTestInstructionsStage.show();
+		    	//freezeTestInstructionsStage.show();
+				if (iModel.noSounds) {
+					new TaskWithoutSoundStage(controller);
+				}
 		    }
 		});
 		

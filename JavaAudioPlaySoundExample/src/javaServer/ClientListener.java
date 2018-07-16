@@ -112,6 +112,14 @@ public class ClientListener implements modelListener{
 				out.writeUTF(fullmsg);
 			}
 			
+			if (controller.state == controller.CLEAR_WORKSPACE) {				
+				String fullmsg = "";
+				for (int i = 0; i<msg.size();i++) {
+					fullmsg += msg.get(i);
+				}				
+				out.writeUTF(fullmsg);
+			}
+			
 			if (controller.state == controller.PAN_READY) {				
 				//send current viewPort location 
 				msg.add(Double.toString(model.iModel.viewPortX)+"\n");					

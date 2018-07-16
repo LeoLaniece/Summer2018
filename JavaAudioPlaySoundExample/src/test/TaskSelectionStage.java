@@ -55,9 +55,10 @@ public class TaskSelectionStage extends Stage{
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
         int SceneWidth = javaServer.LaunchServer.SceneWidth; 
         int SceneHeight = javaServer.LaunchServer.SceneHeight;
-	      VBox root = new VBox();	        
+	      HBox root = new HBox();	        
 	      Scene scene = new Scene(root, SceneWidth,SceneHeight);
 	      
+	       
 	      Button task1 = new Button("FreezeTest study task");
 	      task1.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {         	  	              
@@ -75,7 +76,7 @@ public class TaskSelectionStage extends Stage{
 	               	 me.close();
 	           }
 	      });
-	     
+	      /* 
 	      Button task3 = new Button("FreezeTest study task, without the minimap!");
 	      task3.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {         	  	              
@@ -85,8 +86,8 @@ public class TaskSelectionStage extends Stage{
 	        	   controller.startTask1();
 	               me.close();	               
 	           }
-	      });
-	      
+	      });*/
+	      /* 
 	      Button task4 = new Button("Read and observe study task, without the minimap!");
 	      task4.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
@@ -94,20 +95,22 @@ public class TaskSelectionStage extends Stage{
 	               	 controller.startTask2();
 	               	 me.close();	                     	  	         	  
 	           }
-	      });	
+	      });*/	
 	      
 	      Button task5 = new Button("FreezeTest study task, without sounds!");
 	      task5.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {         	  	              
-	        	   new TaskWithoutSoundStage(controller,controller.FREEZE_TEST_TASK);
+	        	   controller.iModel.noSounds = true;
+	        	   controller.startTask1();
 	               me.close();	               
 	           }
 	      });
-	      
+	       
 	      Button task6 = new Button("Read and observe study task, without sounds!");
 	      task6.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
-	        	   new TaskWithoutSoundStage(controller,controller.READ_AND_OBSERVE);
+	        	   controller.iModel.noSounds = true;
+	        	   controller.startTask2();
 	               	 me.close();	                     	  	         	  
 	           }
 	      });
@@ -129,7 +132,7 @@ public class TaskSelectionStage extends Stage{
 	               	 me.close();	                     	  	         	  
 	           }
 	      });
-	      
+	      /* 
 	      Button task9 = new Button("Button holding task, for activity identification");
 	      task9.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
@@ -137,8 +140,8 @@ public class TaskSelectionStage extends Stage{
 	        	     controller.startTask5();
 	               	 me.close();	                     	  	         	  
 	           }
-	      });
-	      
+	      });*/
+	      /* 
 	      Button task10 = new Button("Preparation for Freeze test, location identification, without the minimap!");
 	      task10.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
@@ -146,8 +149,8 @@ public class TaskSelectionStage extends Stage{
 	        	     controller.startTask0();
 	               	 me.close();	                     	  	         	  
 	           }
-	      });
-	      
+	      });*/
+	      /* 
 	      Button task11 = new Button("Preparation for Freeze test, tool identification, without the minimap!");
 	      task11.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) { 
@@ -155,8 +158,8 @@ public class TaskSelectionStage extends Stage{
 	        	     controller.startTask4();
 	               	 me.close();	                     	  	         	  
 	           }
-	      });
-	      
+	      });*/
+	      /*
 	      Button task12 = new Button("Button holding task, for activity identification, without the minimap!");
 	      task12.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {
@@ -164,7 +167,7 @@ public class TaskSelectionStage extends Stage{
 	        	     controller.startTask5();
 	               	 me.close();	                     	  	         	  
 	           }
-	      });
+	      }); */
 	      
 	      Button task13 = new Button("Preparation for Freeze test, shape detection");
 	      task13.setOnAction(new EventHandler<ActionEvent>() {
@@ -174,7 +177,7 @@ public class TaskSelectionStage extends Stage{
 	               	 me.close();	                     	  	         	  
 	           }
 	      });
-	      
+	      /*
 	      Button task14 = new Button("Preparation for Freeze test, shape detection, without the minimap!");
 	      task14.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
@@ -182,7 +185,7 @@ public class TaskSelectionStage extends Stage{
 	        	     controller.startTask6();
 	               	 me.close();	                     	  	         	  
 	           }
-	      });
+	      });*/
 	      
 	      Button task15 = new Button("Tool identification reaction task");
 	      task15.setOnAction(new EventHandler<ActionEvent>() {
@@ -193,7 +196,62 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
-	      root.getChildren().addAll(task7,task8, task13, task5,task6,task1,task2,task15);
+	      
+	      
+	      //sound less preparation tests	      
+	      Button task16 = new Button("Preparation for Freeze test, shape detection, without sounds!");
+	      task16.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	   controller.drawViewPort =true;	 
+	        	   controller.iModel.noSounds = true;
+	        	     controller.startTask6();
+	               	 me.close();
+	               	
+	           }
+	      });
+	      
+	      Button task17 = new Button("Preparation for Freeze test, location identification, without sounds!");
+	      task17.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) { 
+	        	   controller.drawViewPort =true;	
+	        	   controller.iModel.noSounds = true;
+	        	     controller.startTask0();
+	               	 me.close();	
+	               	
+	           }
+	      });
+	      
+	      Button task18 = new Button("Preparation for Freeze test, tool identification, without sounds!");
+	      task18.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {   
+	        	   controller.drawViewPort =true;	
+	        	   controller.iModel.noSounds = true;
+	        	     controller.startTask4();
+	               	 me.close();	               	 
+	                }
+	      });
+	      
+	      Button task19 = new Button("Tool identification reaction task, without sounds!");
+	      task19.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    
+	        	   controller.drawViewPort =true;
+	        	   controller.iModel.noSounds = true;
+	        	     controller.startTask7();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
+	      
+	      
+	      VBox sound = new VBox();
+	      sound.setAlignment(Pos.CENTER);
+	      VBox noSound = new VBox();
+	      noSound.setAlignment(Pos.CENTER);
+	      sound.getChildren().addAll(task1,task2,task7,task8,task13,task15);
+	      noSound.getChildren().addAll(task5,task6,task16,task17,task18, task19);
+	      //task7,task8, task13, task5,task6,task1,task2,task15
+	      
+	      root.getChildren().addAll(sound,noSound);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

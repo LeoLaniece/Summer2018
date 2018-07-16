@@ -65,7 +65,8 @@ public class TaskCompleteStage extends Stage{
 	      
 	      Text instructions = new Text("Congratulations!!"+"\n"+
 	      "The task was successfully"+"\n"+  
-	      	    		  "completed!"+"\n"+
+	      	    		  "completed!"+"\n"+"\n"+
+	      "Please put the speakers back on your head if you had previously taken them off"+"\n"+"\n"+
 	    		  "Please press the Okay button to continue");
 	      instructions.setFont(Font.font ("Verdana", 40));
 	      instructions.setFill(Color.BLACK); 

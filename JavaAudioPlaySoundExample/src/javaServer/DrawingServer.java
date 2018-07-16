@@ -100,6 +100,13 @@ public void run() {
      			controller.view.drawBorder();
      		}
      		
+     		if (clientState == controller.CLEAR_WORKSPACE) {     			
+	        	   controller.model.resetModel();
+	        	   controller.view.resetView();
+	        	   controller.radarView.resetView();	        	   
+	        	   controller.model.notifySubscribers();
+     		}
+     		
      		//if the freeze test is in progress lauch the instruction stage 
      		if (clientState == controller.FREEZE_TEST_TASK) {
      			//adjust iModeltask depending on freeze test variation
@@ -221,14 +228,14 @@ public void run() {
         	 if (model.netWorkPath == null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
-        		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
+        		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);        		         		
         		//draw the path
-        		 model.createNewPathFromNetwork(line,pathPaint);
+        		 model.createNewPathFromNetwork(line,pathPaint);        		         		 
         		//set timbre
         		 model.setNetTimbre(netTimbre);
         		 //start the path sound
         		 Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
-        		 model.playPathInteractively(line[3], mouseCoordinate); //line[7], line[8]);     
+        		 model.playNetworkPathInteractively(line[3], mouseCoordinate); //line[7], line[8]);     
         		 //log user1 activity here 
         		 if (controller.model.readAndObserveTrial != null) {
         			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
@@ -238,20 +245,20 @@ public void run() {
         	 if (model.netWorkPath!=null) {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
-        		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);
+        		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);        		         		 
         		//add bit to current path
-        		 model.updateNewPathFromNetwork(line);
+        		 model.updateNewPathFromNetwork(line);        		         		 
         		 //update the sound generator
-         		model.updateSoundGeneratorVelocity(line[3]);
+         		model.updateNetworkSoundGeneratorVelocity(line[3]);
          		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
-         		model.updateSoundGeneratorPanValue(mouseCoordinate);
+         		model.updateNetworkSoundGeneratorPanValue(mouseCoordinate);
          		//can eliminate this line
          		//model.updateSoundGeneratorPathAngleFromNet(line[6]);        		 
         	 }        	
         	//close the path and path sound generator
         	 if (isNetPathAlive == false) {        		 
         		 model.netWorkPath = null;        		 
-        		 model.stopSoundGenerator();  
+        		 model.stopNetworkSoundGenerator();  
         		 //log user 1 activity here
         		 if (controller.model.readAndObserveTrial != null) {
         			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);

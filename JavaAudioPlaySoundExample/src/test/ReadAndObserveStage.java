@@ -88,7 +88,6 @@ public class ReadAndObserveStage extends Stage{
       //need to store user1's activity!
       
       Text t = new Text("Please read the article provided in the workspace."+"\n"+
-      "You can pan the workspace by pressing the awsd keys"+"\n"+
       " While reading, whenever you notice that the other user is drawing, please press and hold the big button."+"\n"+
     		  " When the other user ceases to draw, release the big button."+"\n"+
       "After one minute we will ask you to answer a question pertaining to the information in the article"+"\n"+    		  

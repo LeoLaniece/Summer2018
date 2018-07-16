@@ -71,6 +71,23 @@ public class FreezeTestTimer extends Thread{
 					controller.model.notifySubscribers();
 			}
 		}
+			if (controller.model.localVPDS != null) {
+				controller.model.stopLocalDrawingSoundGenerator();
+				controller.model.localVPDS = null;
+			}
+			if (controller.model.networkVPDS != null) {
+				controller.model.stopNetworkDrawingSoundGenerator();
+				controller.model.networkVPDS = null;
+			}
+			if (controller.model.netWorkPath != null) {				
+				controller.model.stopNetworkSoundGenerator();
+				controller.model.netWorkPath = null;
+			}
+			if (controller.model.path != null) {				
+				controller.model.stopLocalSoundGenerator();
+				controller.model.path = null;
+			}
+			
 	      stage.closeStage();
 	      
 	      //now close freezetestinstructions and show the task selection menu again.

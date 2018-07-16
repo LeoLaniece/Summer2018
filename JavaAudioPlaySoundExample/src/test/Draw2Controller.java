@@ -70,7 +70,7 @@ public class Draw2Controller {
 	/**
 	 * superState which indicates that any sound information should be sent to local sound generators
 	 */
-	public int SOUNDS_LOCAL = 1;
+	public int SOUNDS_LOCAL = 0;
 	/**
 	 * Variable which indicates the current superState of this drawing application
 	 */
@@ -126,6 +126,13 @@ public class Draw2Controller {
 	 * and that their partner should wait before persuing their task (used to inform network)
 	 */
 	public int PAUSE_UNTIL_QUIZ_COMPLETE = 10;
+	
+	/**
+	 * state which indicates the user has completed a training phase and needs all paths cleared 
+	 * before beginning the next task
+	 */
+	public int CLEAR_WORKSPACE =11;
+	
 	/**
 	 * Variable which indicates the current state of this drawing application
 	 */
@@ -216,7 +223,7 @@ public class Draw2Controller {
         	mouseCoordinates.add(new Coordinate(me.getX()/radarView.width,me.getY()/radarView.height));
         	//if the state is SOUNDS_LOCAL paly the path sounds locally.
         	if (superState == SOUNDS_LOCAL) {
-			model.playPathInteractively(0,mouseCoordinates.get(mouseCoordinates.size()-1));
+			model.playLocalPathInteractively(0,mouseCoordinates.get(mouseCoordinates.size()-1));
         	}
         	}        	        	            		                        
         }
@@ -237,7 +244,7 @@ public class Draw2Controller {
             	model.pathToNull();
             	//stop the sounds for local generatiom
             	if (superState == SOUNDS_LOCAL) {
-            		model.stopSoundGenerator();
+            		model.stopLocalSoundGenerator();
             	}            	
             	model.notifySubscribers();
             	//reset the mouse coordinates for later use
@@ -290,8 +297,8 @@ public class Draw2Controller {
                 	model.strokePath(me.getX(), me.getY());  
                 	//if superStae is SOUNDS_LOCAL update the local sound generator
                 	if (superState == SOUNDS_LOCAL) {
-            		model.updateSoundGeneratorVelocity(soundVelocityThread.getVelocity());
-            		model.updateSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
+            		model.updateLocalSoundGeneratorVelocity(soundVelocityThread.getVelocity());
+            		model.updateLocalSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
                 	}            	
                 }
             	}
@@ -317,9 +324,14 @@ public class Draw2Controller {
 	   public void startTask2() {
 			state = READ_AND_OBSERVE;
 			taskRunning = true;			
+			view.setImageForReadAndObserve();
+			iModel.task = iModel.READ_AND_OBSERVE;
 			model.notifySubscribers();
 			//launch instruction stage
-			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			
+			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);	
+			if (iModel.noSounds) {
+				new TaskWithoutSoundStage(me);
+			}
 	   }
 	   /**
 	    * Will begin executing the Freeze test study task
@@ -350,7 +362,7 @@ public class Draw2Controller {
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
-		   model.launchFreezeTestIntructions(me);		   
+		   model.launchFreezeTestIntructions(me);
 	   }
 	   /**
 	    * will begin a tool identification task
@@ -365,7 +377,7 @@ public class Draw2Controller {
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
-		   model.launchFreezeTestIntructions(me);		   
+		   model.launchFreezeTestIntructions(me);
 	   }
 	   /**
 	    * will begin an activity identification task
@@ -380,9 +392,15 @@ public class Draw2Controller {
 		   iModel.task = iModel.ACTIVITY_IDENTIFICATION_TASK;
 		   state = READ_AND_OBSERVE;
 			taskRunning = true;
+			view.setImageForReadAndObserve();
+			iModel.task = iModel.READ_AND_OBSERVE;
 			model.notifySubscribers();	
 			//launch instructions for the task
-			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);			   
+			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);	
+			if (iModel.noSounds) {
+				new TaskWithoutSoundStage(me);
+			}
+			
 	   }
 	   /**
 	    * will begin a shape identification task
@@ -398,7 +416,7 @@ public class Draw2Controller {
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
-		   model.launchFreezeTestIntructions(me);		   
+		   model.launchFreezeTestIntructions(me);		
 	   }
 	   /**
 	    * will begin a tool identification task
@@ -412,6 +430,6 @@ public class Draw2Controller {
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
-		   model.launchFreezeTestIntructions(me);		   
+		   model.launchFreezeTestIntructions(me);
 	   }	   
 }

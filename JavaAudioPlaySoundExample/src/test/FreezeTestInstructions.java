@@ -75,7 +75,8 @@ public class FreezeTestInstructions extends Stage{
 		  "Erase the circles with the eraser"+"\n"+		  
 		  "Do not worry if you end up " +"\n"+
 		  "tracing the wrong shape with the wrong tool"+"\n"+
-		  "\n"+		  	    		  
+		  "You can move around in the workspace by holding down the" +"\n"+
+		  "SHIFT key and dragging with the mouse cursor"+"\n"+"\n"+		  	    		  
 	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+
 	    		  "please press the ready button when you are ready to begin");
 	      //change text for location task
@@ -84,7 +85,7 @@ public class FreezeTestInstructions extends Stage{
 	    		      "Please observe the location of the other user's drawing and navigation activity"+"\n"+
 	    		    "When prompted, please identify in which area of the minimap"+"\n"+
 	    		    "the other user was previously active"+"\n"+"\n"+
-	    		    "The other user will be erasing all the circles in the workspace");
+	    		    "The other user will be erasing all the circles and squiggles in the workspace");
 	      }
 	      //change text for tool task
 	      if (controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK) {
@@ -96,7 +97,9 @@ public class FreezeTestInstructions extends Stage{
 	    		    "They will be tracing the triangles with the pencil"+"\n"+
 	    		    "The squares with the nail"+"\n"+
 	    		    "The squiggles with the chalk"+"\n"+
-	    		    "And erasing the circles with the eraser"+"\n"+"\n"+	  		    
+	    		    "And erasing the circles with the eraser"+"\n"+
+	    		    "You can move around in the workspace by holding down the" +"\n"+
+		    		  "SHIFT key and dragging with the mouse cursor"+"\n"+"\n"+	  		    
 	    		    "To familiarize yourself with the tool sounds, please press the Go to training button"+"\n"+	   		    	    		    
 		    		  "When you are ready, please press the ready button ");	    	  
 	      }
@@ -117,7 +120,9 @@ public class FreezeTestInstructions extends Stage{
 		    		    "Trace the triangles with the pencil"+"\n"+
 		    		    "Trace the squares with the nail"+"\n"+
 		    		    "Trace the squiggles with the chalk"+"\n"+
-		    		    "And erase the circles with the eraser"+"\n"+"\n"+	    		    
+		    		    "And erase the circles with the eraser"+"\n"+
+		    		    "You can move around in the workspace by holding down the" +"\n"+
+			    		  "SHIFT key and dragging with the mouse cursor"+"\n"+"\n"+	    		    
 	    		      "Please also observe with which tool the other user is drawing"+"\n"+
 	    		    "Whenever you notice that the other user has changed tools"+"\n"+
 	    		    "You must change to the same tool they are using"+"\n"+"\n"+	    		    
