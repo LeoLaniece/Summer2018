@@ -202,11 +202,13 @@ public class Draw2Controller {
         	if (me.isShiftDown()) {        		
         		//pan the canvas
         		//new state
-        		state = PAN_READY;   
+        		state = PAN_READY;
             	x = me.getX();
-            	y = me.getY();        		
+            	y = me.getY();        	
+            	Coordinate p = iModel.calculateNormalizedViewPortLocation();
             	CreateFile log = new CreateFile("Panning action begun at"
-            			+" x = "+x+" y = "+y, iModel.currentLogFileName);
+            			+" x = "+p.x+
+            			" y = "+p.y, iModel.currentLogFileName);
          		//adjust the server's minimap location
            	    if (state == PAN_READY) {
            		 //START the ViewPortDisplacementSound generator here
@@ -218,9 +220,11 @@ public class Draw2Controller {
         	if (state ==READY) {
         	//will be useful in mouseDragged for velocity
         	x = me.getX();
-        	y = me.getY();    
+        	y = me.getY();   
+        	Coordinate p = iModel.calculateNormalizedViewPortLocation();
         	CreateFile log = new CreateFile("Drawing action begun at"
-        			+" x = "+x+" y = "+y, iModel.currentLogFileName);
+        			+" x = "+((x/radarView.width)+p.x)+
+        			" y = "+((y/radarView.height)+p.y), iModel.currentLogFileName);
         	//begin drawing path and add it to the model database
         	model.startPath(me.getX(),me.getY());      	        	
         	//Mark the location of the path relative to the workspace for sound production 
@@ -242,12 +246,17 @@ public class Draw2Controller {
               	 if (model.localVPDS != null) {
               		 model.stopLocalVPDS();
               	 }
+             	Coordinate p = iModel.calculateNormalizedViewPortLocation();
              	CreateFile log = new CreateFile("Panning action ended at"
-            			+" x = "+x+" y = "+y, iModel.currentLogFileName);
+             			+" x = "+p.x+
+             			" y = "+p.y, iModel.currentLogFileName);
+             	System.out.println("panning action x = "+p.x+" y = "+p.y);
             	}
             	if (state == READY) {
+                	Coordinate p = iModel.calculateNormalizedViewPortLocation();
                 	CreateFile log = new CreateFile("Drawing action ended at"
-                			+" x = "+x+" y = "+y, iModel.currentLogFileName);
+                			+" x = "+((me.getX()/radarView.width)+p.x)+
+                			" y = "+((me.getY()/radarView.height)+p.y), iModel.currentLogFileName);
             	//stop drawing the paths
             	model.pathToNull();
             	//stop the sounds for local generatiom
@@ -337,11 +346,8 @@ public class Draw2Controller {
 			model.notifySubscribers();
 			//launch instruction stage
 			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);	
-			if (iModel.noSounds) {
-				new TaskWithoutSoundStage(me);
-			}
     		String fileName = "ReadAndObserve";
-    		if (!iModel.logTaskSoundStatus) {
+    		if (!iModel.Sounds) {
     			fileName += " without sounds!";
     		}    		
     		CreateFile log = new CreateFile("ReadAndObserve task has begun", fileName);
@@ -362,11 +368,8 @@ public class Draw2Controller {
 			model.notifySubscribers();	
 			//launch instructions
 		   model.launchFreezeTestIntructions(me);
-			if (iModel.noSounds) {
-				new TaskWithoutSoundStage(me);
-			}
     		String fileName = "FreezeTest";
-    		if (!iModel.logTaskSoundStatus) {
+    		if (!iModel.Sounds) {
     			fileName += " without sounds!";
     		}    		
     		CreateFile log = new CreateFile("FreezeTest task has begun", fileName);
@@ -386,11 +389,8 @@ public class Draw2Controller {
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
-			if (iModel.noSounds) {
-				new TaskWithoutSoundStage(me);
-			}
     		String fileName = "Location identification task";
-    		if (!iModel.logTaskSoundStatus) {
+    		if (!iModel.Sounds) {
     			fileName += " without sounds!";
     		}    		
     		CreateFile log = new CreateFile("Location identification task has begun", fileName);
@@ -410,11 +410,8 @@ public class Draw2Controller {
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
-			if (iModel.noSounds) {
-				new TaskWithoutSoundStage(me);
-			}
     		String fileName = "Tool identification task";
-    		if (!iModel.logTaskSoundStatus) {
+    		if (!iModel.Sounds) {
     			fileName += " without sounds!";
     		}    		
     		CreateFile log = new CreateFile("Tool identification task has begun", fileName);
@@ -438,11 +435,8 @@ public class Draw2Controller {
 			model.notifySubscribers();	
 			//launch instructions for the task
 			model.readAndObserveTrial = new ReadAndObserveStage(me, model, iModel, radarView);	
-			if (iModel.noSounds) {
-				new TaskWithoutSoundStage(me);
-			}
     		String fileName = "Activity identification task";
-    		if (!iModel.logTaskSoundStatus) {
+    		if (!iModel.Sounds) {
     			fileName += " without sounds!";
     		}    		
     		CreateFile log = new CreateFile("Activity identification task has begun", fileName);
@@ -464,11 +458,11 @@ public class Draw2Controller {
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
-   		String fileName = "Shape identification task";
-   		if (!iModel.logTaskSoundStatus) {
+   		String fileName = "Shape detection task";
+   		if (!iModel.Sounds) {
    			fileName += " without sounds!";
    		}    		
-   		CreateFile log = new CreateFile("Shape identification task has begun", fileName);
+   		CreateFile log = new CreateFile("Shape detection task has begun", fileName);
    		iModel.currentLogFileName = fileName;
 	   }
 	   /**
@@ -485,7 +479,7 @@ public class Draw2Controller {
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
    		String fileName = "Tool reaction task";
-   		if (!iModel.logTaskSoundStatus) {
+   		if (!iModel.Sounds) {
    			fileName += " without sounds!";
    		}    		
    		CreateFile log = new CreateFile("Tool reaction task has begun", fileName);

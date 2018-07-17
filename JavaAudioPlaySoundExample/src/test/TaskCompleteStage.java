@@ -84,6 +84,7 @@ public class TaskCompleteStage extends Stage{
 	        	   controller.taskRunning = false;
 	        	   controller.drawViewPort =true;
 	        	   controller.iModel.task = -1;
+	        	   controller.iModel.SoundsTrue(); 
 	        	   controller.view.setImageForFreezeTest();
 	        	   controller.model.resetModel();
 	        	   controller.view.resetView();

@@ -190,7 +190,7 @@ public class Draw2Model {
             	notifySubscribers();            	
             	if (iModel.task == iModel.TOOL_REACTION_TASK) {            		
             		String fileName = "Tool reaction task";
-            		if (!iModel.logTaskSoundStatus) {
+            		if (!iModel.Sounds) {
             			fileName += " without sounds!";
             		}
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
@@ -222,7 +222,7 @@ public class Draw2Model {
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
             		
             		String fileName = "Tool reaction task";
-            		if (!iModel.logTaskSoundStatus) {
+            		if (!iModel.Sounds) {
             			fileName += " without sounds!";
             		}
             		CreateFile log = new CreateFile(userInput, fileName);
@@ -252,7 +252,7 @@ public class Draw2Model {
             	if (iModel.task == iModel.TOOL_REACTION_TASK) {
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
             		String fileName = "Tool reaction task";
-            		if (!iModel.logTaskSoundStatus) {
+            		if (!iModel.Sounds) {
             			fileName += " without sounds!";
             		}
             		CreateFile log = new CreateFile(userInput, fileName);
@@ -282,7 +282,7 @@ public class Draw2Model {
             	if (iModel.task == iModel.TOOL_REACTION_TASK) {
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
             		String fileName = "Tool reaction task";
-            		if (!iModel.logTaskSoundStatus) {
+            		if (!iModel.Sounds) {
             			fileName += " without sounds!";
             		}
             		CreateFile log = new CreateFile(userInput, fileName);
@@ -805,6 +805,9 @@ public class Draw2Model {
 		netWorkPath.setSmooth(true);
 		netWorkPath.setStrokeWidth(points[2]);
 		netWorkPath.setStroke(Paint.valueOf(pathPaint));
+		//for logging
+		CreateFile log = new CreateFile("Network drawing action begun at"
+    			+" x = "+points[0]+" y = "+points[1], iModel.currentLogFileName);		
 		netWorkPath.getElements().add(new MoveTo(points[0], points[1]));
 		netWorkPath.getElements().add(new LineTo(points[0], points[1]));
 	    //path.getElements().add(new LineTo(points[2], points[3]));
@@ -917,6 +920,7 @@ public class Draw2Model {
 	
 	public void stopNetworkDrawingSoundGenerator() {
 		networkSoundGenerator.closeSoundGenerator();		
+		
 	}
 	
 	public ReadAndObserveInstructionStage instructions =null;
@@ -963,7 +967,7 @@ public class Draw2Model {
 	
 	public void createFileForFreezeTest() {
 		String fileName = "FreezeTest shape log";
-		if (!iModel.logTaskSoundStatus) {
+		if (!iModel.Sounds) {
 			fileName += " without sounds!";
 		}
 		CreateFile x = new CreateFile(user1FreezeQuestionResult, fileName);
@@ -1000,7 +1004,7 @@ public class Draw2Model {
 		    	}
 		    	freezeTestInstructionsStage= new FreezeTestInstructions(c);
 		    	//freezeTestInstructionsStage.show();
-				if (iModel.noSounds) {
+				if (!iModel.Sounds) {
 					new TaskWithoutSoundStage(controller);
 				}
 		    }
@@ -1021,7 +1025,7 @@ public class Draw2Model {
 		if (iModel.task == iModel.TOOL_REACTION_TASK) {
 		String userInput = "Partner just selected "+netSelectedSoundFile.toString();
 		String fileName = "Tool reaction task";
-		if (!iModel.logTaskSoundStatus) {
+		if (!iModel.Sounds) {
 			fileName += " without sounds!";
 		}
 		CreateFile log = new CreateFile(userInput, fileName);

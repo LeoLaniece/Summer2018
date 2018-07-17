@@ -75,6 +75,7 @@ public class ServerListener extends ClientListener {
 			
 			if (controller.state == controller.FREEZE_TEST_TASK) {				
 				msg.add(Integer.toString((model.iModel.task))+"\n");
+				msg.add(Boolean.toString(model.iModel.Sounds)+"\n");
 				String fullmsg = "";
 				for (int i = 0; i<msg.size();i++) {
 					fullmsg += msg.get(i);

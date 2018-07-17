@@ -18,6 +18,7 @@ import java.util.Scanner;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import test.Coordinate;
+import test.CreateFile;
 import test.Draw2Controller;
 import test.Draw2Model;
 import test.Draw2View;
@@ -180,22 +181,31 @@ public void run() {
         	 
      		//adjust the server's minimap location
         	 if (clientState == controller.PAN_READY) {
+        		 //draw a second viewport on the miniMap!!
+        		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
+             	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++; 
         		 //START the ViewPortDisplacementSound generator here
         	     if (model.networkVPDS == null) {
             		 model.beginNetworkViewPortMovementSound();
+          			//for logging
+            		 Coordinate p = model.radarView.calculateNetViewPortCenter();
+          			CreateFile log = new CreateFile("Network panning action began at"
+          	    			+" x = "+p.x+" y = "+p.y, model.iModel.currentLogFileName);              		
             	 }else {
             		 //update sound if the view port sound is already happening
             		 model.updateNetworkVPDSGeneratorLocation(model.radarView.calculateNetViewPortCenter());
-            	 }
-        		 //draw a second viewport on the miniMap!!
-        		 line[0] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;
-             	 line[1] = Double.parseDouble(netInfo.get(netInfoIndex)); netInfoIndex++;           
+            	 }          
             	 model.radarView.modelChanged();            	 
             	 model.radarView.drawViewPortFromNet(line[0], line[1]);            	            	 
+
         	 }else {
          		//stop the VPDS generator
             	 if (model.networkVPDS != null) {
-            		 model.stopNetworkVPDS();
+          			//for logging
+            		 Coordinate p = model.radarView.calculateNetViewPortCenter();
+          			CreateFile log = new CreateFile("Network panning action ended at"
+          	    			+" x = "+p.x+" y = "+p.y, model.iModel.currentLogFileName);  
+          			model.stopNetworkVPDS();
             	 }
         	 }
 
@@ -229,7 +239,7 @@ public void run() {
         		 //calculate coordinate offsets
         		 line[0] = line[0]-(model.iModel.viewPortX*7/model.radarView.width);
         		 line[1] = line[1]-(model.iModel.viewPortY*7/model.radarView.height);        		         		
-        		//draw the path
+        		//draw the path and log the drawing action start
         		 model.createNewPathFromNetwork(line,pathPaint);        		         		 
         		//set timbre
         		 model.setNetTimbre(netTimbre);
@@ -259,6 +269,10 @@ public void run() {
         	 if (isNetPathAlive == false) {        		 
         		 model.netWorkPath = null;        		 
         		 model.stopNetworkSoundGenerator();  
+        			//for logging
+        			CreateFile log = new CreateFile("Network drawing action ended at"
+        	    			+" x = "+model.radarView.getLastKnownCoordinate().x+
+        	    			" y = "+model.radarView.getLastKnownCoordinate().y, model.iModel.currentLogFileName);
         		 //log user 1 activity here
         		 if (controller.model.readAndObserveTrial != null) {
         			 controller.model.readAndObserveTrial.User1ActiveTimes.add(System.currentTimeMillis()-controller.model.readAndObserveTrial.startTime);
@@ -288,7 +302,7 @@ public static void main(String [] args, Draw2Model m, Draw2Controller c) {
       e.printStackTrace();
    }      
    //uncomment this block to test server client connection on the same device
-    //*  
+    /*  
    String[] arr = new String[2];
    arr[0] = "DESKTOP-3QFK6AS";
    arr[1] = "9080";

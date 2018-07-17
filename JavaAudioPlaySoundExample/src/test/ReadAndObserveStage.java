@@ -317,7 +317,7 @@ public class ReadAndObserveStage extends Stage{
 		
 		System.out.println("user2 awareness was only off by "+calculateUser2Awareness(User1ActiveTimes, User2ActiveTimes)+" milliseconds");		
      		
-     		if (iModel.logTaskSoundStatus) {
+     		if (!iModel.Sounds) {
      			fileName += " without sounds!";
      		}
 		CreateFile x = new CreateFile("user2 awareness was only off by "

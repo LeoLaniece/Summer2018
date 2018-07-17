@@ -52,6 +52,7 @@ public class FreezeTestInstructions extends Stage{
 	
 	private Draw2Controller controller;
 	FreezeTestInstructions me = this;
+	public String logFile;
 
 	public FreezeTestInstructions(Draw2Controller c) {
 		controller = c;
@@ -162,6 +163,8 @@ public class FreezeTestInstructions extends Stage{
 		        	   //add a window with a done training button
 		        	   //new DoneTrainingStage(controller, me);
 		        	   controller.view.addDoneTrainingButton(me);
+		        	   logFile = controller.iModel.currentLogFileName;
+		        	   controller.iModel.currentLogFileName = "training task log";
 		        	   //close this window
 		        	   hide();
 		           }

@@ -135,20 +135,18 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	@Override
 	public void setCanvas() {
 		//needs to be initialized here for some reason
-		scale =7;
-		
+		scale =7;		
 		c = new Canvas(width/scale,height/scale);
 		gc = c.getGraphicsContext2D();
 		this.getChildren().add(c);
         gc.drawImage(image, 0, 0, width/scale, height/scale);		
-	//	gc.setStroke(Color.BLACK);
-	//	gc.strokeRect(0, 0, c.getHeight(), c.getWidth());
 	}
 	
 	@Override
 	public void setSampleStroke(VBox UCLeft, VBox UCRight) {
 		//do nothing
 	}
+	
 	/**
 	 * Draw all the model paths onto the radarView
 	 * An expensive operation
@@ -157,16 +155,19 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 	public void drawModelPaths() {		
 		//synchronized means no other thread can access getModelPaths() while this code is executing
 				synchronized (model.getModelPaths()) {
+					//getGC is access to the canvas graphics context 2d, only one thread may use it at a time
 					synchronized (getGC()) {
 						for (int i=0; i<model.getModelPaths().size();i++) {	
 							getGC().beginPath();
+							//each path begins with a MoveTo element 
 							getGC().moveTo(model.modelPathsCoordinates.get(i).x*width/scale + iModel.viewPortXYLocation.get(i).x,
 									model.modelPathsCoordinates.get(i).y*height/scale+ iModel.viewPortXYLocation.get(i).y );											
 							getGC().setStroke(model.getModelPaths().get(i).getStroke());
 							getGC().setLineWidth(model.getModelPaths().get(i).getStrokeWidth()/scale);
 							if (model.getModelPaths().get(i).getElements().size()>0) {
 							final double viewPortOffSetX = iModel.viewPortXYLocation.get(i).x;
-							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;							
+							final double viewPortOffSetY = iModel.viewPortXYLocation.get(i).y;		
+							//go through all LineTo elements of each path and draw them
 							for (int a = 0; a<model.getModelPaths().get(i).getElements().size(); a++) {
 								if (model.getModelPaths().get(i).getElements().get(a) instanceof LineTo) {
 									getGC().lineTo(((LineTo) model.getModelPaths().get(i).getElements().get(a)).getX()
@@ -264,83 +265,92 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);				
 		return p;
 		}else {
-			//if the network view port has never been active, return the center of the view port
-			//when the stage begins
 			Coordinate p = new Coordinate((((0+(iModel.viewPortWidth/2)))*7)/width, 
 					(((0+(iModel.viewPortHeight/2)))*7)/height);			
 			return p;
 		}
-
 	}
 	
 	/**
-	 * calculate the coordinate of the center of the viewport
+	 * normalize given coordinate
+	 */
+	public Coordinate normalizeViewPortValues(double x, double y) {
+		return new Coordinate(x*7/width,y*7/height);
+	}
+	
+	/**
+	 * calculate the coordinate of the center of the netWork viewport
+	 * @return coordinate network viewPort center location
+	 */
+	public Coordinate calculateNormalizedNetViewPortCenter() {
+		//if the network viewPort is active
+		if (hasNetMiniMap) {
+			Coordinate p =new Coordinate((((netMiniMapX+(iModel.viewPortWidth/2)))*7)/width, 
+				(((netMiniMapY+(iModel.viewPortHeight/2)))*7)/height);				
+		return p;
+		}else {
+			Coordinate p = new Coordinate((((0+(iModel.viewPortWidth/2)))*7)/width, 
+					(((0+(iModel.viewPortHeight/2)))*7)/height);			
+			return p;
+		}
+	}
+	
+	
+	/**
+	 * calculate the coordinate of the center of the local viewport
 	 * @return coordinate network viewPort center location
 	 */
 	public Coordinate calculateViewPortCenter() {
-		//iModel.viewPortX, iModel.viewPortY, iModel.viewPortWidth,iModel.viewPortHeight
-			//if the network view port has never been active, return the center of the view port
-			//when the stage begins
 			Coordinate p = new Coordinate((((iModel.viewPortX+(iModel.viewPortWidth/2)))*7)/width, 
 					(((iModel.viewPortY+(iModel.viewPortHeight/2)))*7)/height);			
 			return p;
 		}
-
-	
-	/**
-	 * what is the max distance the center point is from the edge?
-	 * @param netViewPortCenter
-	 * @return
-	 */
-	public Coordinate distanceFromNVP(Coordinate netViewPortCenter) {
-		//check top and bottom
-		//take the larger value		
-		double xDist = netViewPortCenter.x;
-		if (xDist < (iModel.viewPortWidth - netViewPortCenter.x)) {
-			xDist = iModel.viewPortWidth - netViewPortCenter.x;
-		}
-		double yDist = netViewPortCenter.y;
-		if (yDist < (iModel.viewPortHeight - netViewPortCenter.y)) {
-			yDist = iModel.viewPortHeight - netViewPortCenter.y;
-		}		
-		return new Coordinate(xDist,yDist);
-	}
 	
 	@Override
-	public void addToPath() {
-		
+	/**
+	 * Adds a single segment to the current path
+	 */
+	public void addToPath() {		
 		synchronized (model.getModelPaths()) {
 			synchronized (getGC()) {				
-		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+				//if the current path has more than 2 elements
 		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {	
 			getGC().beginPath();
-		//move to the second last coordinate on the elements list
+			//MoveTo the second last in the list
 			getGC().moveTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
 				*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
 				(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getY())
 				*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);	
 			getGC().setStroke(model.getModelPaths().get(model.getModelPaths().size()-1).getStroke());
-			getGC().setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth()/scale);
-		
+			getGC().setLineWidth(model.getModelPaths().get(model.getModelPaths().size()-1).getStrokeWidth()/scale);		
 		//draw a LineTo to the last element in the path
 			getGC().lineTo((((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getX())
 				*width/scale+iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).x, 
 				(((LineTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-1)).getY())
 				*height/scale+ iModel.viewPortXYLocation.get(iModel.viewPortXYLocation.size()-1).y);		
-		//stroke the bit
+		
 			getGC().stroke();
 		}
 		}
 		}
 	}
 	@Override
+	/**
+	 * Determines which course of action is appropriate based on  
+	 * the number of elements in the current path.
+	 * 
+	 * Adds a single segment to the current path
+	 * 
+	 */
 	public void drawPath() {
 		synchronized (model.getModelPaths()) {	
 			synchronized (getGC()) {
-		if (model.getModelPaths().size()>0) {		
-		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+				//if the path exists
+		if (model.getModelPaths().size()>0) {
+			//if the path has at more than 2 elements
 		if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() > 2) {
 			addToPath();
+			//if the path has exactly 2 elements
 		}else if (model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size() ==2){
 			getGC().beginPath();
 			getGC().moveTo((((MoveTo) model.getModelPaths().get(model.getModelPaths().size()-1).getElements().get(model.getModelPaths().get(model.getModelPaths().size()-1).getElements().size()-2)).getX())
@@ -362,15 +372,18 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		}
 	}
 	
-	//for drawing the netPath
+	
 	@Override
+	/**
+	 * Adds a single segment to the current network path
+	 */
 	public void addToNetPath() {		
 		synchronized (model.getNetWorkPath()) {
 			synchronized (getGC()) {
-			getGC().beginPath();
-		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+			getGC().beginPath();		
+			//if the current path has more than 2 elements
 		if (model.getNetWorkPath().getElements().size() > 2) {					
-		//move to the second last coordinate on the elements list
+			//MoveTo the second last in the list
 			getGC().moveTo((((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
 				*width/scale+model.netPathViewPortXYLocation.x, 
 				(((LineTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
@@ -395,16 +408,27 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 			paintOverPaths();
 		}
 	}
+	
 	@Override
+	/**
+	 * Determines which course of action is appropriate based on  
+	 * the number of elements in the current network path.
+	 * 
+	 * Adds a single segment to the current network path
+	 * 
+	 */
 	public void drawNetPath() {
-		synchronized (model.getNetWorkPath()) {		
-		if (model.getNetWorkPath()!=null) {		
-		//Path currentPath = model.getModelPaths().get(model.getModelPaths().size()-1);
+		synchronized (model.getNetWorkPath()) {
+		//if the path exists
+		if (model.getNetWorkPath()!=null) {	
+			//if the current path has more than 2 elements
 		if (model.getNetWorkPath().getElements().size() > 2) {
 			addToNetPath();
+			//if the current path has exactly 2 elements in it
 		}else if (model.getNetWorkPath().getElements().size() ==2){
 			synchronized (getGC()) {
 				getGC().beginPath();
+				//MoveTo the second last element in the list
 				getGC().moveTo((((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getX())
 					*width/scale+model.netPathViewPortXYLocation.x, 
 					(((MoveTo) model.getNetWorkPath().getElements().get(model.getNetWorkPath().getElements().size()-2)).getY())
@@ -430,6 +454,12 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		}
 	}
 	
+	/**
+	 * Will return the last recorded coordinate of the current network path
+	 * If the network path does not exist, this function will return
+	 * the netViewPort center coordinate
+	 * @return Coordinate, last recorded location from network activity
+	 */
 	public Coordinate getLastKnownCoordinate() {		
 		if (lastNetPathCoordinate !=null && isInViewPort(lastNetPathCoordinate)) {				
 				return lastNetPathCoordinate;					
@@ -438,22 +468,53 @@ public class Draw2miniMap extends Draw2View implements modelListener {
 		}		
 	}		
 	
+	/**
+	 * Will return a value between 0 and 1 which 
+	 * indicates the x-axis location of the Network's viewPort top left corner
+	 * within the bounds of the radarView
+	 * @return double, normalized x-axis location in context of the radarView
+	 */
 	public double getNetNormalizedViewPortX() {
 		return (netMiniMapX/width) *scale;
 	}
 	
+	/**
+	 * Will return a value between 0 and 1 which 
+	 * indicates the y-axis location of the Network's viewPort top left corner
+	 * within the bounds of the radarView
+	 * @return double, normalized y-axis location in context of the radarView
+	 */
 	public double getNetNormalizedViewPortY() {
 		return (netMiniMapY/height) *scale;
 	}
 	
+	/**
+	 * Will return a value between 0 and 1 which 
+	 * indicates the width of the Network's viewPort 
+	 * within the bounds of the radarView
+	 * @return double, normalized width size in context of the radarView
+	 */
 	public double getNetNormalizedViewPortWidth() {
 		return (iModel.viewPortWidth/width) *scale;
 	}
 	
+	/**
+	 * Will return a value between 0 and 1 which 
+	 * indicates the height of the Network's viewPort 
+	 * within the bounds of the radarView
+	 * @return double, normalized height size in context of the radarView
+	 */
 	public double getNetNormalizedViewPortHeight() {
 		return (iModel.viewPortHeight/height) *scale;
 	}
 	
+	/**
+	 * Will return a boolean value
+	 * Will return true if the coordinate 'p' is within the bounds of the current viewPort
+	 * Will return false otherwise
+	 * @param p, A Coordinate value, the x and y values must be between 0 and 1
+	 * @return boolean value
+	 */
 	public boolean isInViewPort(Coordinate p) {
 		if (p.x > getNetNormalizedViewPortX()&&
 				p.x < getNetNormalizedViewPortX()+getNetNormalizedViewPortWidth()&&

@@ -23,18 +23,18 @@ public class InteractionModel {
 	public int TOOL_REACTION_TASK = 5;
 	public int READ_AND_OBSERVE = 6;
 	
-	public boolean logTaskSoundStatus = true;
+	//public boolean logTaskSoundStatus = false;
 	public int task = -1;
-	public boolean noSounds = false;
+	public boolean Sounds = true;	
 	public String currentLogFileName = "";
 	
-	public void noSoundsTrue() {
-		noSounds = true;
-		logTaskSoundStatus = false;
+	public void SoundsTrue() {
+		Sounds = true;
+		//logTaskSoundStatus = true;
 	}
-	public void noSoundsFalse() {
-		noSounds = false;
-		logTaskSoundStatus = true;
+	public void SoundsFalse() {
+		Sounds = false;
+		//logTaskSoundStatus = false;
 	}
 	
 	//public double normalizedViewPortX, normalizedViewPortY;
@@ -65,8 +65,15 @@ public class InteractionModel {
 	//	System.out.println("viewport X   Y "+(viewPortX+viewPortWidth)*7/view.radarView.width+" "
 	//+(viewPortY+viewPortHeight)*7/view.radarView.height);
 		Coordinate p =new Coordinate((viewPortX+viewPortWidth/2)*7/view.radarView.width, 
-				(viewPortY+viewPortHeight/2)*7/view.radarView.height);
+				(viewPortY+viewPortHeight/2)*7/view.radarView.height);	
+		return p;	
+	}
 	
+	public Coordinate calculateNormalizedViewPortLocation() {		 		
+	//	System.out.println("viewport X   Y "+(viewPortX+viewPortWidth)*7/view.radarView.width+" "
+	//+(viewPortY+viewPortHeight)*7/view.radarView.height);
+		Coordinate p =new Coordinate((viewPortX)*7/view.radarView.width, 
+				(viewPortY)*7/view.radarView.height);	
 		return p;	
 	}
 	

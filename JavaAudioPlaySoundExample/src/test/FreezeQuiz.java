@@ -238,7 +238,7 @@ public class FreezeQuiz extends Stage{
     				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
     				userInput += "Current sound file for paths is "+con.model.netSelectedSoundFile.toString();
             		String fileName = "Tool identification task";
-            		if (!con.iModel.logTaskSoundStatus) {
+            		if (!con.iModel.Sounds) {
             			fileName += " without sounds!";
             		}
     				CreateFile log = new CreateFile(userInput, fileName);
@@ -252,7 +252,7 @@ public class FreezeQuiz extends Stage{
     				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
     				//userInput += "Current sound file for paths is "+con.model.selectedSoundFile.toString();
             		String fileName = "Shape detection task";
-            		if (!con.iModel.logTaskSoundStatus) {
+            		if (!con.iModel.Sounds) {
             			fileName += " without sounds!";
             		}
     				CreateFile log = new CreateFile(userInput, fileName);
@@ -284,14 +284,16 @@ public class FreezeQuiz extends Stage{
 				//send userInput to controller
         		String fileName = "FreezeTest";
         		if (con.iModel.task == con.iModel.LOCATION_IDENTIFICATION_TASK) {
-        			fileName = "Location identification task";
+        			fileName = "Location identification task";        			        			
         		}
+        		
         	//	if (con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK) {
         			//this used to be freezeTest tool identification
         	//		fileName += "Tool identification task";
         	//	}        		
-        		if (!con.iModel.logTaskSoundStatus) {
+        		if (!con.iModel.Sounds) {
         			fileName += " without sounds!";
+        			System.out.println("without sounds!");
         		}
 				CreateFile log = new CreateFile(userInput, fileName);
 				con.iModel.currentLogFileName = fileName;

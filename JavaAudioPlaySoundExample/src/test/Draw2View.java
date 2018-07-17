@@ -503,6 +503,8 @@ public class Draw2View extends Pane implements modelListener{
 	        	   model.notifySubscribers();	        	   
 	        	   //change super state 
 	        	   controller.superState = controller.SOUNDS_OVER_NETWORK;
+	        	   //restore current log file
+	        	   iModel.currentLogFileName = lastStage.logFile;
 	        	   //open instructions window
 	        	   lastStage.show();
 	        	   //close this window

@@ -111,7 +111,9 @@ public DrawingClient(String [] args) {
      		
      		//if the Freeze Test test is happening
      		if (serverState == controller.FREEZE_TEST_TASK) {
-     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;     			
+     			int serverTask = Integer.parseInt(netInfo.get(netInfoIndex)); netInfoIndex++;    
+     			boolean serverSounds = Boolean.parseBoolean(netInfo.get(netInfoIndex)); netInfoIndex++;
+     			model.iModel.Sounds = serverSounds;
      			if (serverTask == model.iModel.REAL_FREEZE_TEST) {
      				model.iModel.task = serverTask;
      			}

@@ -21,7 +21,7 @@ public class FreezeTestTimer extends Thread{
 	public int timeIncrement = 20000;
 	public FreezeTestTimer me = this;
 	public FreezeQuiz fr = null;
-	public int taskTime =2999;
+	public int taskTime =89999;
 	
 	public FreezeTestTimer(Draw2Controller con, FreezeTestInstructions stage) {
 		//this.timer = timer;
@@ -31,10 +31,10 @@ public class FreezeTestTimer extends Thread{
 		if (controller.iModel.task == controller.iModel.LOCATION_IDENTIFICATION_TASK
 				|| controller.iModel.task == controller.iModel.TOOL_IDENTIFICATION_TASK
 				|| controller.iModel.task == controller.iModel.SHAPE_DETECTION_TASK) {
-			//taskTime = 46999;
+			taskTime = 46999;
 			timeIncrement = 15000;
 		}else {
-		//	taskTime = 89999;
+			taskTime = 89999;
 		}
 		if (controller.iModel.task == controller.iModel.TOOL_REACTION_TASK) {
 			timeIncrement = Integer.MAX_VALUE;

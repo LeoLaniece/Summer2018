@@ -61,6 +61,8 @@ public class ReadAndObserveInstructionStage extends Stage{
 	ReadAndObserveInstructionStage me = this;
 	private Draw2Model model;
 	private InteractionModel iModel;
+	public int executedTask = -5;
+	
 
 	public ReadAndObserveInstructionStage(InteractionModel iModel) {
 		this.iModel = iModel;
@@ -104,6 +106,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 		    		  "You can move around in the workspace by holding down the" +"\n"+
 		    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
 		    		  "please begin drawing when the workspace appears"); 
+	    	  executedTask = iModel.SHAPE_DETECTION_TASK;
 	      }
 	      if (iModel.task == iModel.REAL_FREEZE_TEST) {
 	    	  instructions = new Text("A task is about to start"+"\n"+
@@ -121,6 +124,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 		    		  "You can move around in the workspace by holding down the" +"\n"+
 		    		  "SHIFT key and dragging with the mouse cursor"+"\n"+
 		    		  "please begin drawing when the workspace appears"); 
+	    	  executedTask = iModel.REAL_FREEZE_TEST;
 	      }
 	      
 	      instructions.setFont(Font.font ("Verdana", 20));
@@ -149,7 +153,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 	      instructions.setFill(Color.GREEN); 
 	      if (radioButtons !=null) {
       		String fileName = "Freeze test shape claim";
-      		if (iModel.logTaskSoundStatus) {
+      		if (!iModel.Sounds) {
       			fileName += " without sounds!";
       		}
 	    	  CreateFile f = new CreateFile("",fileName);
@@ -197,13 +201,14 @@ public class ReadAndObserveInstructionStage extends Stage{
    			 	    		  "This window will close when the other user is ready to begin");
    		 	      instructions.setFont(Font.font ("Verdana", 20));
    		 	      instructions.setFill(Color.BLACK);   	
-   	      		String fileName = "Freeze test shape claim";
-   	      		if (iModel.logTaskSoundStatus) {
+   	      		String fileName = "Freeze test shape claim";  	      		
+   	      		if (executedTask == iModel.SHAPE_DETECTION_TASK) {
+   	      			fileName = "Shape detection shape claim";
+   	      		}  
+   	      		if (!iModel.Sounds) {
    	      			fileName += " without sounds!";
-   	      		}
-   				CreateFile x = new CreateFile("User1 selected "+groupResultString,fileName);
-   				//hide();   				
-   				
+   	      		} 
+   				CreateFile x = new CreateFile("User1 selected "+groupResultString,fileName);   			  				   				
                }
           }); 
           
@@ -251,7 +256,7 @@ public class ReadAndObserveInstructionStage extends Stage{
 			root.getChildren().remove(radioButtons);
 			radioButtons = null;
 	      		String fileName = "Freeze test shape claim";
-	      		if (iModel.logTaskSoundStatus) {
+	      		if (!iModel.Sounds) {
 	      			fileName += " without sounds!";
 	      		}
 			CreateFile x = new CreateFile("User1 selected "+groupResultString,fileName);
