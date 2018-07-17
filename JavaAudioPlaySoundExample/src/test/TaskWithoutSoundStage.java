@@ -76,7 +76,7 @@ public class TaskWithoutSoundStage extends Stage{
 	           public void handle(ActionEvent event) {	        	           	   	        	   	        	   
 	        	   
 	        	   me.close();
-	        	   controller.iModel.noSounds =false;
+	        	   controller.iModel.noSoundsFalse();
 	        	   
 	           }
 	      });

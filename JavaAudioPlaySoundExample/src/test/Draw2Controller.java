@@ -199,12 +199,14 @@ public class Draw2Controller {
         	state = READY;
         	model.pathToNull();  	        	
         	//if shift is down, the user wants to pan the viewPort
-        	if (me.isShiftDown()) {
+        	if (me.isShiftDown()) {        		
         		//pan the canvas
         		//new state
         		state = PAN_READY;   
             	x = me.getX();
             	y = me.getY();        		
+            	CreateFile log = new CreateFile("Panning action begun at"
+            			+" x = "+x+" y = "+y, iModel.currentLogFileName);
          		//adjust the server's minimap location
            	    if (state == PAN_READY) {
            		 //START the ViewPortDisplacementSound generator here
@@ -216,7 +218,9 @@ public class Draw2Controller {
         	if (state ==READY) {
         	//will be useful in mouseDragged for velocity
         	x = me.getX();
-        	y = me.getY();       	         	
+        	y = me.getY();    
+        	CreateFile log = new CreateFile("Drawing action begun at"
+        			+" x = "+x+" y = "+y, iModel.currentLogFileName);
         	//begin drawing path and add it to the model database
         	model.startPath(me.getX(),me.getY());      	        	
         	//Mark the location of the path relative to the workspace for sound production 
@@ -238,8 +242,12 @@ public class Draw2Controller {
               	 if (model.localVPDS != null) {
               		 model.stopLocalVPDS();
               	 }
+             	CreateFile log = new CreateFile("Panning action ended at"
+            			+" x = "+x+" y = "+y, iModel.currentLogFileName);
             	}
-            	if (state == READY) {   
+            	if (state == READY) {
+                	CreateFile log = new CreateFile("Drawing action ended at"
+                			+" x = "+x+" y = "+y, iModel.currentLogFileName);
             	//stop drawing the paths
             	model.pathToNull();
             	//stop the sounds for local generatiom
@@ -332,6 +340,12 @@ public class Draw2Controller {
 			if (iModel.noSounds) {
 				new TaskWithoutSoundStage(me);
 			}
+    		String fileName = "ReadAndObserve";
+    		if (!iModel.logTaskSoundStatus) {
+    			fileName += " without sounds!";
+    		}    		
+    		CreateFile log = new CreateFile("ReadAndObserve task has begun", fileName);
+    		iModel.currentLogFileName = fileName;
 	   }
 	   /**
 	    * Will begin executing the Freeze test study task
@@ -348,6 +362,15 @@ public class Draw2Controller {
 			model.notifySubscribers();	
 			//launch instructions
 		   model.launchFreezeTestIntructions(me);
+			if (iModel.noSounds) {
+				new TaskWithoutSoundStage(me);
+			}
+    		String fileName = "FreezeTest";
+    		if (!iModel.logTaskSoundStatus) {
+    			fileName += " without sounds!";
+    		}    		
+    		CreateFile log = new CreateFile("FreezeTest task has begun", fileName);
+    		iModel.currentLogFileName = fileName;
 	   }
 	   /**
 	    * will begin a location identification task
@@ -363,6 +386,15 @@ public class Draw2Controller {
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
+			if (iModel.noSounds) {
+				new TaskWithoutSoundStage(me);
+			}
+    		String fileName = "Location identification task";
+    		if (!iModel.logTaskSoundStatus) {
+    			fileName += " without sounds!";
+    		}    		
+    		CreateFile log = new CreateFile("Location identification task has begun", fileName);
+    		iModel.currentLogFileName = fileName;
 	   }
 	   /**
 	    * will begin a tool identification task
@@ -378,6 +410,15 @@ public class Draw2Controller {
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
+			if (iModel.noSounds) {
+				new TaskWithoutSoundStage(me);
+			}
+    		String fileName = "Tool identification task";
+    		if (!iModel.logTaskSoundStatus) {
+    			fileName += " without sounds!";
+    		}    		
+    		CreateFile log = new CreateFile("Tool identification task has begun", fileName);
+    		iModel.currentLogFileName = fileName;
 	   }
 	   /**
 	    * will begin an activity identification task
@@ -400,6 +441,12 @@ public class Draw2Controller {
 			if (iModel.noSounds) {
 				new TaskWithoutSoundStage(me);
 			}
+    		String fileName = "Activity identification task";
+    		if (!iModel.logTaskSoundStatus) {
+    			fileName += " without sounds!";
+    		}    		
+    		CreateFile log = new CreateFile("Activity identification task has begun", fileName);
+    		iModel.currentLogFileName = fileName;
 			
 	   }
 	   /**
@@ -416,7 +463,13 @@ public class Draw2Controller {
 		   state = FREEZE_TEST_TASK;
 			taskRunning = true;
 			model.notifySubscribers();			
-		   model.launchFreezeTestIntructions(me);		
+		   model.launchFreezeTestIntructions(me);
+   		String fileName = "Shape identification task";
+   		if (!iModel.logTaskSoundStatus) {
+   			fileName += " without sounds!";
+   		}    		
+   		CreateFile log = new CreateFile("Shape identification task has begun", fileName);
+   		iModel.currentLogFileName = fileName;
 	   }
 	   /**
 	    * will begin a tool identification task
@@ -431,5 +484,11 @@ public class Draw2Controller {
 			taskRunning = true;
 			model.notifySubscribers();			
 		   model.launchFreezeTestIntructions(me);
+   		String fileName = "Tool reaction task";
+   		if (!iModel.logTaskSoundStatus) {
+   			fileName += " without sounds!";
+   		}    		
+   		CreateFile log = new CreateFile("Tool reaction task has begun", fileName);
+   		iModel.currentLogFileName = fileName;
 	   }	   
 }

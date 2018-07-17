@@ -60,8 +60,10 @@ public class ReadAndObserveInstructionStage extends Stage{
 	Text timer;
 	ReadAndObserveInstructionStage me = this;
 	private Draw2Model model;
+	private InteractionModel iModel;
 
 	public ReadAndObserveInstructionStage(InteractionModel iModel) {
+		this.iModel = iModel;
 	      setTitle("read and observe stage!");
 	      //set the size of the window here
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
@@ -146,7 +148,12 @@ public class ReadAndObserveInstructionStage extends Stage{
 		instructions.setFont(Font.font ("Verdana", 20));
 	      instructions.setFill(Color.GREEN); 
 	      if (radioButtons !=null) {
-	    	  CreateFile f = new CreateFile("","User 1 freeze test shape claim");
+      		String fileName = "Freeze test shape claim";
+      		if (iModel.logTaskSoundStatus) {
+      			fileName += " without sounds!";
+      		}
+	    	  CreateFile f = new CreateFile("",fileName);
+	    	  iModel.currentLogFileName = fileName;
 	    	  root.getChildren().remove(radioButtons);
 	      }
 		 radioButtons = new VBox();
@@ -189,8 +196,12 @@ public class ReadAndObserveInstructionStage extends Stage{
    			 	      "Please wait until this window automatically closes"+"\n"+
    			 	    		  "This window will close when the other user is ready to begin");
    		 	      instructions.setFont(Font.font ("Verdana", 20));
-   		 	      instructions.setFill(Color.BLACK);   		 	      
-   				CreateFile x = new CreateFile("User1 selected "+groupResultString,"User 1 freeze test shape claim");
+   		 	      instructions.setFill(Color.BLACK);   	
+   	      		String fileName = "Freeze test shape claim";
+   	      		if (iModel.logTaskSoundStatus) {
+   	      			fileName += " without sounds!";
+   	      		}
+   				CreateFile x = new CreateFile("User1 selected "+groupResultString,fileName);
    				//hide();   				
    				
                }
@@ -239,7 +250,12 @@ public class ReadAndObserveInstructionStage extends Stage{
 			//close and remove current bullets and submit button
 			root.getChildren().remove(radioButtons);
 			radioButtons = null;
-			CreateFile x = new CreateFile("User1 selected "+groupResultString,"User 1 freeze test shape claim");
+	      		String fileName = "Freeze test shape claim";
+	      		if (iModel.logTaskSoundStatus) {
+	      			fileName += " without sounds!";
+	      		}
+			CreateFile x = new CreateFile("User1 selected "+groupResultString,fileName);
+			iModel.currentLogFileName = fileName;
 		}
 		hide();
 		

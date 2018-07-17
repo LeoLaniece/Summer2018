@@ -19,11 +19,24 @@ public class InteractionModel {
 	public int TOOL_IDENTIFICATION_TASK =1;
 	public int ACTIVITY_IDENTIFICATION_TASK = 2;
 	public int REAL_FREEZE_TEST = 3;
-	public int SHAPE_DETECTION_TASK =4;
-	public int TOOL_REACTION_TASK =5;
-	public int READ_AND_OBSERVE =6;
+	public int SHAPE_DETECTION_TASK = 4;
+	public int TOOL_REACTION_TASK = 5;
+	public int READ_AND_OBSERVE = 6;
+	
+	public boolean logTaskSoundStatus = true;
 	public int task = -1;
 	public boolean noSounds = false;
+	public String currentLogFileName = "";
+	
+	public void noSoundsTrue() {
+		noSounds = true;
+		logTaskSoundStatus = false;
+	}
+	public void noSoundsFalse() {
+		noSounds = false;
+		logTaskSoundStatus = true;
+	}
+	
 	//public double normalizedViewPortX, normalizedViewPortY;
 	
 	public InteractionModel(Draw2Model m, Draw2View view) {

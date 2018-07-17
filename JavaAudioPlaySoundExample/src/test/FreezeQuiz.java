@@ -237,28 +237,28 @@ public class FreezeQuiz extends Stage{
     				String toolGroupResultString = toolGroupResult.getText();
     				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
     				userInput += "Current sound file for paths is "+con.model.netSelectedSoundFile.toString();
-    				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
+            		String fileName = "Tool identification task";
+            		if (!con.iModel.logTaskSoundStatus) {
+            			fileName += " without sounds!";
+            		}
+    				CreateFile log = new CreateFile(userInput, fileName);
+    				con.iModel.currentLogFileName = fileName;
                     System.out.println(userInput);	                               
             		
-                   // con.state = con.NOTREADY;
-                   // con.iModel.freezeTestOff();
-    				//con.model.notifySubscribers();					
-    				//con.model.showTaskStage();									
-    				//close();
         		}else if ((con.iModel.task == con.iModel.SHAPE_DETECTION_TASK)) {
         			//get result from shape toggle group        			
         			RadioButton toolGroupResult = (RadioButton) shapeGroup.getSelectedToggle();
     				String toolGroupResultString = toolGroupResult.getText();
     				userInput += "User claims that their partner is "+toolGroupResultString+"\n";
     				//userInput += "Current sound file for paths is "+con.model.selectedSoundFile.toString();
-    				CreateFile log = new CreateFile(userInput, "FreezeTest User 2 questionaire result");
+            		String fileName = "Shape detection task";
+            		if (!con.iModel.logTaskSoundStatus) {
+            			fileName += " without sounds!";
+            		}
+    				CreateFile log = new CreateFile(userInput, fileName);
+    				con.iModel.currentLogFileName = fileName;
                     System.out.println(userInput);	                               
             		
-                   // con.state = con.NOTREADY;
-                   // con.iModel.freezeTestOff();
-    				//con.model.notifySubscribers();					
-    				//con.model.showTaskStage();									
-    				//close();
         		}else {        			
             	
             	userInput = "User selected region "+selectedField+"\n"+
@@ -284,12 +284,17 @@ public class FreezeQuiz extends Stage{
 				//send userInput to controller
         		String fileName = "FreezeTest";
         		if (con.iModel.task == con.iModel.LOCATION_IDENTIFICATION_TASK) {
-        			fileName += " location identification";
+        			fileName = "Location identification task";
         		}
-        		if (con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK) {
-        			fileName += " tool identification";
+        	//	if (con.iModel.task == con.iModel.TOOL_IDENTIFICATION_TASK) {
+        			//this used to be freezeTest tool identification
+        	//		fileName += "Tool identification task";
+        	//	}        		
+        		if (!con.iModel.logTaskSoundStatus) {
+        			fileName += " without sounds!";
         		}
 				CreateFile log = new CreateFile(userInput, fileName);
+				con.iModel.currentLogFileName = fileName;
                 System.out.println(userInput);
         		}
                 //send msg to user 1 so that they can continue their task

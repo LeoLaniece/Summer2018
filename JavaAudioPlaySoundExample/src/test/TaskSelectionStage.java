@@ -100,7 +100,7 @@ public class TaskSelectionStage extends Stage{
 	      Button task5 = new Button("FreezeTest study task, without sounds!");
 	      task5.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {         	  	              
-	        	   controller.iModel.noSounds = true;
+	        	   controller.iModel.noSoundsTrue();
 	        	   controller.startTask1();
 	               me.close();	               
 	           }
@@ -109,7 +109,7 @@ public class TaskSelectionStage extends Stage{
 	      Button task6 = new Button("Read and observe study task, without sounds!");
 	      task6.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
-	        	   controller.iModel.noSounds = true;
+	        	   controller.iModel.noSoundsTrue();
 	        	   controller.startTask2();
 	               	 me.close();	                     	  	         	  
 	           }
@@ -203,7 +203,7 @@ public class TaskSelectionStage extends Stage{
 	      task16.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
 	        	   controller.drawViewPort =true;	 
-	        	   controller.iModel.noSounds = true;
+	        	   controller.iModel.noSoundsTrue();
 	        	     controller.startTask6();
 	               	 me.close();
 	               	
@@ -214,7 +214,7 @@ public class TaskSelectionStage extends Stage{
 	      task17.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) { 
 	        	   controller.drawViewPort =true;	
-	        	   controller.iModel.noSounds = true;
+	        	   controller.iModel.noSoundsTrue();
 	        	     controller.startTask0();
 	               	 me.close();	
 	               	
@@ -225,7 +225,7 @@ public class TaskSelectionStage extends Stage{
 	      task18.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {   
 	        	   controller.drawViewPort =true;	
-	        	   controller.iModel.noSounds = true;
+	        	   controller.iModel.noSoundsTrue();
 	        	     controller.startTask4();
 	               	 me.close();	               	 
 	                }
@@ -235,7 +235,7 @@ public class TaskSelectionStage extends Stage{
 	      task19.setOnAction(new EventHandler<ActionEvent>() {
 	           public void handle(ActionEvent event) {    
 	        	   controller.drawViewPort =true;
-	        	   controller.iModel.noSounds = true;
+	        	   controller.iModel.noSoundsTrue();
 	        	     controller.startTask7();
 	               	 me.close();	                     	  	         	  
 	           }

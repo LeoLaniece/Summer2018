@@ -188,9 +188,14 @@ public class Draw2Model {
             	}            	
             	view.controller.state = view.controller.PLAY_IMPACT;
             	notifySubscribers();            	
-            	if (iModel.task == iModel.TOOL_REACTION_TASK) {
+            	if (iModel.task == iModel.TOOL_REACTION_TASK) {            		
+            		String fileName = "Tool reaction task";
+            		if (!iModel.logTaskSoundStatus) {
+            			fileName += " without sounds!";
+            		}
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
-            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            		CreateFile log = new CreateFile(userInput, fileName);
+            		iModel.currentLogFileName = fileName;
             	}
             }
         });    	
@@ -215,7 +220,13 @@ public class Draw2Model {
             	notifySubscribers();
             	if (iModel.task == iModel.TOOL_REACTION_TASK) {
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
-            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            		
+            		String fileName = "Tool reaction task";
+            		if (!iModel.logTaskSoundStatus) {
+            			fileName += " without sounds!";
+            		}
+            		CreateFile log = new CreateFile(userInput, fileName);
+            		iModel.currentLogFileName = fileName;
             	}
             }
         });    	
@@ -240,7 +251,12 @@ public class Draw2Model {
             	notifySubscribers();
             	if (iModel.task == iModel.TOOL_REACTION_TASK) {
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
-            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            		String fileName = "Tool reaction task";
+            		if (!iModel.logTaskSoundStatus) {
+            			fileName += " without sounds!";
+            		}
+            		CreateFile log = new CreateFile(userInput, fileName);
+            		iModel.currentLogFileName = fileName;
             	}
             }
         });    	
@@ -265,7 +281,12 @@ public class Draw2Model {
             	notifySubscribers();
             	if (iModel.task == iModel.TOOL_REACTION_TASK) {
             		String userInput = getSelectedTimbreAndNetTimbreAsStrings();
-            		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+            		String fileName = "Tool reaction task";
+            		if (!iModel.logTaskSoundStatus) {
+            			fileName += " without sounds!";
+            		}
+            		CreateFile log = new CreateFile(userInput, fileName);
+            		iModel.currentLogFileName = fileName;
             	}
             }
         });    	    	
@@ -682,7 +703,7 @@ public class Draw2Model {
 		//if x < 400 pan value should be between -1 and 0
 		//if x >400 and <800 value should be between 0 and 1
 		//System.out.println("location x "+location.x);
-		location.x = location.x *1000;
+		location.x = location.x *radarView.width;
 		//System.out.println("view width "+view.width);
 		float panValue = 0;
 			if (location.x < (view.width/2)) {
@@ -941,7 +962,13 @@ public class Draw2Model {
 	}
 	
 	public void createFileForFreezeTest() {
-		CreateFile x = new CreateFile(user1FreezeQuestionResult, "FreezeTest User 1 shape log");
+		String fileName = "FreezeTest shape log";
+		if (!iModel.logTaskSoundStatus) {
+			fileName += " without sounds!";
+		}
+		CreateFile x = new CreateFile(user1FreezeQuestionResult, fileName);
+		iModel.currentLogFileName = fileName;
+		
 		user1FreezeQuestionResult = "";
 	}
 	
@@ -993,7 +1020,12 @@ public class Draw2Model {
 	public void logPartnerImpact() {
 		if (iModel.task == iModel.TOOL_REACTION_TASK) {
 		String userInput = "Partner just selected "+netSelectedSoundFile.toString();
-		CreateFile log = new CreateFile(userInput, "Tool reaction task");
+		String fileName = "Tool reaction task";
+		if (!iModel.logTaskSoundStatus) {
+			fileName += " without sounds!";
+		}
+		CreateFile log = new CreateFile(userInput, fileName);
+		iModel.currentLogFileName = fileName;
 	}
 	}
 	   /**
