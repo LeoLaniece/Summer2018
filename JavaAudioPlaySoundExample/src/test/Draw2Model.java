@@ -36,26 +36,88 @@ import unusedClasses.PlayPathSound;
 import unusedClasses.SoundThread;
 
 public class Draw2Model {
-	//the model listeners
-	ArrayList<modelListener> modelListeners;	
-	//ClientListener pathActivityListener;
-	public int count =0;
+	/**
+	 * ArrayList of model listeners
+	 * Will be notified every time the model changes
+	 */
+	ArrayList<modelListener> modelListeners;		
+	/**
+	 * a reference to the path being currently drawn by the user
+	 */
     public Path path;  
+    /**
+     * A reference to the network path being currently drawn
+     */
     public Path netWorkPath = null;
+    /**
+     * A reference to coordinate of the last segment location of the path being drawn
+     */
     public Coordinate currentPathCoordinate;
+    /**
+     * Sets the initial path stroke size
+     */
     public static final Double DEFAULTSTROKE = 3.0;
+    /**
+     * The largest allowed path stroke size
+     */
     public static final Double MAXSTROKE = 30.0;
+    /**
+     * The smallest allowed path stroke size
+     */
     public static final Double MINSTROKE = 1.0;
+    /**
+     * Reference to the clear button, 
+     * will clear all paths and restore the canvas 
+     * to its original appearance
+     */
     Button btnClear;
+    /**
+     * Button for selection of the Pencil tool
+     * Will alter the drawing sounds to match the tone of a pencil
+     */
     Button btnPencil;
+    /**
+     * Button for selection of the Metal tool
+     * Will alter the drawing sounds to have a more metallic timbre
+     */
     Button btnMetal;
+    /**
+     * Button for selection of the Chalk tool
+     * Will alter the drawing sounds to match the tone of a piece of chalk
+     */
     Button btnChalk;
+    /**
+     * Button for selection of the Eraser tool
+     * Will alter the drawing sounds to match the tone of an eraser
+     */
     Button btnEraser;    
+    /**
+     * Label containing the image of a square
+     * To be aligned by the Metal tool for quick reference 
+     * during the Freeze Test tasks
+     */
     Label square;
+    /**
+     * Label containing the image of a triangle
+     * To be aligned by the Pencil tool for quick reference 
+     * during the Freeze Test tasks
+     */
     Label triangle;
+    /**
+     * Label containing the image of a squiggle
+     * To be aligned by the Chalk tool for quick reference 
+     * during the Freeze Test tasks
+     */
     Label squiggle;
+    /**
+     * Label containing the image of a circle
+     * To be aligned by the Eraser tool for quick reference 
+     * during the Freeze Test tasks
+     */
     Label circle;
-    
+    /**
+     * 
+     */
     public String user1FreezeQuestionResult = "";
     
     public ViewPortDisplacementSound localVPDS;
@@ -73,6 +135,8 @@ public class Draw2Model {
     public Draw2Controller controller;
     drawPath dP = null;
     public ReadAndObserveStage readAndObserveTrial =null;
+    public boolean soundGeneratorStart = false;
+    public boolean netSoundGeneratorStart = false;
     
     //eliminate all of this
   //  Coordinate[] pathAngleCalculationCoordinates = new Coordinate[3];
@@ -182,7 +246,7 @@ public class Draw2Model {
             	setPencilTimbre();
             	sampleLine.setStroke(Color.DIMGRAY);  
             	strokeSlider.setValue(3);
-            	File pencilTap = new File(new File("src\\soundAndImageFiles\\pencilTap.WAV").getAbsolutePath());
+            	File pencilTap = new File(new File("src\\soundAndImageFiles\\pencilTap2.WAV").getAbsolutePath());
             	if (controller.superState == controller.SOUNDS_LOCAL) {
             		player.playFileClip(pencilTap);
             	}            	
@@ -243,7 +307,7 @@ public class Draw2Model {
             	setChalkTimbre();
             	sampleLine.setStroke(Color.ANTIQUEWHITE);
             	strokeSlider.setValue(3);
-            	File chalkTap = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
+            	File chalkTap = new File(new File("src\\soundAndImageFiles\\pencilTap.WAV").getAbsolutePath());
             	if (controller.superState == controller.SOUNDS_LOCAL) {
             		player.playFileClip(chalkTap);
             	}               	
@@ -356,7 +420,7 @@ public class Draw2Model {
     		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());    		
     	}
     	if (t == CHALK) {
-    		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk.WAV").getAbsolutePath());
+    		netSelectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk3.WAV").getAbsolutePath());
     		netSelectedImpactFile = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
     	}
     }
@@ -364,24 +428,24 @@ public class Draw2Model {
     public void setPencilTimbre() {
     	currentTimbre =PENCIL;
     	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\pencilSlow.WAV").getAbsolutePath());
-    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\pencilImpact.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\paperImpact.WAV").getAbsolutePath());
     	notifySubscribers();
     }
     public void setMetalTimbre() {
     	currentTimbre =METAL;
     	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\metalOnWoodSlow.WAV").getAbsolutePath());
-    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\metalImpact.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\metalImpact2.WAV").getAbsolutePath());
     	notifySubscribers();
     }
     public void setEraserTimbre() {
     	currentTimbre =ERASER;
     	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\eraserOnPaperFast.WAV").getAbsolutePath());
-    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact.WAV").getAbsolutePath());
+    	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\eraserImpact2.WAV").getAbsolutePath());
     	notifySubscribers();
     }
     public void setChalkTimbre() {
     	currentTimbre =CHALK;
-    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk.WAV").getAbsolutePath());
+    	selectedSoundFile = new File(new File("src\\soundAndImageFiles\\chalk3.WAV").getAbsolutePath());
     	selectedImpactFile = new File(new File("src\\soundAndImageFiles\\chalkTap.WAV").getAbsolutePath());
     	notifySubscribers();
     }        
@@ -398,7 +462,7 @@ public class Draw2Model {
     
 	//this bit should call a method in the model, just pass in the coordinates.
 	public void startPath(double x1, double y1) {		
-		//relativize the coordinates for strorage
+		//relativize the coordinates for storage
 		double x = x1/radarView.width;
 		double y = y1/radarView.height;	
 		if (path != null) {
@@ -553,8 +617,7 @@ public class Draw2Model {
 	 * @param clipDuration
 	 * @param clipStaggerIncrement
 	 */
-	public void playLocalPathInteractively(double velocity, Coordinate mouseCoordinate
-			) {
+	public void playLocalPathInteractively(double velocity, Coordinate mouseCoordinate) {
 		float panValue = doNotCalculatePanValue(mouseCoordinate); 	
 		if (localSoundGenerator != null) {
 			stopLocalSoundGenerator();
@@ -567,7 +630,7 @@ public class Draw2Model {
 		//AnInteractiveStaggeredThread t = new AnInteractiveStaggeredThread("staggeredThread",velocity,panValue, pathAngle, clipDuration);		
     	localSoundGenerator = new AnInteractiveStaggeredSoundGenerator("localStaggeredThread",
     	velocity,panValue, clipDuration,clipStaggerIncrement,selectedSoundFile,selectedImpactFile);    	
-		localSoundGenerator.start();		
+    	//localSoundGenerator.start();		
 		//use netSelectedSoundFile and netSelectedImpactFile?
 	}
 	
@@ -594,18 +657,20 @@ public class Draw2Model {
 		networkSoundGenerator = new AnInteractiveStaggeredSoundGenerator("networkStaggeredThread",
 				velocity,panValue, clipDuration,clipStaggerIncrement,netSelectedSoundFile,netSelectedImpactFile);
     	
-		networkSoundGenerator.start();		
+		//networkSoundGenerator.start();		
 		//use netSelectedSoundFile and netSelectedImpactFile?
 	}
 	
 	public void stopLocalSoundGenerator() {
 		localSoundGenerator.setMouseReleased(true);		
 		stopLocalDrawingSoundGenerator();
+		soundGeneratorStart = false;
 	}
 	
 	public void stopNetworkSoundGenerator() {
 		networkSoundGenerator.setMouseReleased(true);		
 		stopNetworkDrawingSoundGenerator();
+		netSoundGeneratorStart = false;
 	}
 	
 	public void updateLocalSoundGeneratorVelocity(double v) {
@@ -966,7 +1031,7 @@ public class Draw2Model {
 	}
 	
 	public void createFileForFreezeTest() {
-		String fileName = "FreezeTest shape log";
+		String fileName = "FreezeTest shape claim";
 		if (!iModel.Sounds) {
 			fileName += " without sounds!";
 		}
@@ -1043,6 +1108,8 @@ public class Draw2Model {
 	   public double calculateClipDuration() {		   
 		   return player.fileLength(selectedSoundFile)*1000;
 	   }
-	   
+	   public void launchDemoSequence() {
+		   SoundDemo x = new SoundDemo(this);		   
+	   }
 	
 }

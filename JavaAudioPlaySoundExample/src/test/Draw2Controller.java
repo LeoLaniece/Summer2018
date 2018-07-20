@@ -314,6 +314,10 @@ public class Draw2Controller {
                 	model.strokePath(me.getX(), me.getY());  
                 	//if superStae is SOUNDS_LOCAL update the local sound generator
                 	if (superState == SOUNDS_LOCAL) {
+                		if (!model.soundGeneratorStart) {
+                			model.localSoundGenerator.start();
+                			model.soundGeneratorStart = true;
+                		}
             		model.updateLocalSoundGeneratorVelocity(soundVelocityThread.getVelocity());
             		model.updateLocalSoundGeneratorPanValue(mouseCoordinates.get(mouseCoordinates.size()-1));
                 	}            	
@@ -484,5 +488,13 @@ public class Draw2Controller {
    		}    		
    		CreateFile log = new CreateFile("Tool reaction task has begun", fileName);
    		iModel.currentLogFileName = fileName;
-	   }	   
+	   }	  
+	   /**
+	    * will begin the sound calibration demo
+	    * only one user is involved?
+	    */
+	   public void startTask8() {
+		   model.launchDemoSequence();
+	   }
+	   
 }

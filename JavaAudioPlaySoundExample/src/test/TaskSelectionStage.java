@@ -241,6 +241,14 @@ public class TaskSelectionStage extends Stage{
 	           }
 	      });
 	      
+	      Button task20 = new Button("Sound calibration demo!");
+	      task20.setOnAction(new EventHandler<ActionEvent>() {
+	           public void handle(ActionEvent event) {    	        	  
+	        	     controller.startTask8();
+	               	 me.close();	                     	  	         	  
+	           }
+	      });
+	      
 	      
 	      
 	      VBox sound = new VBox();
@@ -248,7 +256,7 @@ public class TaskSelectionStage extends Stage{
 	      VBox noSound = new VBox();
 	      noSound.setAlignment(Pos.CENTER);
 	      sound.getChildren().addAll(task1,task2,task7,task8,task13,task15);
-	      noSound.getChildren().addAll(task5,task6,task16,task17,task18, task19);
+	      noSound.getChildren().addAll(task5,task6,task17,task18,task16, task19);
 	      //task7,task8, task13, task5,task6,task1,task2,task15
 	      
 	      root.getChildren().addAll(sound,noSound);

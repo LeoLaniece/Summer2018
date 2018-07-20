@@ -142,7 +142,7 @@ public DrawingClient(String [] args) {
         			 controller.taskRunning =false;
         			 model.iModel.task = -1;
         			 controller.view.resetView();
-        			 model.createFileForFreezeTest();
+        			 //model.createFileForFreezeTest();
         				Platform.runLater(new Runnable() {
            				    @Override
            				        public void run() {	
@@ -261,6 +261,10 @@ public DrawingClient(String [] args) {
         		 //add bit to current path
         		 model.updateNewPathFromNetwork(line);        		         		 
         		 //update the sound generator
+          		if (!model.netSoundGeneratorStart) {
+         			model.networkSoundGenerator.start();
+         			model.netSoundGeneratorStart = true;
+         		}
          		model.updateNetworkSoundGeneratorVelocity(line[3]);
          		Coordinate mouseCoordinate = new Coordinate(line[4],line[5]);
          		model.updateNetworkSoundGeneratorPanValue(mouseCoordinate);

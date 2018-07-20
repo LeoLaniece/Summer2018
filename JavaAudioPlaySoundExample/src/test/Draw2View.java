@@ -136,7 +136,7 @@ public class Draw2View extends Pane implements modelListener{
 		
 		//UCLeft.getChildren().add(stackpane);		
 		//UCLeft.getChildren().add(model.strokeSlider);
-		UCLeft.getChildren().add(model.btnClear);
+		UCRight.getChildren().add(model.btnClear);
 		
 		HBox h1 = new HBox();		
 		h1.getChildren().addAll(model.btnPencil, model.triangle);		
