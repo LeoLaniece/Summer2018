@@ -1,6 +1,7 @@
 package test;
 
 import javafx.application.Application;
+
 import javafx.scene.control.ToggleButton ;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.RadioButton ;
@@ -59,13 +60,17 @@ import javafx.scene.control.TextField ;
  * 
  * Do the shape identification task
  * Do the tool and shape identification task.
+ * 
+ * this class currently executes the tool identification task
  * @author HCI Lab
  *
  */
+//should be renamed to toolSounds demo
 public class SoundDemo extends Stage{
-	private Draw2Model model;
+	public Draw2Model model;
 	private Stage me;
 	private HBox root;
+	private Text instructions;
 	private StrokePlayer strokePlayer;
 	private ArrayList<File> toolClips;
 	private ArrayList<Integer> toolClipsID;
@@ -73,6 +78,8 @@ public class SoundDemo extends Stage{
 	public int METAL = 1;
 	public int CHALK = 2;
 	public int ERASER = 3;
+	public int answer = -1;
+	
 	
 	public SoundDemo(Draw2Model m){
 		model = m;
@@ -87,36 +94,42 @@ public class SoundDemo extends Stage{
 	    setX(0);
 	    setY(0);
 	    show();  
-	    Text instructions = new Text("FreezeTest is about to start"+"\n"+
-	  	      "Until promted to stop, please trace the all the shapes"+"\n"+"you can find in the workspace"+"\n"+
-	  	      "Only trace each shape once!"+"\n"+
-	  	      "Work with the other user to achieve this goal"+"\n"+"\n"+
-	  		  "Trace the triangles with the pencil"+"\n"+
-	  		  "Trace the squares with the nail"+"\n"+
-	  		  "Trace the squiggles with the chalk"+"\n"+
-	  		  "Erase the circles with the eraser"+"\n"+		  
-	  		  "Do not worry if you end up " +"\n"+
-	  		  "tracing the wrong shape with the wrong tool"+"\n"+
-	  		  "You can move around in the workspace by holding down the" +"\n"+
-	  		  "SHIFT key and dragging with the mouse cursor"+"\n"+"\n"+		  	    		  
-	  	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+
-	  	    		  "please press the ready button when you are ready to begin");
-	    root.getChildren().add(instructions);
-	    root.setAlignment(Pos.CENTER);
-	    
-	    Button okay1 = new Button("Okay");
-	      okay1.setOnAction(new EventHandler<ActionEvent>() {
-	           public void handle(ActionEvent event) {	        	      	   	        	   
-	        	   launchStrokesTask();	        	   
-	           }
-	      });
-	      root.getChildren().add(okay1);
+	    setInstructions();
+	    strokePlayer = new StrokePlayer(toolClips, this);
+	}
+	
+	public void setInstructions() {
+		root.getChildren().clear();
+		instructions = new Text("Your training task is about to begin"+"\n"+
+		  	      "Listen to the drawing sound played"+"\n"+"select which tool was utilised in the sound"+"\n"+
+		  	     /* "Only trace each shape once!"+"\n"+
+		  	      "Work with the other user to achieve this goal"+"\n"+"\n"+
+		  		  "Trace the triangles with the pencil"+"\n"+
+		  		  "Trace the squares with the nail"+"\n"+
+		  		  "Trace the squiggles with the chalk"+"\n"+
+		  		  "Erase the circles with the eraser"+"\n"+		  
+		  		  "Do not worry if you end up " +"\n"+
+		  		  "tracing the wrong shape with the wrong tool"+"\n"+
+		  		  "You can move around in the workspace by holding down the" +"\n"+
+		  		  "SHIFT key and dragging with the mouse cursor"+"\n"+"\n"+		  	    		  
+		  	    		  "When prompted to stop, please answer all questions in the pop up window"+"\n"+*/
+		  	    		  "please press the ready button when you are ready to begin");
+		    root.getChildren().add(instructions);
+		    root.setAlignment(Pos.CENTER);
+		    
+		    Button okay1 = new Button("Okay");
+		      okay1.setOnAction(new EventHandler<ActionEvent>() {
+		           public void handle(ActionEvent event) {	        	      	   	        	   
+		        	   launchStrokesTask();	        	   
+		           }
+		      });
+		      root.getChildren().add(okay1);
 	}
 	
 	public void launchStrokesTask() {
-		root.getChildren().clear();
-		StrokePlayer strokePlayer = new StrokePlayer(toolClips);
+		root.getChildren().clear();		
 		strokePlayer.playNext();
+		instructions = new Text("Select which tool was utilised");		
 		
 		Button btnPencil = new Button("Pencil");
     	//add pencil picture
@@ -125,13 +138,21 @@ public class SoundDemo extends Stage{
         // simple displays ImageView the image as is
         ImageView iv1 = new ImageView();
         iv1.setImage(image);
-        btnPencil.setGraphic(iv1);        
-        
+        btnPencil.setGraphic(iv1);                
     	btnPencil.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {              	
-            	
+            	//launch incorrect answer stage 
+            	//or change text to correct and add continue button
+            	if (PENCIL == strokePlayer.getAnswer()) {
+            		showCorrectMessage();
+            	}else {
+            		setInstructions();
+            		launchCorrectionStage(PENCIL,strokePlayer.getAnswer());            		
+            	}           	            	
             }
         });    	
+    	
+    	
     	Button btnMetal = new Button("Nail");
     	//add metal picture    	
     	File f2 = new File(new File("src\\soundAndImageFiles\\nail.png").getAbsolutePath());        
@@ -142,7 +163,14 @@ public class SoundDemo extends Stage{
         btnMetal.setGraphic(iv3);
     	btnMetal.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {              	
-            	
+            	//launch incorrect answer stage 
+            	//or change text to correct and add continue button
+            	if (METAL == strokePlayer.getAnswer()) {
+            		showCorrectMessage();
+            	}else {
+            		setInstructions();
+            		launchCorrectionStage(METAL,strokePlayer.getAnswer());            		
+            	}  
             }
         });    	
     	Button btnChalk = new Button("Chalk");
@@ -155,7 +183,14 @@ public class SoundDemo extends Stage{
         btnChalk.setGraphic(iv4);
     	btnChalk.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
-            	
+            	//launch incorrect answer stage 
+            	//or change text to correct and add continue button
+            	if (CHALK == strokePlayer.getAnswer()) {
+            		showCorrectMessage();
+            	}else {
+            		setInstructions();
+            		launchCorrectionStage(CHALK,strokePlayer.getAnswer());            		
+            	}  
             }
         });    	
     	Button btnEraser = new Button("Eraser");
@@ -168,11 +203,34 @@ public class SoundDemo extends Stage{
         btnEraser.setGraphic(iv2);
     	btnEraser.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {  
-            	
+            	//launch incorrect answer stage 
+            	//or change text to correct and add continue button
+            	if (ERASER == strokePlayer.getAnswer()) {
+            		showCorrectMessage();
+            	}else {
+            		setInstructions();
+            		launchCorrectionStage(ERASER,strokePlayer.getAnswer());            		
+            	}  
             }
-        });    	    	
-	    
-    	root.getChildren().addAll(btnPencil,btnMetal,btnChalk,btnEraser);    			
+        });    	    		    
+    	VBox vbox = new VBox();    	
+    	HBox hbox = new HBox();
+    	hbox.getChildren().addAll(btnPencil,btnMetal,btnChalk,btnEraser); 
+    	vbox.getChildren().addAll(instructions,hbox);  
+    	vbox.setAlignment(Pos.CENTER);
+    	root.getChildren().addAll(vbox);  			
+	}
+	
+	public void showCorrectMessage() {
+		root.getChildren().clear();
+		instructions = new Text("Correct!");
+		Button okay = new Button("Okay"); 
+		root.getChildren().addAll(instructions,okay);
+    	okay.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {  
+            	setInstructions();
+            }
+        });    	    		    
 	}
 	
 	public void initializeClips() {
@@ -210,4 +268,12 @@ public class SoundDemo extends Stage{
 				toolClips.add(new File(new File("src\\soundAndImageFiles\\metalSelectionAndStroke.WAV").getAbsolutePath())); 
 				toolClipsID.add(METAL);								
 	}
+	
+	public void launchCorrectionStage(int selectedAnswer, int correctAnswer) {
+		CorrectionStage correctionStage = new CorrectionStage(selectedAnswer, correctAnswer);
+	}
+	
+	//public static void main(String[] args) {
+	//	Application.launch(args);
+	//	}
 }

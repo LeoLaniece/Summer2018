@@ -1,5 +1,6 @@
 package test;
 import javafx.application.Application;
+import javafx.geometry.Insets ;
 import javafx.scene.control.ToggleButton ;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.RadioButton ;
@@ -55,7 +56,7 @@ public class TaskSelectionStage extends Stage{
 	      //make sure the height is 200 + what you want to accommodate the color picker and sample line
         int SceneWidth = javaServer.LaunchServer.SceneWidth; 
         int SceneHeight = javaServer.LaunchServer.SceneHeight;
-	      HBox root = new HBox();	        
+	      VBox root = new VBox();	        
 	      Scene scene = new Scene(root, SceneWidth,SceneHeight);
 	      
 	       
@@ -248,6 +249,9 @@ public class TaskSelectionStage extends Stage{
 	               	 me.close();	                     	  	         	  
 	           }
 	      });
+	      task20.setPrefHeight(40);
+	      task20.setPrefWidth(200);
+	      task20.setAlignment(Pos.TOP_CENTER);
 	      
 	      
 	      
@@ -258,8 +262,10 @@ public class TaskSelectionStage extends Stage{
 	      sound.getChildren().addAll(task1,task2,task7,task8,task13,task15);
 	      noSound.getChildren().addAll(task5,task6,task17,task18,task16, task19);
 	      //task7,task8, task13, task5,task6,task1,task2,task15
-	      
-	      root.getChildren().addAll(sound,noSound);
+	      HBox hbox = new HBox();
+	      hbox.getChildren().addAll(sound,noSound);
+	      hbox.setAlignment(Pos.CENTER);
+	      root.getChildren().addAll(task20,hbox);
 	      root.setAlignment(Pos.CENTER);	      
 	      root.requestFocus();
 	      setScene(scene);

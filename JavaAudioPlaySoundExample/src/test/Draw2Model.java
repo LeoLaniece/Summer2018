@@ -1109,7 +1109,9 @@ public class Draw2Model {
 		   return player.fileLength(selectedSoundFile)*1000;
 	   }
 	   public void launchDemoSequence() {
-		   SoundDemo x = new SoundDemo(this);		   
+		   SoundDemo x = new SoundDemo(this);	
+		  
+		   
 	   }
 	
 }

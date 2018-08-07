@@ -50,14 +50,14 @@
 <fullyQualifiedTypeName name="java.io.FileWriter"/>
 <fullyQualifiedTypeName name="javax.swing.event.ChangeListener"/>
 <fullyQualifiedTypeName name="javafx.beans.value.ChangeListener"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="javaServer.LaunchServer"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="java.nio.file.Path"/>
 <fullyQualifiedTypeName name="java.nio.file.Paths"/>
 <fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.io.BufferedReader"/>
 <fullyQualifiedTypeName name="test.Draw2Controller"/>
 <fullyQualifiedTypeName name="test.FreezeTestInstructions"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.io.File"/>
 </qualifiedTypeNameHistroy>
